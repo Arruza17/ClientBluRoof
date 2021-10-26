@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<Pane fx:controller="view.controllers.SignUpController" id="MainPane" fx:id="backgroundPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="968.0" prefWidth="1024.0" snapToPixel="false" styleClass="bgimg" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <BorderPane fx:id="backgroundBorderPane" layoutX="466.0" layoutY="212.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="450.0" prefWidth="605.0" snapToPixel="false">
+            <center>
+                <Pane id="LoginPane" fx:id="formPane" prefHeight="450.0" prefWidth="605.0" styleClass="loginPanel" BorderPane.alignment="CENTER">
+                    <children>
+                        <HBox fx:id="lowHbox" alignment="CENTER" layoutY="275.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="605.0" spacing="40.0">
+                            <children>
+                                <ImageView fx:id="logoImg" fitHeight="150.0" fitWidth="153.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                                    <image>
+                                        <Image url="@../resources/img/logo.png" />
+                                    </image>
+                                </ImageView>
+                                <Button fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" styleClass="cancelButton" text="Cancel" textAlignment="CENTER" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="16.0" />
+                                    </font>
+                                </Button>
+                                <Button fx:id="btnSignUp" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" styleClass="primaryButton" text="Sign up" textAlignment="CENTER" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="16.0" />
+                                    </font>
+                                </Button>
+                            </children>
+                        </HBox>
+                        <GridPane fx:id="formGridPane" alignment="CENTER" layoutX="46.0" layoutY="71.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="192.0" prefWidth="514.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="82.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="187.20004882812503" minWidth="0.0" prefWidth="7.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="231.4000244140625" minWidth="0.0" prefWidth="134.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="231.4000244140625" minWidth="0.0" prefWidth="12.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="231.4000244140625" minWidth="10.0" prefWidth="128.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="231.4000244140625" minWidth="0.0" prefWidth="12.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="231.4000244140625" minWidth="10.0" prefWidth="154.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints maxHeight="55.99996337890625" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
+                                <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
+                                <RowConstraints maxHeight="66.599951171875" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
+                                <RowConstraints maxHeight="82.40001220703125" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                                <RowConstraints maxHeight="99.4" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
+                            <children>
+                                <Label fx:id="lblUsername" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="RIGHT_TO_LEFT" prefHeight="55.0" prefWidth="74.0" text=" Username:" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="tfEmail" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="37.0" prefWidth="429.0" promptText="E-mail" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                           <tooltip>
+                              <Tooltip fx:id="tooltipEmail" text="Empty Tooltip" />
+                           </tooltip>
+                                </TextField>
+                                <Label fx:id="lblPass" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="RIGHT_TO_LEFT" text="Password:" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                </Label>
+                                <PasswordField fx:id="passField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefWidth="130.0" promptText="Pass." GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                           <tooltip>
+                              <Tooltip fx:id="tooltipPass" text="Empty Tooltip" />
+                           </tooltip>
+                                </PasswordField>
+                                <Label fx:id="lblRptPass" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="42.0" prefWidth="91.0" text="Repeat Password:" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="2">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblFullName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="78.0" text="Full name:" GridPane.columnIndex="4">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="tfFullName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefWidth="130.0" promptText="Full name" GridPane.columnIndex="6">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                           <tooltip>
+                              <Tooltip text="Empty Tooltip" />
+                           </tooltip>
+                                </TextField>
+                                <TextField fx:id="tfRptPass" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefWidth="130.0" promptText="Repeat Pass." GridPane.columnIndex="6" GridPane.rowIndex="2">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                           <tooltip>
+                              <Tooltip fx:id="tooltipRptPass" text="Empty Tooltip" />
+                           </tooltip>
+                                </TextField>
+                                <Label fx:id="lblEmail" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="   E-mail:" GridPane.rowIndex="4">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="tfUser" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefWidth="130.0" promptText="User" GridPane.columnIndex="2">
+                                    <font>
+                                        <Font size="16.0" />
+                                    </font>
+                           <tooltip>
+                              <Tooltip fx:id="tooltipUser" />
+                           </tooltip>
+                                </TextField>
+                            </children>
+                        </GridPane>
+                    </children>
+                </Pane>
+            </center>
+        </BorderPane>
+    </children>
+    <effect>
+        <Blend />
+    </effect>
+</Pane>
