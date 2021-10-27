@@ -29,12 +29,12 @@
                                         <Image url="@../resources/img/logo.png" />
                                     </image>
                                 </ImageView>
-                                <Button fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" styleClass="cancelButton" text="Cancel" textAlignment="CENTER" textFill="WHITE">
+                                <Button fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#cancel" styleClass="cancelButton" text="Cancel" textAlignment="CENTER" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="16.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="btnSignUp" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleButtonPressed" styleClass="primaryButton" text="Sign up" textAlignment="CENTER" textFill="WHITE">
+                                <Button fx:id="btnSignUp" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#signUp" styleClass="primaryButton" text="Sign up" textAlignment="CENTER" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="16.0" />
                                     </font>
