@@ -33,17 +33,20 @@ public class SignUpController implements Initializable{
 
     private Stage stage;
     
+    
     @FXML
     private TextField tfUser;   
    
     @FXML
     private void show(ActionEvent evento){
            
+        
             tfUser.setText("sdfsdfsfsdf");
     }
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        
         
     }
 
