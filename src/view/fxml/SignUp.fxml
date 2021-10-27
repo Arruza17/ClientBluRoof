@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<Pane fx:controller="view.controllers.SignUpController" id="MainPane" fx:id="backgroundPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="968.0" prefWidth="1024.0" snapToPixel="false" styleClass="bgimg" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<Pane id="MainPane" fx:id="backgroundPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="968.0" prefWidth="1024.0" snapToPixel="false" styleClass="bgimg" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.SignUpController">
     <children>
         <BorderPane fx:id="backgroundBorderPane" layoutX="466.0" layoutY="212.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="450.0" prefWidth="605.0" snapToPixel="false">
             <center>
@@ -34,7 +34,7 @@
                                         <Font name="System Bold" size="16.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="btnSignUp" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" styleClass="primaryButton" text="Sign up" textAlignment="CENTER" textFill="WHITE">
+                                <Button fx:id="btnSignUp" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleButtonPressed" styleClass="primaryButton" text="Sign up" textAlignment="CENTER" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="16.0" />
                                     </font>
@@ -103,14 +103,6 @@
                               <Tooltip text="Empty Tooltip" />
                            </tooltip>
                                 </TextField>
-                                <TextField fx:id="tfRptPass" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefWidth="130.0" promptText="Repeat Pass." GridPane.columnIndex="6" GridPane.rowIndex="2">
-                                    <font>
-                                        <Font size="16.0" />
-                                    </font>
-                           <tooltip>
-                              <Tooltip fx:id="tooltipRptPass" text="Empty Tooltip" />
-                           </tooltip>
-                                </TextField>
                                 <Label fx:id="lblEmail" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="   E-mail:" GridPane.rowIndex="4">
                                     <font>
                                         <Font size="16.0" />
@@ -124,6 +116,11 @@
                               <Tooltip fx:id="tooltipUser" />
                            </tooltip>
                                 </TextField>
+                        <PasswordField fx:id="rptPassword" prefHeight="37.0" prefWidth="153.0" GridPane.columnIndex="6" GridPane.rowIndex="2">
+                           <tooltip>
+                              <Tooltip text="Repeat the password" />
+                           </tooltip>
+                        </PasswordField>
                             </children>
                         </GridPane>
                     </children>
