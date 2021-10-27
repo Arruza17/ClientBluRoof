@@ -5,17 +5,14 @@
  */
 package application;
 
+import view.controllers.SignInController;
+
 /**
  *
- * @author 2dam
+ * @author Yeray Sampedro, Jorge Crespo
  */
 public class Application {
-
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
+        javafx.application.Application.launch(SignInController.class);
     }
-    
 }
