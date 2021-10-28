@@ -5,6 +5,7 @@
  */
 package view.controllers;
 
+import exceptions.EmailFormatException;
 import exceptions.FieldsEmptyException;
 import exceptions.FullNameGapException;
 import exceptions.MaxCharactersException;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -36,15 +39,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import model.User;
 
 /**
  *
  * @author 2dam
  */
-public class SignUpController extends Application {
+public class SignUpController {
 
     private static final Logger logger = Logger.getLogger(SignUpController.class.getName());
-
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
+    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     private Stage stage;
     @FXML
     private TextField tfUser;
@@ -69,8 +74,6 @@ public class SignUpController extends Application {
     @FXML
     private TextField tfEmail;
     @FXML
-    private Tooltip tooltipEmail;
-    @FXML
     private Label lblPass;
     @FXML
     private PasswordField passField;
@@ -89,77 +92,30 @@ public class SignUpController extends Application {
     @FXML
     private PasswordField rptPassword;
 
-    @Override
-    public void start(Stage primaryStage) {
-        try {
-            String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/SignUp.fxml"));
-            Parent root = (Parent) fxmlLoader.load();
-            SignUpController controller = ((SignUpController) fxmlLoader.getController());
-            controller.setStage(primaryStage);
-            controller.initStage(root);
-
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
      *
      * @param root
      */
     public void initStage(Parent root) {
-
+        //Creation of a new Scene
         Scene scene = new Scene(root);
+        //Save the route of the .css file
         String css = this.getClass().getResource("/view/resources/styles/CSSLogIn.css").toExternalForm();
+        //Sets the .css to the Scene
         scene.getStylesheets().add(css);
+        //Sets the scene to the stage
         stage.setScene(scene);
         stage.setTitle("SignUp");
         stage.setResizable(true);
-        //Event when the window is started
-        //stage.setOnShowing(this::handleWindowShowing);
-        //Event when the button is clicked      
+        stage.setOnCloseRequest(this::handleWindowClosing);
         stage.show();
 
     }
 
     //ALL THE HANDLERS
-    @FXML
-    private void signUp(javafx.event.ActionEvent event) {
-
-        try {
-            if (checkFields()) {
-                Alert alert = new Alert(AlertType.CONFIRMATION);
-                alert.setTitle("Confirmation Dialog");
-                alert.setHeaderText("Look, a Confirmation Dialog");
-                alert.setContentText("Are you ok with this?");
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    Alert alert1 = new Alert(AlertType.INFORMATION);
-                    alert1.setTitle("Information Dialog");
-                    alert1.setHeaderText(null);
-                    alert1.setContentText("I have a great message for you!");
-
-                    alert1.showAndWait();
-                } else {
-                    // ... user chose CANCEL or closed the dialog
-                }
-            }
-
-        } catch (Exception ex) {
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(null);
-            alert.setContentText(ex.getMessage());
-            alert.showAndWait();
-            logger.warning(ex.getClass().getSimpleName() + " exception thrown at signUp method");
-        }
-
-    }
-
-    private boolean checkFields() throws FieldsEmptyException, MaxCharactersException, PassNotEqualException, PassMinCharacterException, FullNameGapException {
+    private boolean checkFields() throws FieldsEmptyException, MaxCharactersException, PassNotEqualException, PassMinCharacterException, FullNameGapException, EmailFormatException {
 
         if (tfUser.getText().trim().isEmpty()
                 || tfFullName.getText().trim().isEmpty()
@@ -185,25 +141,72 @@ public class SignUpController extends Application {
                 || rptPassword.getText().trim().length() < 6) {
             throw new PassMinCharacterException();
         }
-        if(!tfFullName.getText().trim().contains(" ")){
-        throw new FullNameGapException();}
+        if (!tfFullName.getText().trim().contains(" ")) {
+            throw new FullNameGapException();
+        }
+        if(!validateEmail(tfEmail.getText())){
+            throw new EmailFormatException();
+        }
         return true;
     }
 
-    /*if (event.getSource().equals(btnCancel)) {
-            Platform.exit();
-            try {
-                stop();
-            } catch (Exception ex) {
-                Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+    @FXML
+    private void handleSignUpAction(javafx.event.ActionEvent event) {
+
+        try {
+            if (checkFields()) {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Sign Up CONFIRMATION");
+                alert.setHeaderText("Are you sure you want to add?");
+                User newUser = createUser();
+                alert.setContentText("UserName = "+newUser.getLogin()+
+                        "\nFullName = "+newUser.getFullName()+
+                        "\nEmail = "+newUser.getEmail());
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    Alert alert1 = new Alert(AlertType.INFORMATION);
+                    alert1.setTitle("Information Dialog");
+                    alert1.setHeaderText(null);
+                    alert1.setContentText("I have a great message for you!");
+
+                    alert1.showAndWait();
+                } else {
+                    // ... user chose CANCEL or closed the dialog
+                }
             }
+
+        } catch (Exception ex) {
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
+            logger.warning(ex.getClass().getSimpleName() + " exception thrown at signUp method");
         }
-     */
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
+    }
+
+    private User createUser() {
+        User user = User.getUser();
+        user.setLogin(tfUser.getText());
+        user.setFullName(tfFullName.getText());
+        user.setPassword(passField.getText());
+        user.setEmail(tfEmail.getText());
+        return user;
+    }
+
+    @FXML
+    private void handleCancelAction(javafx.event.ActionEvent event) {
+    }
+
+    private void handleWindowClosing(WindowEvent e) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to close this window?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != ButtonType.OK) {
+            e.consume();
+        }
+
     }
     //GETTERS AND SETTERS
 
@@ -223,17 +226,9 @@ public class SignUpController extends Application {
         this.stage = stage;
     }
 
-    @FXML
-    private void cancel(javafx.event.ActionEvent event) {
-    
-            Platform.exit();
-            try {
-                stop();
-            } catch (Exception ex) {
-                Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
-        
+    private boolean validateEmail(String email) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+        return matcher.find();
     }
 
 }

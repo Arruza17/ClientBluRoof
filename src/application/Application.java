@@ -5,17 +5,37 @@
  */
 package application;
 
+import java.io.IOException;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.stage.Stage;
+import view.controllers.SignUpController;
+
 /**
  *
  * @author 2dam
  */
-public class Application {
-
+public class Application extends javafx.application.Application{
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        launch(args);
     }
-    
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/SignUp.fxml"));
+            Parent root = (Parent) fxmlLoader.load();
+            SignUpController controller = ((SignUpController) fxmlLoader.getController());
+            controller.setStage(primaryStage);
+            controller.initStage(root);
+
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+           // logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
