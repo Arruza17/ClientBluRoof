@@ -2,7 +2,10 @@ package view.controllers;
 
 import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
+import exceptions.ServerDownException;
+import interfaces.Connectable;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +20,7 @@ import javafx.scene.image.Image;
 
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import model.DataEncapsulator;
 import model.User;
 
 /**
@@ -25,6 +29,7 @@ import model.User;
  */
 public class SignInController {
 
+    private Connectable connectable;
     private static final Logger logger = Logger.getLogger(SignInController.class.getName());
     private final int MAX_WIDTH = 1920;
     private final int MAX_HEIGHT = 1024;
@@ -44,7 +49,7 @@ public class SignInController {
     private TextField tfPassword;
     private Stage stage;
 
-    public void initStage(Parent root){
+    public void initStage(Parent root) {
         Scene scene = new Scene(root);
         String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
         scene.getStylesheets().add(css);
@@ -94,28 +99,46 @@ public class SignInController {
     }
 
     private void signIn(String login, String pass) {
-        User user = User.getUser();
-        user.setLogin(login);
-        user.setPassword(new String(pass));
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText(null);
-        alert.setTitle("Login");
-        alert.setContentText("Intento de login: " + login + " " + pass);
-        alert.showAndWait();
+        try {
+            User user = User.getUser();
+            user.setLogin(login);
+            user.setPassword(new String(pass));
+            DataEncapsulator de = connectable.signIn(user);
+            if (de.getException() != null) {
+                throw de.getException();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText(null);
+                alert.setContentText("TODO OK");
+                alert.showAndWait();
+                logger.warning("TODO OK");
+            }
+        } catch (Exception ex) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
+            logger.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
+        }
 
-        logger.info(login + " login attempt");
     }
 
     private void handleWindowClosing(WindowEvent e) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-
         alert.setHeaderText(null);
         alert.setContentText("Are you sure you want to close this window?");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != ButtonType.OK) {
-            e.consume();
+            User user = null;
+            try {
+                connectable.signIn(user);
+            } catch (ServerDownException ex) {
+                Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                e.consume();
+            }
         }
-        logger.warning("prueba");
+
     }
 //GETTERS AND SETTERS
 
@@ -125,6 +148,10 @@ public class SignInController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public void setConnectable(Connectable connectable) {
+        this.connectable = connectable;
     }
 
 }
