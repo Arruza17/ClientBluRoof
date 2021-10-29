@@ -2,30 +2,28 @@ package view.controllers;
 
 import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
-import java.io.IOException;
-import java.util.logging.Level;
+import java.util.Optional;
 import java.util.logging.Logger;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import model.User;
 
 /**
  *
  * @author Yeray Sampedro, Jorge Crespo
  */
-public class SignInController extends Application {
+public class SignInController {
 
     private static final Logger logger = Logger.getLogger(SignInController.class.getName());
     private final int MAX_WIDTH = 1920;
@@ -44,38 +42,28 @@ public class SignInController extends Application {
 
     @FXML
     private TextField tfPassword;
+    private Stage stage;
 
-    @Override
-    public void start(Stage primaryStage) {
-        try {
-            logger.info("Initializing SignIn window");
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/SignIn.fxml"));
-            Parent root = (Parent) loader.load();
-
-            Scene scene = new Scene(root);
-            String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
-            scene.getStylesheets().add(css);
-
-            primaryStage.setMaxWidth(MAX_WIDTH);
-            primaryStage.setMinWidth(MIN_WIDTH);
-            primaryStage.setMaxHeight(MAX_HEIGHT);
-            primaryStage.setMinHeight(MIN_HEIGHT);
-            primaryStage.setResizable(false);
-            primaryStage.setResizable(false);
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("BluRoof SignIn Page");
-            primaryStage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
-            primaryStage.show();
-
-        } catch (IOException ex) {
-
-            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+    public void initStage(Parent root){
+        Scene scene = new Scene(root);
+        String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
+        scene.getStylesheets().add(css);
+        stage.setMaxWidth(MAX_WIDTH);
+        stage.setMinWidth(MIN_WIDTH);
+        stage.setMaxHeight(MAX_HEIGHT);
+        stage.setMinHeight(MIN_HEIGHT);
+        stage.setResizable(false);
+        stage.setTitle("BluRoof SignIn Page");
+        stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
+        stage.setScene(scene);
+        stage.setTitle("SignIn");
+        stage.setResizable(true);
+        stage.setOnCloseRequest(this::handleWindowClosing);
+        stage.show();
     }
 
     public void signUp(ActionEvent action) {
-      
+
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText(null);
         alert.setTitle("Error");
@@ -96,8 +84,6 @@ public class SignInController extends Application {
         }
     }
 
-    
-    
     private void checkEmptyFields() throws FieldsEmptyException, MaxCharactersException {
         if (tfUser.getText().trim().isEmpty() || tfPassword.getText().trim().isEmpty()) {
             throw new FieldsEmptyException();
@@ -118,6 +104,27 @@ public class SignInController extends Application {
         alert.showAndWait();
 
         logger.info(login + " login attempt");
+    }
+
+    private void handleWindowClosing(WindowEvent e) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to close this window?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != ButtonType.OK) {
+            e.consume();
+        }
+        logger.warning("prueba");
+    }
+//GETTERS AND SETTERS
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
 }
