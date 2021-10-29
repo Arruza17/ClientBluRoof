@@ -20,7 +20,7 @@
     <children>
         <BorderPane fx:id="backgroundBorderPane" layoutX="466.0" layoutY="212.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="450.0" prefWidth="605.0" snapToPixel="false">
             <center>
-                <Pane id="LoginPane" fx:id="formPane" prefHeight="450.0" prefWidth="605.0" styleClass="loginPanel" BorderPane.alignment="CENTER">
+                <Pane id="SignUpPane" fx:id="formPane" prefHeight="450.0" prefWidth="605.0" styleClass="loginPanel" BorderPane.alignment="CENTER">
                     <children>
                         <GridPane fx:id="formGridPane" alignment="CENTER" layoutX="46.0" layoutY="71.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="192.0" prefWidth="514.0">
                             <columnConstraints>
@@ -50,7 +50,7 @@
                                         <Font size="16.0" />
                                     </font>
                                     <tooltip>
-                                        <Tooltip fx:id="tooltipUser" />
+                                        <Tooltip fx:id="tooltipUser" text="Enter the user" />
                                     </tooltip>
                                 </TextField>
                                 <Label fx:id="lblFullName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="78.0" text="Full name:" GridPane.columnIndex="4">
@@ -63,7 +63,7 @@
                                         <Font size="16.0" />
                                     </font>
                                     <tooltip>
-                                        <Tooltip text="Empty Tooltip" />
+                                        <Tooltip fx:id="tooltipFullName" text="Enter the name and surname" />
                                     </tooltip>
                                 </TextField>
                                 <Label fx:id="lblPass" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="RIGHT_TO_LEFT" text="Password:" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
@@ -76,7 +76,7 @@
                                         <Font size="16.0" />
                                     </font>
                                     <tooltip>
-                                        <Tooltip fx:id="tooltipPass" text="Empty Tooltip" />
+                                        <Tooltip fx:id="tooltipPass" text="Enter the password" />
                                     </tooltip>
                                 </PasswordField>
                                 <Label fx:id="lblRptPass" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="42.0" prefWidth="91.0" text="Repeat Password:" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="2">
@@ -86,7 +86,7 @@
                                 </Label>
                                 <PasswordField fx:id="rptPassword" prefHeight="37.0" prefWidth="153.0" promptText="Rpt Pass." GridPane.columnIndex="6" GridPane.rowIndex="2">
                                     <tooltip>
-                                        <Tooltip text="Repeat the password" />
+                                        <Tooltip fx:id="tooltipRptPass" text="Repeat the password" />
                                     </tooltip>
                                 </PasswordField>
                                 <Label fx:id="lblEmail" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="   E-mail:" GridPane.rowIndex="4">
@@ -98,6 +98,9 @@
                                     <font>
                                         <Font size="16.0" />
                                     </font>
+                                    <tooltip>
+                                        <Tooltip fx:id="tooltipEmail" text="Enter the email (example@domain.com)" />
+                                    </tooltip>
                                 </TextField>
                             </children>
                         </GridPane>

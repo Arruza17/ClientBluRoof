@@ -6,6 +6,8 @@
 package application;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
@@ -17,6 +19,7 @@ import view.controllers.SignUpController;
  */
 public class Application extends javafx.application.Application{
     
+    private static final Logger LOGGER = Logger.getLogger(SignUpController.class.getName());
     /** Entry point for the java application
      * @param args the command line arguments
      */
@@ -35,11 +38,11 @@ public class Application extends javafx.application.Application{
             Parent root = (Parent) fxmlLoader.load();
             SignUpController controller = ((SignUpController) fxmlLoader.getController());
             controller.setStage(primaryStage);
+            //Initialize stage
             controller.initStage(root);
 
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-           // logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "UI LogIn Controller: Error openning users managing window",ex.getMessage());
         }
     }
 }
