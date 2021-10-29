@@ -12,18 +12,22 @@ import javafx.stage.Stage;
 import view.controllers.SignUpController;
 
 /**
- *
- * @author 2dam
+ * Entry point for the java application
+ * @author BluRoof
  */
 public class Application extends javafx.application.Application{
     
-    /**
+    /** Entry point for the java application
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         launch(args);
     }
-
+    /**
+     * Entry pont for the JavaFX application. Load, sets and shows the primary window
+     * @param primaryStage The primary window of the applicarion
+     * @throws Exception the Exception to be thrown
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         try {

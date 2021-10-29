@@ -84,7 +84,7 @@
                                         <Font size="16.0" />
                                     </font>
                                 </Label>
-                                <PasswordField fx:id="rptPassword" prefHeight="37.0" prefWidth="153.0" GridPane.columnIndex="6" GridPane.rowIndex="2">
+                                <PasswordField fx:id="rptPassword" prefHeight="37.0" prefWidth="153.0" promptText="Rpt Pass." GridPane.columnIndex="6" GridPane.rowIndex="2">
                                     <tooltip>
                                         <Tooltip text="Repeat the password" />
                                     </tooltip>
