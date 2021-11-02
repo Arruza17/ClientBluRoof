@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.DataEncapsulator;
 import model.User;
+import view.controllers.SignInController;
 
 /**
  *
@@ -18,6 +20,9 @@ import model.User;
  */
 public class ConnectableImplementation implements Connectable {
 
+    private static final Logger logger = Logger.getLogger(ConnectableImplementation.class.getName());
+
+    private static final ResourceBundle CONFIGFILE = ResourceBundle.getBundle("resources.config");
     private static int PORT;
     private static String IP;
     private static Socket cliente;
@@ -30,14 +35,18 @@ public class ConnectableImplementation implements Connectable {
         try {
             de.setUser(user);
             oos.writeObject(de);
-             de = (DataEncapsulator) ois.readObject();
-            if (de.getException().getMessage().equals("CLOSE")) {
-                oos.close();
-                ois.close();
-                cliente.close();
+            de = null;
+            de = (DataEncapsulator) ois.readObject();
+            if (de.getException() != null) {
+                if (de.getException().getMessage().equalsIgnoreCase("CLOSE")) {
+                    oos.close();
+                    ois.close();
+                    cliente.close();
+                    throw de.getException();
+                }
             }
         } catch (Exception ex) {
-            Logger.getLogger(ConnectableImplementation.class.getName()).log(Level.SEVERE, null, ex);
+            logger.warning(ex.getMessage());
             throw new ServerDownException(ex.getMessage());
 
         }
@@ -50,12 +59,12 @@ public class ConnectableImplementation implements Connectable {
         try {
             de.setUser(user);
             oos.writeObject(de);
-            /* de = (DataEncapsulator) ois.readObject();
+            de = (DataEncapsulator) ois.readObject();
             if (de.getException() != null) {
                 throw de.getException();
-            }*/
+            }
         } catch (Exception ex) {
-            Logger.getLogger(ConnectableImplementation.class.getName()).log(Level.SEVERE, null, ex);
+            logger.warning(ex.getMessage());
             throw new ServerDownException(ex.getMessage());
 
         }
@@ -63,8 +72,8 @@ public class ConnectableImplementation implements Connectable {
     }
 
     public ConnectableImplementation() throws ServerDownException {
-        PORT = 5000;
-        IP = "localhost";
+        PORT = Integer.parseInt(CONFIGFILE.getString("PORT"));
+        IP = CONFIGFILE.getString("IP");
         try {
             cliente = new Socket(IP, PORT);
             oos = new ObjectOutputStream(cliente.getOutputStream());

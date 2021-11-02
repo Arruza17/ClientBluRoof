@@ -17,12 +17,15 @@ import logic.ConnectableImplementation;
  */
 public class ConnectableFactory {
 
-    public static Connectable getConnectable() {
+    private static final Logger logger = Logger.getLogger(ConnectableImplementation.class.getName());
+
+    public static Connectable getConnectable() throws ServerDownException {
         Connectable con = null;
         try {
             con = new ConnectableImplementation();
         } catch (ServerDownException ex) {
-            Logger.getLogger(ConnectableFactory.class.getName()).log(Level.SEVERE, null, ex);
+            logger.warning(ex.getMessage());
+            throw new ServerDownException();
         }
         return con;
     }

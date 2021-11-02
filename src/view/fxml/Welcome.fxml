@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane  maxHeight="1080.0" maxWidth="1920.0" minHeight="400.0" minWidth="640.0" prefHeight="768.0" prefWidth="1020.0" styleClass="bgimg" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.WelcomeController">
+    <center>
+        <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="loginPanel" BorderPane.alignment="CENTER">
+            <top>
+                <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="186.0" prefWidth="863.0" BorderPane.alignment="CENTER" />
+            </top>
+            <left>
+                <Pane prefHeight="200.0" prefWidth="206.0" BorderPane.alignment="CENTER" />
+            </left>
+            <right>
+                <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            </right>
+            <center>
+                <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Salutations" BorderPane.alignment="CENTER">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                </Label>
+            </center>
+            <bottom>
+                <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            </bottom>
+        </BorderPane>
+    </center>
+    <left>
+        <Pane disable="true" prefHeight="200.0" prefWidth="400.0" BorderPane.alignment="CENTER" />
+    </left>
+    <bottom>
+        <Pane disable="true" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+    </bottom>
+    <right>
+        <Pane id="bluRoofLogo" disable="true" prefHeight="200.0" prefWidth="400.0" BorderPane.alignment="CENTER" />
+    </right>
+    <top>
+        <ButtonBar prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <buttons>
+                <Button fx:id="btnSignOut" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Sign Out" />
+                <Button fx:id="btnClose" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Close" />
+            </buttons>
+        </ButtonBar>
+    </top>
+</BorderPane>

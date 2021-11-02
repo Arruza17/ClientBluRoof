@@ -4,11 +4,14 @@ import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
 import exceptions.ServerDownException;
 import interfaces.Connectable;
+import static java.lang.Thread.sleep;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -17,6 +20,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.stage.Modality;
 
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -79,10 +83,23 @@ public class SignInController {
     public void signIn(ActionEvent action) {
         try {
             checkEmptyFields();
-            signIn(tfUser.getText().trim(), tfPassword.getText().trim());
+            DataEncapsulator de = signIn(tfUser.getText().trim(), tfPassword.getText().trim());
+            if (de.getException() != null) {
+                throw de.getException();
+            }
+            if (de.getUser() != null) {
+                Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("view/fxml/Welcome.fxml"));
+                Stage stageWelcome = new Stage();
+                WelcomeController controller = new WelcomeController();
+                controller.setStage(stageWelcome);
+                controller.setUser(de.getUser());
+                controller.initStage(root);
+
+            }
+
         } catch (Exception ex) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(null);
+            alert.setHeaderText("ERROR GENERAL");
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
             logger.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
@@ -98,29 +115,26 @@ public class SignInController {
         }
     }
 
-    private void signIn(String login, String pass) {
+    private DataEncapsulator signIn(String login, String pass) throws Exception {
+        User user = null;
         try {
-            User user = User.getUser();
+            user = User.getUser();
             user.setLogin(login);
-            user.setPassword(new String(pass));
+            user.setPassword(pass);
             DataEncapsulator de = connectable.signIn(user);
+
             if (de.getException() != null) {
+                user = null;
                 throw de.getException();
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText(null);
-                alert.setContentText("TODO OK");
-                alert.showAndWait();
-                logger.warning("TODO OK");
+                logger.info(user.getLogin() + " signed in");
+                return de;
             }
         } catch (Exception ex) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText(null);
-            alert.setContentText(ex.getMessage());
-            alert.showAndWait();
             logger.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
-        }
+            throw ex;
 
+        }
     }
 
     private void handleWindowClosing(WindowEvent e) {
@@ -128,19 +142,19 @@ public class SignInController {
         alert.setHeaderText(null);
         alert.setContentText("Are you sure you want to close this window?");
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != ButtonType.OK) {
-            User user = null;
+        if (result.get() != ButtonType.CANCEL) {
+            logger.info("CERRANDO VENTANA");
             try {
-                connectable.signIn(user);
+                connectable.signIn(null);
             } catch (ServerDownException ex) {
-                Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+                logger.info(ex.getMessage());
             } finally {
-                e.consume();
+                this.stage.close();
             }
         }
 
     }
-//GETTERS AND SETTERS
+    //GETTERS AND SETTERS
 
     public Stage getStage() {
         return stage;
