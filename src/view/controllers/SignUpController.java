@@ -17,6 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -27,11 +29,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import model.User;
@@ -42,8 +46,13 @@ import model.User;
  * @author Ander Arruza and Adrián Pérez
  */
 public class SignUpController {
-    
-    private static final Logger LOGGER = Logger.getLogger("package.class");
+
+    private final int MAX_WIDTH = 1920;
+    private final int MAX_HEIGHT = 1024;
+    private final int MIN_WIDTH = 1024;
+    private final int MIN_HEIGHT = 768;
+
+    private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
     public static final Pattern VALID_EMAIL_ADDRESS
             = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     private Stage stage;
@@ -52,47 +61,15 @@ public class SignUpController {
     @FXML
     private Button btnSignUp;
     @FXML
-    private Pane backgroundPane;
-    @FXML
-    private BorderPane backgroundBorderPane;
-    @FXML
-    private Pane formPane;
-    @FXML
-    private HBox lowHbox;
-    @FXML
-    private ImageView logoImg;
-    @FXML
     private Button btnCancel;
-    @FXML
-    private GridPane formGridPane;
-    @FXML
-    private Label lblUsername;
     @FXML
     private TextField tfEmail;
     @FXML
-    private Label lblPass;
-    @FXML
     private PasswordField passField;
-    @FXML
-    private Tooltip tooltipPass;
-    @FXML
-    private Label lblRptPass;
-    @FXML
-    private Label lblFullName;
     @FXML
     private TextField tfFullName;
     @FXML
-    private Label lblEmail;
-    @FXML
-    private Tooltip tooltipUser;
-    @FXML
     private PasswordField rptPassword;
-    @FXML
-    private Tooltip tooltipFullName;
-    @FXML
-    private Tooltip tooltipRptPass;
-    @FXML
-    private Tooltip tooltipEmail;
 
     /**
      * This method is used to initialize the stage
@@ -107,13 +84,19 @@ public class SignUpController {
         String css = this.getClass().getResource("/view/resources/styles/CSSLogIn.css").toExternalForm();
         //Sets the .css to the Scene
         scene.getStylesheets().add(css);
+        //Stage dimension setters
+        stage.setMaxWidth(MAX_WIDTH);
+        stage.setMinWidth(MIN_WIDTH);
+        stage.setMaxHeight(MAX_HEIGHT);
+        stage.setMinHeight(MIN_HEIGHT);
+        stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
         //Sets the scene to the stage
         stage.setScene(scene);
         stage.setTitle("SignUp");
-        stage.setResizable(true);
+        stage.setResizable(false);
         stage.setOnCloseRequest(this::handleWindowClosing);
         stage.show();
-
+        LOGGER.info("SignUp Open Window");
     }
 
     //ALL THE HANDLERS
@@ -137,6 +120,7 @@ public class SignUpController {
                 || rptPassword.getText().trim().isEmpty()
                 || tfEmail.getText().trim().isEmpty()) {
             //throw validation Error
+            LOGGER.warning("Some fields are empty");
             throw new FieldsEmptyException();
         }
         //Checks if the fields are >255 characters
@@ -146,30 +130,36 @@ public class SignUpController {
                 || rptPassword.getText().trim().length() > 255
                 || tfEmail.getText().trim().length() > 255) {
             //throw validation Error
+            LOGGER.warning("Some field/s are more than >255 characters");
             throw new MaxCharactersException();
         }
         //Checks if the password fields are the same
         if (!passField.getText().trim().equals(rptPassword.getText().trim())) {
             //throw validation Error
+            LOGGER.warning("The field passField and rptPassword are not the same");
             throw new PassNotEqualException();
         }
         //Checks if the password fields are <6
         if (passField.getText().trim().length() < 6
                 || rptPassword.getText().trim().length() < 6) {
             //throw validation Error
+            LOGGER.warning("The password have <6 characters");
             throw new PassMinCharacterException();
         }
         //Checks if the fullName contains at least one space, in order to know
         //if the user did write the surname
         if (!tfFullName.getText().trim().contains(" ")) {
+            LOGGER.warning("The surmane is not written");
             //throw validation Error
             throw new FullNameGapException();
         }
         //Checks if the email is ins the correct form
         if (!validateEmail(tfEmail.getText().trim())) {
+            LOGGER.warning("The email is not in the correct format");
             //throw validation Error
             throw new EmailFormatException();
         }
+        //Reachable if everything goes OK
         return true;
     }
 
@@ -183,6 +173,7 @@ public class SignUpController {
         User newUser;
         try {
             if (checkFields()) {
+                LOGGER.info("All the fields are OK");
                 //New Alert in order to ask the user if
                 //he really want to add that user
                 Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -197,7 +188,7 @@ public class SignUpController {
                 if (result.get() == ButtonType.OK) {
                     //ADDING THE USER TO THE DATABASE
                     //NEEDED THE LOGICAL PART
-                    
+
                     //TELLING THE USER THAT EVERYTHING HAD WORK
                     LOGGER.info("New User succesfully added");
                     Alert alert1 = new Alert(AlertType.INFORMATION);
@@ -224,6 +215,7 @@ public class SignUpController {
 
     /**
      * This method generates a new user taking all the values of teh fields
+     *
      * @return the created User
      */
     private User createUser() {
@@ -236,30 +228,29 @@ public class SignUpController {
     }
 
     /**
-     * This method closes the actual window and gets the user back to the
-     * SignIn Window
+     * This method closes the actual window and gets the user back to the SignIn
+     * Window
+     *
      * @param event
      */
     @FXML
     private void handleCancelAction(javafx.event.ActionEvent event) {
         LOGGER.info("Closing SignUp Window");
-        Platform.exit();
+        // Get a handle to the stage
+        Stage stage = (Stage) btnCancel.getScene().getWindow();
+        // do what you have to do
+        stage.close();
     }
 
     /**
-     * This method is executed when the user tries to close the actual window
-     * clicking in the close button of the actal window located top right
-     * @param e
+     * Method which contains an alert with a choice.
+     *
+     * @param e window event representing some type of action.
+     *
      */
     private void handleWindowClosing(WindowEvent e) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation");
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to close this window?");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != ButtonType.OK) {
-            e.consume();
-        }
+        LOGGER.info("SignUp Window is closed");
+
     }
 
     /**

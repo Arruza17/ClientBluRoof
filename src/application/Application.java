@@ -8,10 +8,11 @@ package application;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import view.controllers.SignUpController;
+import view.controllers.SignInController;
 
 /**
  * Entry point for the java application
@@ -19,7 +20,7 @@ import view.controllers.SignUpController;
  */
 public class Application extends javafx.application.Application{
     
-    private static final Logger LOGGER = Logger.getLogger(SignUpController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
     /** Entry point for the java application
      * @param args the command line arguments
      */
@@ -34,11 +35,12 @@ public class Application extends javafx.application.Application{
     @Override
     public void start(Stage primaryStage) throws Exception {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/SignUp.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/SignIn.fxml"));
             Parent root = (Parent) fxmlLoader.load();
-            SignUpController controller = ((SignUpController) fxmlLoader.getController());
+            SignInController controller = ((SignInController) fxmlLoader.getController());
             controller.setStage(primaryStage);
             //Initialize stage
+            LOGGER.info("Openning SignIn Window");
             controller.initStage(root);
 
         } catch (IOException ex) {

@@ -1,100 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.effect.Blend?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<Pane id="MainPane" fx:id="backgroundPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="968.0" prefWidth="1024.0" snapToPixel="false" styleClass="bgimg" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.SignUpController">
-    <children>
-        <BorderPane fx:id="backgroundBorderPane" layoutX="466.0" layoutY="212.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="450.0" prefWidth="605.0" snapToPixel="false">
-            <center>
-                <Pane id="SignUpPane" fx:id="formPane" prefHeight="450.0" prefWidth="605.0" styleClass="loginPanel" BorderPane.alignment="CENTER">
+<BorderPane maxHeight="1080.0" maxWidth="1920.0" minHeight="400.0" minWidth="640.0" prefHeight="768.0" prefWidth="1024.0" styleClass="bgimg" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.SignUpController">
+    <center>
+        <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="loginPanel" BorderPane.alignment="CENTER">
+            <left>
+                <Pane prefHeight="200.0" prefWidth="200.0" visible="false" BorderPane.alignment="CENTER" />
+            </left>
+            <right>
+                <Pane prefHeight="200.0" prefWidth="200.0" visible="false" BorderPane.alignment="CENTER" />
+            </right>
+            <top>
+                <Pane prefHeight="102.0" prefWidth="800.0" visible="false" BorderPane.alignment="CENTER">
                     <children>
-                        <GridPane fx:id="formGridPane" alignment="CENTER" layoutX="46.0" layoutY="71.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="192.0" prefWidth="514.0">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="82.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="187.20004882812503" minWidth="0.0" prefWidth="7.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="231.4000244140625" minWidth="0.0" prefWidth="134.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="231.4000244140625" minWidth="0.0" prefWidth="12.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="231.4000244140625" minWidth="10.0" prefWidth="128.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="231.4000244140625" minWidth="0.0" prefWidth="12.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="231.4000244140625" minWidth="10.0" prefWidth="154.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints maxHeight="55.99996337890625" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
-                                <RowConstraints maxHeight="46.0" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
-                                <RowConstraints maxHeight="66.599951171875" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
-                                <RowConstraints maxHeight="82.40001220703125" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
-                                <RowConstraints maxHeight="99.4" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
+                        <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" />
+                    </children>
+                </Pane>
+            </top>
+            <bottom>
+                <Pane prefHeight="74.0" prefWidth="806.0" visible="false" BorderPane.alignment="CENTER" />
+            </bottom>
+            <center>
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
                             <children>
-                                <Label fx:id="lblUsername" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="RIGHT_TO_LEFT" prefHeight="55.0" prefWidth="74.0" text=" Username:" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-                                    <font>
-                                        <Font size="16.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="tfUser" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefWidth="130.0" promptText="User" GridPane.columnIndex="2">
-                                    <font>
-                                        <Font size="16.0" />
-                                    </font>
-                                    <tooltip>
-                                        <Tooltip fx:id="tooltipUser" text="Enter the user" />
-                                    </tooltip>
-                                </TextField>
-                                <Label fx:id="lblFullName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="78.0" text="Full name:" GridPane.columnIndex="4">
-                                    <font>
-                                        <Font size="16.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="tfFullName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefWidth="130.0" promptText="Full name" GridPane.columnIndex="6">
-                                    <font>
-                                        <Font size="16.0" />
-                                    </font>
-                                    <tooltip>
-                                        <Tooltip fx:id="tooltipFullName" text="Enter the name and surname" />
-                                    </tooltip>
-                                </TextField>
-                                <Label fx:id="lblPass" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="RIGHT_TO_LEFT" text="Password:" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-                                    <font>
-                                        <Font size="16.0" />
-                                    </font>
-                                </Label>
-                                <PasswordField fx:id="passField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefWidth="130.0" promptText="Pass." GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-                                    <font>
-                                        <Font size="16.0" />
-                                    </font>
-                                    <tooltip>
-                                        <Tooltip fx:id="tooltipPass" text="Enter the password" />
-                                    </tooltip>
-                                </PasswordField>
-                                <Label fx:id="lblRptPass" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="42.0" prefWidth="91.0" text="Repeat Password:" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="2">
-                                    <font>
-                                        <Font size="16.0" />
-                                    </font>
-                                </Label>
-                                <PasswordField fx:id="rptPassword" prefHeight="37.0" prefWidth="153.0" promptText="Rpt Pass." GridPane.columnIndex="6" GridPane.rowIndex="2">
-                                    <tooltip>
-                                        <Tooltip fx:id="tooltipRptPass" text="Repeat the password" />
-                                    </tooltip>
-                                </PasswordField>
-                                <Label fx:id="lblEmail" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="   E-mail:" GridPane.rowIndex="4">
-                                    <font>
-                                        <Font size="16.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="tfEmail" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="37.0" prefWidth="429.0" promptText="E-mail" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Username:">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="tfUser" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="User">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                            <tooltip>
+                                                <Tooltip fx:id="tooltipUser" text="Enter the user" />
+                                            </tooltip>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+                                <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
+                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Full name:">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="tfFullName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="Name">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                            <tooltip>
+                                                <Tooltip fx:id="tooltipFullName" text="Enter the name and surname" />
+                                            </tooltip>
+                                        </TextField>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                            <children>
+                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Password:">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                        </Label>
+                                        
+                                        <PasswordField fx:id="rptPassword" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="Password">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                            <tooltip>
+                                                <Tooltip fx:id="tooltipRptPass" text="Repeat the password" />
+                                            </tooltip>
+                                        </PasswordField>
+                                    </children>
+                                </VBox>
+                                <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
+                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Repeat password:">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                        </Label>
+                                        <PasswordField fx:id="passField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="Repeat Password">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                            <tooltip>
+                                                <Tooltip fx:id="tooltipPass" text="Enter the password" />
+                                            </tooltip>
+                                        </PasswordField>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                        <VBox alignment="CENTER_LEFT" prefHeight="95.0" prefWidth="406.0">
+                            <children>
+                                <Label text="Email:" />
+                                <TextField fx:id="tfEmail" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="33.0" prefWidth="400.0" promptText="Email">
                                     <font>
                                         <Font size="16.0" />
                                     </font>
@@ -103,33 +128,37 @@
                                     </tooltip>
                                 </TextField>
                             </children>
-                        </GridPane>
-                        <HBox fx:id="lowHbox" alignment="CENTER" layoutY="275.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="605.0" spacing="40.0">
+                        </VBox>
+                        <HBox alignment="CENTER" prefHeight="132.0" prefWidth="400.0">
                             <children>
-                                <ImageView fx:id="logoImg" fitHeight="150.0" fitWidth="153.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                                <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../resources/img/logo.png" />
+                                        <Image url="@../resources/img/BluRoofLogo.png" />
                                     </image>
                                 </ImageView>
-                                <Button fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleCancelAction" styleClass="cancelButton" text="Cancel" textAlignment="CENTER" textFill="WHITE">
-                                    <font>
-                                        <Font name="System Bold" size="16.0" />
-                                    </font>
-                                </Button>
-                                <Button fx:id="btnSignUp" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleSignUpAction" styleClass="primaryButton" text="Sign up" textAlignment="CENTER" textFill="WHITE">
-                                    <font>
-                                        <Font name="System Bold" size="16.0" />
-                                    </font>
-                                </Button>
+                                <ButtonBar prefHeight="40.0" prefWidth="200.0">
+                                    <buttons>
+                                        <Button fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleCancelAction" styleClass="cancelButton" text="Cancel" />
+                                        <Button fx:id="btnSignUp" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignUpAction" styleClass="primaryButton" text="Sign Up" />
+                                    </buttons>
+                                </ButtonBar>
                             </children>
                         </HBox>
-                        
                     </children>
-                </Pane>
+                </VBox>
             </center>
         </BorderPane>
-    </children>
-    <effect>
-        <Blend />
-    </effect>
-</Pane>
+    </center>
+    <top>
+        <Pane disable="true" prefHeight="100.0" prefWidth="200.0" visible="false" BorderPane.alignment="CENTER" />
+    </top>
+    <left>
+        <Pane disable="true" prefHeight="200.0" prefWidth="400.0" visible="false" BorderPane.alignment="CENTER" />
+    </left>
+    <bottom>
+        <Pane disable="true" prefHeight="100.0" prefWidth="200.0" visible="false" BorderPane.alignment="CENTER" />
+    </bottom>
+    <right>
+        <Pane id="bluRoofLogo" disable="true" prefHeight="568.0" prefWidth="322.0" visible="false" BorderPane.alignment="CENTER" />
+    </right>
+</BorderPane>
