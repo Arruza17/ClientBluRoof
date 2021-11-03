@@ -4,6 +4,6 @@
  * and open the template in the editor.
  */
 /**
- * This package contains the Application class in order to be open
+ * This packages contains the controllers for the fxml files
  */
-package application;
+package view.controllers;

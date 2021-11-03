@@ -4,6 +4,6 @@
  * and open the template in the editor.
  */
 /**
- * This package contains the Application class in order to be open
+ * This package contains all the css needed in the application
  */
-package application;
+package view.resources.styles;

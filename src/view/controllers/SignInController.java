@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import static javafx.fxml.FXMLLoader.load;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -92,13 +93,13 @@ public class SignInController {
      * pressed.
      */
     public void signUp(ActionEvent action) {
-        Parent root;
         try {
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("view/fxml/SignUp.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/SignUp.fxml"));
             Stage stageSignUp = new Stage();
-            SignUpController controller = new SignUpController();
+            Parent root = (Parent) loader.load();
+            SignUpController controller = ((SignUpController) loader.getController());
             controller.setStage(stageSignUp);
-            stageSignUp.initModality(Modality.WINDOW_MODAL);
+            stageSignUp.initModality(Modality.APPLICATION_MODAL);
             stageSignUp.initOwner(
                     ((Node) action.getSource()).getScene().getWindow());
             controller.initStage(root);

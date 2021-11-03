@@ -4,6 +4,6 @@
  * and open the template in the editor.
  */
 /**
- * This package contains the Application class in order to be open
+ * This package contains the extra fonts to use in the application
  */
-package application;
+package view.resources.fonts;
