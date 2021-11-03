@@ -58,7 +58,7 @@ public class WelcomeController {
         stage.setMinWidth(MIN_WIDTH);
         stage.setMaxHeight(MAX_HEIGHT);
         stage.setMinHeight(MIN_HEIGHT);
-        stage.setResizable(false);
+        stage.setResizable(true);
         stage.setTitle("BluRoof Welcome Page");
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
         stage.setScene(scene);
@@ -66,6 +66,7 @@ public class WelcomeController {
         stage.setOnCloseRequest(this::handleWindowClosing);
         stage.show();
         LOGGER.info("Welcome window shown");
+        lblHi.setText("Welcome back, " + user.getLogin());
 
     }
 
@@ -109,7 +110,7 @@ public class WelcomeController {
     private void exit(Button btn) {
         try {
             if (btn.getText().toString().equalsIgnoreCase("Sign Out")) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/SignIn.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/SignIn.fxml"));
                 Parent root = (Parent) loader.load();
                 SignInController controller = ((SignInController) loader.getController());
                 controller.setStage(new Stage());

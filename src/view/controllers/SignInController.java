@@ -64,7 +64,6 @@ public class SignInController {
         stage.setMinWidth(MIN_WIDTH);
         stage.setMaxHeight(MAX_HEIGHT);
         stage.setMinHeight(MIN_HEIGHT);
-        stage.setResizable(false);
         stage.setTitle("BluRoof SignIn Page");
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
         stage.setScene(scene);
@@ -146,10 +145,12 @@ public class SignInController {
 
     private void welcomeWindow(User user) {
         Parent root;
+        FXMLLoader loader = null;
         try {
-            root = FXMLLoader.load(getClass().getClassLoader().getResource("view/fxml/Welcome.fxml"));
+            loader = new FXMLLoader(getClass().getResource("../fxml/Welcome.fxml"));
+            root = (Parent) loader.load();
             Stage stageWelcome = new Stage();
-            WelcomeController controller = new WelcomeController();
+            WelcomeController controller = ((WelcomeController) loader.getController());
             controller.setUser(user);
             controller.setStage(stageWelcome);
             this.stage.close();
