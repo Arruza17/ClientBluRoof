@@ -33,16 +33,15 @@ public class ConnectableImplementation implements Connectable {
     public DataEncapsulator signIn(User user) throws ServerDownException {
         DataEncapsulator de = new DataEncapsulator();
         try {
+            oos.flush();
             de.setUser(user);
             oos.writeObject(de);
-            de = null;
             de = (DataEncapsulator) ois.readObject();
             if (de.getException() != null) {
-                if (de.getException().getMessage().equalsIgnoreCase("CLOSE")) {
+                if (de.getException().getMessage().equalsIgnoreCase("OK")) {
                     oos.close();
                     ois.close();
                     cliente.close();
-                    throw de.getException();
                 }
             }
         } catch (Exception ex) {
@@ -57,6 +56,7 @@ public class ConnectableImplementation implements Connectable {
     public void signUp(User user) throws ServerDownException, LoginFoundException {
         DataEncapsulator de = new DataEncapsulator();;
         try {
+            oos.flush();
             de.setUser(user);
             oos.writeObject(de);
             de = (DataEncapsulator) ois.readObject();
@@ -79,7 +79,6 @@ public class ConnectableImplementation implements Connectable {
             oos = new ObjectOutputStream(cliente.getOutputStream());
             ois = new ObjectInputStream(cliente.getInputStream());
         } catch (IOException ex) {
-            //Logger.getLogger(ConnectableImplementation.class.getName()).log(Level.SEVERE, null, ex);
             throw new ServerDownException(ex.getMessage());
 
         }

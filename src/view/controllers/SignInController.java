@@ -4,6 +4,7 @@ import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
 import exceptions.ServerDownException;
 import interfaces.Connectable;
+import java.io.IOException;
 import static java.lang.Thread.sleep;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -24,6 +25,7 @@ import javafx.stage.Modality;
 
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import logic.ConnectableFactory;
 import model.DataEncapsulator;
 import model.User;
 
@@ -34,7 +36,7 @@ import model.User;
 public class SignInController {
 
     private Connectable connectable;
-    private static final Logger logger = Logger.getLogger(SignInController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
     private final int MAX_WIDTH = 1920;
     private final int MAX_HEIGHT = 1024;
     private final int MIN_WIDTH = 1024;
@@ -54,6 +56,7 @@ public class SignInController {
     private Stage stage;
 
     public void initStage(Parent root) {
+        LOGGER.info("Initializing SignIn window");
         Scene scene = new Scene(root);
         String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
         scene.getStylesheets().add(css);
@@ -69,40 +72,31 @@ public class SignInController {
         stage.setResizable(true);
         stage.setOnCloseRequest(this::handleWindowClosing);
         stage.show();
+        LOGGER.info("SHOWING SignIn window");
     }
 
     public void signUp(ActionEvent action) {
 
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText(null);
-        alert.setTitle("Error");
-        alert.setContentText("This window is on building, wait for it pedazo de pesao");
-        alert.showAndWait();
     }
 
     public void signIn(ActionEvent action) {
         try {
+            LOGGER.info("SignIn method");
             checkEmptyFields();
             DataEncapsulator de = signIn(tfUser.getText().trim(), tfPassword.getText().trim());
             if (de.getException() != null) {
-                throw de.getException();
+                if (de.getException().getMessage().equalsIgnoreCase("OK")) {
+                    welcomeWindow(de.getUser());
+                } else {
+                    throw de.getException();
+                }
             }
-            if (de.getUser() != null) {
-                Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("view/fxml/Welcome.fxml"));
-                Stage stageWelcome = new Stage();
-                WelcomeController controller = new WelcomeController();
-                controller.setStage(stageWelcome);
-                controller.setUser(de.getUser());
-                controller.initStage(root);
-
-            }
-
         } catch (Exception ex) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("ERROR GENERAL");
+            alert.setHeaderText("Error");
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
-            logger.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
         }
     }
 
@@ -116,46 +110,70 @@ public class SignInController {
     }
 
     private DataEncapsulator signIn(String login, String pass) throws Exception {
-        User user = null;
         try {
-            user = User.getUser();
+            openSocket();
+            User user = User.getUser();
             user.setLogin(login);
             user.setPassword(pass);
             DataEncapsulator de = connectable.signIn(user);
-
-            if (de.getException() != null) {
-                user = null;
+            if (de.getException() != null && !de.getException().getMessage().equalsIgnoreCase("OK")) {
+                LOGGER.warning(de.getException().getClass().getSimpleName() + " exception thrown at SignIn");
                 throw de.getException();
             } else {
-                logger.info(user.getLogin() + " signed in");
+                LOGGER.info(user.getLogin() + " signed in");
                 return de;
             }
         } catch (Exception ex) {
-            logger.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
             throw ex;
 
         }
+
     }
 
     private void handleWindowClosing(WindowEvent e) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText(null);
+        alert.setHeaderText("You are about to close this window");
         alert.setContentText("Are you sure you want to close this window?");
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != ButtonType.CANCEL) {
-            logger.info("CERRANDO VENTANA");
-            try {
-                connectable.signIn(null);
-            } catch (ServerDownException ex) {
-                logger.info(ex.getMessage());
-            } finally {
-                this.stage.close();
-            }
+        if (result.get() == ButtonType.OK) {
+            LOGGER.info("CLOSING WINDOW");
+        } else {
+            e.consume();
         }
 
     }
-    //GETTERS AND SETTERS
 
+    private void welcomeWindow(User user) {
+        Parent root;
+        try {
+            root = FXMLLoader.load(getClass().getClassLoader().getResource("view/fxml/Welcome.fxml"));
+            Stage stageWelcome = new Stage();
+            WelcomeController controller = new WelcomeController();
+            controller.setUser(user);
+            controller.setStage(stageWelcome);
+            this.stage.close();
+            LOGGER.info("Initializing Welcome window and closing SignIn window");
+
+            controller.initStage(root);
+        } catch (Exception ex) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Error generating the window");
+            alert.setContentText(ex.getMessage());
+        }
+    }
+
+    private void openSocket() throws ServerDownException {
+        try {
+            LOGGER.info("Opening connection to the server");
+            connectable = ConnectableFactory.getConnectable();
+        } catch (ServerDownException ex) {
+            LOGGER.info(ex.getMessage());
+            throw ex;
+        }
+    }
+
+    //GETTERS AND SETTERS
     public Stage getStage() {
         return stage;
     }
