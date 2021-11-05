@@ -1,40 +1,44 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package application;
 
-import exceptions.ServerDownException;
-import interfaces.Connectable;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-
 import javafx.stage.Stage;
-
-import logic.ConnectableFactory;
-import logic.ConnectableImplementation;
 import view.controllers.SignInController;
 
 /**
+ * Entry point for the java application
  *
- * @author Yeray Sampedro, Jorge Crespo
+ * @author BluRoof
  */
 public class Application extends javafx.application.Application {
 
+    private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
+
+    /**
+     * Entry point for the java application
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+    /**
+     * Entry pont for the JavaFX application. Load, sets and shows the primary
+     * window
+     *
+     * @param primaryStage The primary window of the applicarion
+     * @throws Exception the Exception to be thrown
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/SignIn.fxml"));
-        Parent root = (Parent) loader.load();
-        SignInController controller = ((SignInController) loader.getController());
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/SignIn.fxml"));
+        Parent root = (Parent) fxmlLoader.load();
+        SignInController controller = ((SignInController) fxmlLoader.getController());
         controller.setStage(primaryStage);
+        //Initialize stage
+        LOGGER.info("Openning SignIn Window");
         controller.initStage(root);
 
     }

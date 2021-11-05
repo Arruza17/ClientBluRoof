@@ -1,30 +1,30 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logic;
 
 import exceptions.ServerDownException;
 import interfaces.Connectable;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import logic.ConnectableImplementation;
 
 /**
+ * Class that returns the instace of Connectable
  *
  * @author Yeray Sampedro
  */
 public class ConnectableFactory {
 
-    private static final Logger logger = Logger.getLogger(ConnectableImplementation.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ConnectableImplementation.class.getName());
 
+    /**
+     * Method that return the Connectable Object
+     *
+     * @return Connectable to open the connection
+     * @throws ServerDownException if the Server is down
+     */
     public static Connectable getConnectable() throws ServerDownException {
         Connectable con = null;
         try {
             con = new ConnectableImplementation();
         } catch (ServerDownException ex) {
-            logger.warning(ex.getMessage());
+            LOGGER.warning(ex.getMessage());
             throw new ServerDownException();
         }
         return con;
