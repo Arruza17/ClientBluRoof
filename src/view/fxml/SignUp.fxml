@@ -86,7 +86,7 @@
                                             </font>
                                         </Label>
                                         
-                                        <PasswordField fx:id="rptPassword" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="Password">
+                                        <PasswordField fx:id="passField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="Password">
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
@@ -104,7 +104,7 @@
                                                 <Font size="16.0" />
                                             </font>
                                         </Label>
-                                        <PasswordField fx:id="passField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="Repeat Password">
+                                        <PasswordField fx:id="rptPassword" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="Repeat Password">
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
