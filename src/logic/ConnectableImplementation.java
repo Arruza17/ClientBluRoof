@@ -92,8 +92,8 @@ public class ConnectableImplementation implements Connectable {
             de.setUser(user);
             oos.writeObject(de);
             de = (DataEncapsulator) ois.readObject();
-            if (de.getException() != null) {
-                throw de.getException();
+            if (de.getException() != null && !de.getException().getMessage().equals("OK")) {
+                throw de.getException(); 
             }
         } catch (Exception ex) {
             LOGGER.warning(ex.getMessage());
