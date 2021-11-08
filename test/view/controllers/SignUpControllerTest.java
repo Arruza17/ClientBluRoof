@@ -47,7 +47,7 @@ public class SignUpControllerTest extends ApplicationTest {
         @Override
         public void start(Stage stage) throws Exception {
         new Application().start(stage);
-        
+
     }
      */
     /**
@@ -253,19 +253,32 @@ public class SignUpControllerTest extends ApplicationTest {
 
     @Test
     public void test13_tfUserMaxCharacter() {
-        tfUser = lookup("#tfUser").query();
-        tfUser.setText(MAX_CHARACTERS_EXAMPLE);
-        clickOn("#btnSignUp");
-        verifyThat(new MaxCharactersException().getMessage(), isVisible());
-        press(KeyCode.ENTER).release(KeyCode.ENTER);
         clickOn("#btnCancel");
         clickOn("#hlSignUp");
         writeAllData();
+        clickOn(username);
+        press(KeyCode.CONTROL);
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+        eraseText(1);
+        write(MAX_CHARACTERS_EXAMPLE);
+        clickOn("#btnSignUp");
+        verifyThat(new MaxCharactersException().getMessage(), isVisible());
+        clickOn(MAX_CHARACTERS_EXAMPLE);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        press(KeyCode.CONTROL);
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+        eraseText(1);
+        write("Robot888");
+
     }
 
     @Test
     public void test14_tfFullNameMaxCharacter() {
         tfFullName = lookup("#tfFullName").query();
+        clickOn("#tfFullName");
+        press(KeyCode.CONTROL);
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+        eraseText(1);
         tfFullName.setText(MAX_CHARACTERS_EXAMPLE);
         clickOn("#btnSignUp");
         verifyThat(new MaxCharactersException().getMessage(), isVisible());
@@ -276,10 +289,14 @@ public class SignUpControllerTest extends ApplicationTest {
         eraseText(1);
         write("TextFx Robot");
     }
-    
+
     @Test
     public void test15_passFieldMaxCharacter() {
         passField = lookup("#passField").query();
+        clickOn(passField);
+        press(KeyCode.CONTROL);
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+        eraseText(1);
         passField.setText(MAX_CHARACTERS_EXAMPLE);
         clickOn("#btnSignUp");
         verifyThat(new MaxCharactersException().getMessage(), isVisible());
@@ -290,10 +307,46 @@ public class SignUpControllerTest extends ApplicationTest {
         eraseText(1);
         write("abcd*1234");
     }
-    
-    public void test16_rptPasswordMaxCharacter(){
-        
+
+    public void test16_rptPasswordMaxCharacter() {
+        rptPassword = lookup("#rptPassword").query();
+        clickOn(rptPassword);
+        press(KeyCode.CONTROL);
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+        eraseText(1);
+        rptPassword.setText(MAX_CHARACTERS_EXAMPLE);
+        clickOn("#btnSignUp");
+        verifyThat(new MaxCharactersException().getMessage(), isVisible());
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn(rptPassword);
+        press(KeyCode.CONTROL);
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+        eraseText(1);
+        write("abcd*1234");
     }
+
+    public void test17_tfEmailMaxCharacter() {
+        tfEmail = lookup("#rptPassword").query();
+        clickOn(tfEmail);
+        press(KeyCode.CONTROL);
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+        eraseText(1);
+        tfEmail.setText(MAX_CHARACTERS_EXAMPLE);
+        clickOn("#btnSignUp");
+        verifyThat(new MaxCharactersException().getMessage(), isVisible());
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn(tfEmail);
+        press(KeyCode.CONTROL);
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+        eraseText(1);
+        write("robot@robot.rb");
+    }
+
+    public void test18_btnCancelWorking() {
+        clickOn("#btnCancel");
+        verifyThat("Full name:", isInvisible());
+    }
+
     private void writeAllData() {
         //Generate a random user
         Random rand = new Random(); //instance of random class
