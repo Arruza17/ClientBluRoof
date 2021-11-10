@@ -59,7 +59,7 @@ public class WelcomeController {
         stage.setTitle("BluRoof Welcome Page");
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
         stage.setScene(scene);
-        stage.setTitle("Welcome");
+        stage.setTitle("BluRoof Main");
         stage.setOnCloseRequest(this::handleWindowClosing);
         stage.show();
         LOGGER.info("Welcome window shown");

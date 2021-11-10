@@ -75,7 +75,7 @@ public class SignInController {
         stage.setMinWidth(MIN_WIDTH);
         stage.setMaxHeight(MAX_HEIGHT);
         stage.setMinHeight(MIN_HEIGHT);
-        //sets the window as not resizable
+        //Sets the window not resizable
         stage.setResizable(false);
         stage.setTitle("BluRoof SignIn Page");
         //Gets the icon of the window.
@@ -95,7 +95,6 @@ public class SignInController {
      * pressed.
      */
     public void signUp(ActionEvent action) {
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/SignUp.fxml"));
             Stage stageSignUp = new Stage();
@@ -107,7 +106,11 @@ public class SignInController {
                     ((Node) action.getSource()).getScene().getWindow());
             controller.initStage(root);
         } catch (IOException ex) {
-            //Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Error");
+            alert.setContentText("There was a problem creating the window, try again later");
+            alert.showAndWait();
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
         }
 
     }
@@ -118,8 +121,6 @@ public class SignInController {
      * @param action action event that triggers when sign in button is pressed.
      */
     public void signIn(ActionEvent action) {
-
-        //In this try we have methods that catch different types of exceptions
         try {
             LOGGER.info("SignIn method");
             checkEmptyFields();
@@ -132,6 +133,9 @@ public class SignInController {
                 }
             }
         } catch (Exception ex) {
+            //Depending on the Exception thrown by the server:
+            // 1.- User Limit passed
+            // 2.- User not found
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("Error");
             alert.setContentText(ex.getMessage());

@@ -159,6 +159,6 @@
         <Pane disable="true" prefHeight="100.0" prefWidth="200.0" visible="false" BorderPane.alignment="CENTER" />
     </bottom>
     <right>
-        <Pane id="bluRoofLogo" disable="true" prefHeight="568.0" prefWidth="322.0" visible="false" BorderPane.alignment="CENTER" />
+        <Pane id="bluRoofLogo" disable="true" prefHeight="200.0" prefWidth="400.0" visible="false" BorderPane.alignment="CENTER" />
     </right>
 </BorderPane>

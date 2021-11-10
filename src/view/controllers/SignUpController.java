@@ -87,6 +87,7 @@ public class SignUpController {
         //Sets the scene to the stage
         stage.setScene(scene);
         stage.setTitle("SignUp");
+        //Sets the window not resizable
         stage.setResizable(false);
         stage.setOnCloseRequest(this::handleWindowClosing);
         stage.show();
@@ -119,7 +120,7 @@ public class SignUpController {
             LOGGER.warning("Some fields are empty");
             throw new FieldsEmptyException();
         }
-        //Checks if the fields are >255 characters
+        //Checks if the fields have more than 255 characters
         if (tfUser.getText().trim().length() > 255
                 || tfFullName.getText().trim().length() > 255
                 || passField.getText().trim().length() > 255
@@ -135,21 +136,20 @@ public class SignUpController {
             LOGGER.warning("The field passField and rptPassword are not the same");
             throw new PassNotEqualException();
         }
-        //Checks if the password fields are <6
+        //Checks if the password fields are less than 6 characters
         if (passField.getText().trim().length() < 6
                 || rptPassword.getText().trim().length() < 6) {
             //throw validation Error
             LOGGER.warning("The password have <6 characters");
             throw new PassMinCharacterException();
         }
-        //Checks if the fullName contains at least one space, in order to know
-        //if the user did write the surname
+        //Checks if the fullName contains at least one space
         if (!tfFullName.getText().trim().contains(" ")) {
             LOGGER.warning("The surmane is not written");
             //throw validation Error
             throw new FullNameGapException();
         }
-        //Checks if the email is ins the correct form
+        //Checks if the email is in the correct format
         if (!validateEmail(tfEmail.getText().trim())) {
             LOGGER.warning("The email is not in the correct format");
             //throw validation Error
@@ -210,7 +210,7 @@ public class SignUpController {
     }
 
     /**
-     * This method generates a new user taking all the values of teh fields
+     * This method generates a new user retreiving all the values of the fields
      *
      * @return the created User
      */
@@ -234,9 +234,8 @@ public class SignUpController {
     @FXML
     private void handleCancelAction(javafx.event.ActionEvent event) {
         LOGGER.info("Closing SignUp Window");
-        // Get a handle to the stage
         Stage stage = (Stage) btnCancel.getScene().getWindow();
-        // do what you have to do
+        // Close current window 
         stage.close();
     }
 
