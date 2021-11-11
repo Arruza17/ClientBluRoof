@@ -96,7 +96,7 @@ public class SignInController {
      */
     public void signUp(ActionEvent action) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/SignUp.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/SignUp.fxml"));
             Stage stageSignUp = new Stage();
             Parent root = (Parent) loader.load();
             SignUpController controller = ((SignUpController) loader.getController());
@@ -227,7 +227,7 @@ public class SignInController {
         Parent root;
         FXMLLoader loader = null;
         try {
-            loader = new FXMLLoader(getClass().getResource("../fxml/Welcome.fxml"));
+            loader = new FXMLLoader(getClass().getResource("/view/fxml/Welcome.fxml"));
             root = (Parent) loader.load();
             Stage stageWelcome = new Stage();
             WelcomeController controller = ((WelcomeController) loader.getController());

@@ -130,7 +130,7 @@ public class WelcomeController {
     private void exit(Button btn) {
         try {
             if (btn.getText().toString().equalsIgnoreCase("Sign Out")) {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("../fxml/SignIn.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/SignIn.fxml"));
                 Parent root = (Parent) loader.load();
                 SignInController controller = ((SignInController) loader.getController());
                 controller.setStage(new Stage());

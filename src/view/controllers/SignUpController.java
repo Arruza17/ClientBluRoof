@@ -75,7 +75,7 @@ public class SignUpController {
         //Creation of a new Scene
         Scene scene = new Scene(root);
         //Save the route of the .css file
-        String css = this.getClass().getResource("/view/resources/styles/CSSLogIn.css").toExternalForm();
+        String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
         //Sets the .css to the Scene
         scene.getStylesheets().add(css);
         //Stage dimension setters
