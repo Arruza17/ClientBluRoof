@@ -263,12 +263,10 @@ public class SignUpControllerTest extends ApplicationTest {
         write(MAX_CHARACTERS_EXAMPLE);
         clickOn("#btnSignUp");
         verifyThat(new MaxCharactersException().getMessage(), isVisible());
-        clickOn(MAX_CHARACTERS_EXAMPLE);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
-        press(KeyCode.CONTROL);
-        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
-        eraseText(1);
-        write("Robot888");
+        clickOn("#btnCancel");
+        clickOn("#hlSignUp");
+        writeAllData();
 
     }
 
@@ -307,7 +305,8 @@ public class SignUpControllerTest extends ApplicationTest {
         eraseText(1);
         write("abcd*1234");
     }
-
+    
+    @Test
     public void test16_rptPasswordMaxCharacter() {
         rptPassword = lookup("#rptPassword").query();
         clickOn(rptPassword);
@@ -325,8 +324,9 @@ public class SignUpControllerTest extends ApplicationTest {
         write("abcd*1234");
     }
 
+    @Test
     public void test17_tfEmailMaxCharacter() {
-        tfEmail = lookup("#rptPassword").query();
+        tfEmail = lookup("#tfEmail").query();
         clickOn(tfEmail);
         press(KeyCode.CONTROL);
         press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
@@ -341,12 +341,7 @@ public class SignUpControllerTest extends ApplicationTest {
         eraseText(1);
         write("robot@robot.rb");
     }
-
-    public void test18_btnCancelWorking() {
-        clickOn("#btnCancel");
-        verifyThat("Full name:", isInvisible());
-    }
-
+    
     private void writeAllData() {
         //Generate a random user
         Random rand = new Random(); //instance of random class
