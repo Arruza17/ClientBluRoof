@@ -11,7 +11,6 @@ import exceptions.PassNotEqualException;
 import java.util.Random;
 import static org.testfx.matcher.base.NodeMatchers.*;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -36,6 +35,10 @@ public class SignUpControllerTest extends ApplicationTest {
 
     private final String MAX_CHARACTERS_EXAMPLE = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
     private static final Logger LOGGER = Logger.getLogger(SignUpControllerTest.class.getName());
+    /**
+     * Needed variable to test if a username in the BD already exists
+     */
+    private final String USERNAME_IN_EXISTENCE = "test";
     private TextField tfUser;
     private TextField tfFullName;
     private TextField tfEmail;
@@ -47,7 +50,6 @@ public class SignUpControllerTest extends ApplicationTest {
         @Override
         public void start(Stage stage) throws Exception {
         new Application().start(stage);
-
     }
      */
     /**
@@ -69,26 +71,24 @@ public class SignUpControllerTest extends ApplicationTest {
         clickOn("Aceptar");
         verifyThat("User corretly added", isVisible());
         press(KeyCode.ENTER).release(KeyCode.ENTER);
+        //System.out.println(nombreUsuarioCreado);
     }
 
     @Test
     public void test02_sameUserSignUp() {
+        //Make sure that before executing this test USERNAME_IN_EXISTENCE
+        //cointains a valid username in the BD
+        clickOn("#hlSignUp");
+        writeUserInExistence();
         clickOn("#btnSignUp");
         clickOn("Aceptar");
         verifyThat(new LoginFoundException().getMessage(), isVisible());
         press(KeyCode.ENTER).release(KeyCode.ENTER);
     }
 
+    
     @Test
-    public void test03_cancelNewSignUp() {
-        clickOn("#btnSignUp");
-        clickOn("Cancelar");
-        verifyThat("The user is not registered", isVisible());
-        press(KeyCode.ENTER).release(KeyCode.ENTER);
-    }
-
-    @Test
-    public void test04_tfUserWritten() {
+    public void test03_tfUserWritten() {
         clickOn("#btnCancel");
         clickOn("#hlSignUp");
         writeAllData();
@@ -101,7 +101,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test05_tfFullNameWritten() {
+    public void test04_tfFullNameWritten() {
         clickOn("#btnCancel");
         clickOn("#hlSignUp");
         writeAllData();
@@ -119,7 +119,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test06_passFieldWritten() {
+    public void test05_passFieldWritten() {
         passField = lookup("#passField").query();
         clickOn(passField);
         press(KeyCode.CONTROL);
@@ -134,7 +134,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test07_rptPasswordWritten() {
+    public void test06_rptPasswordWritten() {
         rptPassword = lookup("#rptPassword").query();
         clickOn(rptPassword);
         press(KeyCode.CONTROL);
@@ -148,7 +148,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test08_tfEmailWritten() {
+    public void test07_tfEmailWritten() {
         tfEmail = lookup("#tfEmail").query();
         clickOn(tfEmail);
         press(KeyCode.CONTROL);
@@ -162,7 +162,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test09_tfFullNameNoGap() {
+    public void test08_tfFullNameNoGap() {
         tfFullName = lookup("#tfFullName").query();
         clickOn(tfFullName);
         press(KeyCode.CONTROL);
@@ -180,7 +180,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test10_passwordNotEqual() {
+    public void test09_passwordNotEqual() {
         passField = lookup("#passField").query();
         rptPassword = lookup("#rptPassword").query();
         clickOn(passField);
@@ -204,7 +204,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test11_passwordTooShort() {
+    public void test10_passwordTooShort() {
         rptPassword = lookup("#rptPassword").query();
         passField = lookup("#passField").query();
         clickOn(passField);
@@ -233,7 +233,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test12_emailValidFormat() {
+    public void test11_emailValidFormat() {
         tfEmail = lookup("#tfEmail").query();
         clickOn(tfEmail);
         press(KeyCode.CONTROL);
@@ -252,7 +252,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test13_tfUserMaxCharacter() {
+    public void test12_tfUserMaxCharacter() {
         clickOn("#btnCancel");
         clickOn("#hlSignUp");
         writeAllData();
@@ -271,7 +271,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test14_tfFullNameMaxCharacter() {
+    public void test13_tfFullNameMaxCharacter() {
         tfFullName = lookup("#tfFullName").query();
         clickOn("#tfFullName");
         press(KeyCode.CONTROL);
@@ -289,7 +289,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test15_passFieldMaxCharacter() {
+    public void test14_passFieldMaxCharacter() {
         passField = lookup("#passField").query();
         clickOn(passField);
         press(KeyCode.CONTROL);
@@ -307,7 +307,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
     
     @Test
-    public void test16_rptPasswordMaxCharacter() {
+    public void test15_rptPasswordMaxCharacter() {
         rptPassword = lookup("#rptPassword").query();
         clickOn(rptPassword);
         press(KeyCode.CONTROL);
@@ -325,7 +325,7 @@ public class SignUpControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test17_tfEmailMaxCharacter() {
+    public void test16_tfEmailMaxCharacter() {
         tfEmail = lookup("#tfEmail").query();
         clickOn(tfEmail);
         press(KeyCode.CONTROL);
@@ -341,7 +341,7 @@ public class SignUpControllerTest extends ApplicationTest {
         eraseText(1);
         write("robot@robot.rb");
     }
-    
+     
     private void writeAllData() {
         //Generate a random user
         Random rand = new Random(); //instance of random class
@@ -349,6 +349,7 @@ public class SignUpControllerTest extends ApplicationTest {
         //Generate random values from 0-999998
         int int_random = rand.nextInt(upperbound);
         username = "robot" + int_random;
+        //Guardar la variable para luego
         write(username);
         clickOn("#tfFullName");
         write("TextFx Robot");
@@ -359,4 +360,16 @@ public class SignUpControllerTest extends ApplicationTest {
         clickOn("#tfEmail");
         write("robot@robot.rb");
     }
+    private void writeUserInExistence(){
+        write(USERNAME_IN_EXISTENCE);
+        clickOn("#tfFullName");
+        write("TextFx Robot");
+        clickOn("#passField");
+        write("abcd*1234");
+        clickOn("#rptPassword");
+        write("abcd*1234");
+        clickOn("#tfEmail");
+        write("robot@robot.rb");
+    }
+
 }

@@ -5,6 +5,7 @@ import enumerations.UserStatus;
 import exceptions.EmailFormatException;
 import exceptions.FieldsEmptyException;
 import exceptions.FullNameGapException;
+import exceptions.LoginFoundException;
 import exceptions.MaxCharactersException;
 import exceptions.PassMinCharacterException;
 import exceptions.PassNotEqualException;
@@ -34,13 +35,13 @@ import model.User;
  * @author Ander Arruza and Adrián Pérez
  */
 public class SignUpController {
-
+    
     private Connectable connectable;
     private final int MAX_WIDTH = 1920;
     private final int MAX_HEIGHT = 1024;
     private final int MIN_WIDTH = 1024;
     private final int MIN_HEIGHT = 768;
-
+    
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
 
     /**
@@ -89,7 +90,7 @@ public class SignUpController {
         stage.setTitle("SignUp");
         //Sets the window not resizable
         stage.setResizable(false);
-        stage.setOnCloseRequest(this::handleWindowClosing);
+
         stage.show();
         LOGGER.info("SignUp Open Window");
     }
@@ -135,6 +136,7 @@ public class SignUpController {
             //throw validation Error
             LOGGER.warning("The field passField and rptPassword are not the same");
             throw new PassNotEqualException();
+            
         }
         //Checks if the password fields are less than 6 characters
         if (passField.getText().trim().length() < 6
@@ -192,12 +194,11 @@ public class SignUpController {
                     alert1.setHeaderText(null);
                     alert1.setContentText("User corretly added");
                     alert1.showAndWait();
-                } else {
-                    Alert alertNotAdded = new Alert(AlertType.WARNING);
-                    alertNotAdded.setTitle("User");
-                    alertNotAdded.setHeaderText(null);
-                    alertNotAdded.setContentText("The user is not registered");
-                    alertNotAdded.showAndWait();
+                    LOGGER.info("Closing SignUp Window");
+                    Stage stage = (Stage) btnCancel.getScene().getWindow();
+                    // Close current window 
+                    stage.close();
+                    
                 }
             }
         } catch (Exception ex) {
@@ -206,6 +207,11 @@ public class SignUpController {
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at signUp method");
+            if (ex.getMessage().equals(new LoginFoundException().getMessage())) {
+                tfUser.requestFocus();
+            }else if(ex.getMessage().equals(new PassNotEqualException().getMessage())){
+                passField.requestFocus();
+            }
         }
     }
 
@@ -240,17 +246,6 @@ public class SignUpController {
     }
 
     /**
-     * Method which contains an alert with a choice.
-     *
-     * @param e window event representing some type of action.
-     *
-     */
-    private void handleWindowClosing(WindowEvent e) {
-        LOGGER.info("SignUp Window is closed");
-
-    }
-
-    /**
      * This method validates that the email recived is in the correct form:
      * example = user@domain.com
      *
@@ -280,5 +275,5 @@ public class SignUpController {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-
+    
 }
