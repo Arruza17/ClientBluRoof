@@ -66,24 +66,46 @@ public class SignInControllerTest extends ApplicationTest {
         /*Verify that the greeting label is visible on the welcome window
         in order to check if it's open.      
          */
-        verifyThat("#lblHi", isVisible());
+        verifyThat("Welcome back, test test", isVisible());
         clickOn("#btnSignOut");
         clickOn("Aceptar");
 
     }
-
+    
     /**
      * Tests if credentials not found in database alert is visible.
      */
     @Test
-    public void test02_signInNotOk() {
-
-        //Exception message string.
+    public void test02_SignInBadUser(){
+    //Exception message string.
         String alert = "Login or password are incorrect";
 
         //writing incorrect credentials.
         clickOn("#tfUser");
         write("incorrect");
+
+        clickOn("#tfPassword");
+        write("abcd*1234");
+
+        clickOn("#primaryButton");
+
+        //verify that the exception message appears in the alert.
+        verifyThat(alert, isVisible());
+        clickOn("Aceptar");
+
+        clickOn("#tfUser");
+        eraseText(9);
+        clickOn("#tfPassword");
+        eraseText(9);
+    }
+    @Test
+    public void test03_SignInBadPasswd(){
+    //Exception message string.
+        String alert = "Login or password are incorrect";
+
+        //writing incorrect credentials.
+        clickOn("#tfUser");
+        write("test");
 
         clickOn("#tfPassword");
         write("incorrect");
@@ -98,14 +120,13 @@ public class SignInControllerTest extends ApplicationTest {
         eraseText(9);
         clickOn("#tfPassword");
         eraseText(9);
-
     }
 
     /**
      * Tests if Alert shows when at least one field is empty.
      */
     @Test
-    public void test03_fieldsEmpty() {
+    public void test04_fieldsEmpty() {
 
         //Exception message string.
         String alert = "At least one field is empty.";
@@ -143,12 +164,12 @@ public class SignInControllerTest extends ApplicationTest {
      * Tests if Alert shows when typing max characters in at least one field.
      */
     @Test
-    public void test04_maxChars255() {
+    public void test05_maxChars255() {
 
         //String that contains 255 chars.
         String maxChar = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
         //Exception message string.
-        String alert = "The maximum amount of characters is 255, try again with shorter information";
+        String alert = "The maximum amount of characters is 255,\n try again with shorter information";
         tfUser = lookup​("#tfUser").query();
         passwd = lookup​("#tfPassword").query();
         //Test max characters (255) on userField.
@@ -196,14 +217,19 @@ public class SignInControllerTest extends ApplicationTest {
      * Tests sign Up hyperlink and verifies that the sign up window is visible.
      */
     @Test
-    public void test05_signUpLink() {
+    public void test06_signUpLink() {
         clickOn("#hlSignUp");
 
         /*Verify that "Sign Up" string is visible on the welcome window
         in order to check if it is open.
          */
         verifyThat("Sign Up", isVisible());
+        clickOn("#btnCancel");
 
     }
-
+@Test
+public void test07_ServerDown(){
+String alert="The server is down, try connecting again in a few minutes";
+    verifyThat(alert, isVisible());
+}
 }

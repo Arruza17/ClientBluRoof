@@ -1,8 +1,11 @@
 package view.controllers;
 
 import exceptions.FieldsEmptyException;
+import exceptions.LoginFoundException;
 import exceptions.MaxCharactersException;
+import exceptions.PassNotEqualException;
 import exceptions.ServerDownException;
+import exceptions.UserNotFoundException;
 import interfaces.Connectable;
 import java.io.IOException;
 import java.util.Optional;
@@ -124,7 +127,31 @@ public class SignInController {
         try {
             LOGGER.info("SignIn method");
             checkEmptyFields();
-            DataEncapsulator de = signIn(tfUser.getText().trim(), tfPassword.getText().trim());
+           DataEncapsulator de;
+            try {
+            connectToServer();
+            User user = User.getUser();
+            user.setLogin(tfUser.getText().trim());
+            user.setPassword(tfPassword.getText().trim());
+            de = connectable.signIn(user);
+             if(de.getException()!=null && de.getException() instanceof UserNotFoundException){
+                 tfPassword.setText("");
+                 tfUser.setStyle("-fx-text-fill: red");
+                 tfUser.requestFocus();
+             }
+            if (de.getException() != null && !de.getException().getMessage().equalsIgnoreCase("OK")) {
+                LOGGER.warning(de.getException().getClass().getSimpleName() + " exception thrown at SignIn");
+                throw de.getException();
+            } else {
+                LOGGER.info(user.getLogin() + " signed in");
+            }
+           
+        } catch (Exception ex) {
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
+            throw ex;
+            
+        }
+
             if (de.getException() != null) {
                 if (de.getException().getMessage().equalsIgnoreCase("OK")) {
                     welcomeWindow(de.getUser());
@@ -141,6 +168,7 @@ public class SignInController {
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
+           
         }
     }
 
@@ -164,36 +192,6 @@ public class SignInController {
             LOGGER.warning("Max character length reached");
             throw new MaxCharactersException();
         }
-    }
-
-    /**
-     * This method is executed when the user wants to sign In
-     *
-     * @param login the username to set
-     * @param pass the password to set
-     * @return the DataEncapsulator object
-     * @throws Exception if there is an error
-     */
-    private DataEncapsulator signIn(String login, String pass) throws Exception {
-        try {
-            openSocket();
-            User user = User.getUser();
-            user.setLogin(login);
-            user.setPassword(pass);
-            DataEncapsulator de = connectable.signIn(user);
-            if (de.getException() != null && !de.getException().getMessage().equalsIgnoreCase("OK")) {
-                LOGGER.warning(de.getException().getClass().getSimpleName() + " exception thrown at SignIn");
-                throw de.getException();
-            } else {
-                LOGGER.info(user.getLogin() + " signed in");
-                return de;
-            }
-        } catch (Exception ex) {
-            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
-            throw ex;
-
-        }
-
     }
 
     /**
@@ -249,7 +247,7 @@ public class SignInController {
      *
      * @throws ServerDownException if Server is down
      */
-    private void openSocket() throws ServerDownException {
+    private void connectToServer() throws ServerDownException {
         try {
             LOGGER.info("Opening connection to the server");
             connectable = ConnectableFactory.getConnectable();

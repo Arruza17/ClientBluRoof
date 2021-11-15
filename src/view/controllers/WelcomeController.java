@@ -63,7 +63,7 @@ public class WelcomeController {
         stage.setOnCloseRequest(this::handleWindowClosing);
         stage.show();
         LOGGER.info("Welcome window shown");
-        lblHi.setText("Welcome back, " + user.getLogin());
+        lblHi.setText("Welcome back, " + user.getFullName());
 
     }
 
