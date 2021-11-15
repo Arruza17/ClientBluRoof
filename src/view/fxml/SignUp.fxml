@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="1080.0" maxWidth="1920.0" minHeight="400.0" minWidth="640.0" prefHeight="768.0" prefWidth="1024.0" styleClass="bgimg" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.SignUpController">
+<BorderPane maxHeight="1080.0" maxWidth="1920.0" minHeight="400.0" minWidth="640.0" prefHeight="768.0" prefWidth="1024.0" styleClass="bgimg" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.SignUpController">
     <center>
         <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="loginPanel" BorderPane.alignment="CENTER">
             <left>
@@ -136,10 +136,10 @@
                                         <Image url="@../resources/img/BluRoofLogo.png" />
                                     </image>
                                 </ImageView>
-                                <ButtonBar prefHeight="40.0" prefWidth="200.0">
+                                <ButtonBar prefHeight="150.0" prefWidth="224.0">
                                     <buttons>
-                                        <Button fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleCancelAction" styleClass="cancelButton" text="Cancel" />
-                                        <Button fx:id="btnSignUp" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignUpAction" styleClass="primaryButton" text="Sign Up" />
+                                        <Button id="primaryButton" fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleCancelAction" styleClass="cancelButton" text="Cancel" />
+                                        <Button id="primaryButton" fx:id="btnSignUp" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignUpAction" prefHeight="37.0" styleClass="primaryButton" text="Sign Up" />
                                     </buttons>
                                 </ButtonBar>
                             </children>

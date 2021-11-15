@@ -73,6 +73,7 @@ public class SignUpControllerTest extends ApplicationTest {
 
     @Test
     public void test02_sameUserSignUp() {
+        existentUserWrite();
         clickOn("#btnSignUp");
         clickOn("Aceptar");
         verifyThat(new LoginFoundException().getMessage(), isVisible());
@@ -358,5 +359,26 @@ public class SignUpControllerTest extends ApplicationTest {
         write("abcd*1234");
         clickOn("#tfEmail");
         write("robot@robot.rb");
+    }
+
+    private void existentUserWrite() {
+        
+         final String username="test";
+         final String email="test@test.test";
+         final String fullName="test test";
+         final String password="abcd*1234";
+ 
+        clickOn("tfUser");
+       
+        write(username);
+        clickOn("#tfFullName");
+        write(fullName);
+        clickOn("#passField");
+        write(password);
+        clickOn("#rptPassword");
+        write(password);
+        clickOn("#tfEmail");
+        write(email);
+        
     }
 }

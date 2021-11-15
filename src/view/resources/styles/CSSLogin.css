@@ -23,6 +23,12 @@
     -fx-background-color: #041e42;
 }
 
+#primaryButton:focused{
+      -fx-border-style: solid;
+      -fx-border-color: turquoise;
+      -fx-border-width: 4px;
+}
+
 .button:hover{
     -fx-text-fill: white;
     -fx-background-color: #00214d;

@@ -109,7 +109,7 @@ public class SignUpController {
      * character
      * @throws EmailFormatException if the email is not in the valid form
      */
-    private boolean checkFields() throws FieldsEmptyException, MaxCharactersException, PassNotEqualException, PassMinCharacterException, FullNameGapException, EmailFormatException {
+    private void checkFields() throws FieldsEmptyException, MaxCharactersException, PassNotEqualException, PassMinCharacterException, FullNameGapException, EmailFormatException {
         //Checks if all the fields are written
         if (tfUser.getText().trim().isEmpty()
                 || tfFullName.getText().trim().isEmpty()
@@ -128,7 +128,25 @@ public class SignUpController {
                 || tfEmail.getText().trim().length() > 255) {
             //throw validation Error
             LOGGER.warning("Some field/s are more than >255 characters");
+            
+            if(tfUser.getText().trim().length() > 255){
+                
+                focusAndSelectAll(tfUser);
+            }
+            if(tfFullName.getText().trim().length() > 255){
+                  focusAndSelectAll(tfFullName);
+            }
+            if(passField.getText().trim().length() > 255){
+                  focusAndSelectAll(passField);
+            }
+            if(rptPassword.getText().trim().length() > 255){
+                  focusAndSelectAll(rptPassword);
+            }
+            if(tfEmail.getText().trim().length() > 255){
+                  focusAndSelectAll(tfEmail);
+            }
             throw new MaxCharactersException();
+    
         }
         //Checks if the password fields are the same
         if (!passField.getText().trim().equals(rptPassword.getText().trim())) {
@@ -153,10 +171,11 @@ public class SignUpController {
         if (!validateEmail(tfEmail.getText().trim())) {
             LOGGER.warning("The email is not in the correct format");
             //throw validation Error
+            focusAndSelectAll(tfEmail);
             throw new EmailFormatException();
         }
         //Reachable if everything goes OK
-        return true;
+        
     }
 
     /**
@@ -168,7 +187,7 @@ public class SignUpController {
     private void handleSignUpAction(javafx.event.ActionEvent event) {
         User newUser;
         try {
-            if (checkFields()) {
+                checkFields();
                 LOGGER.info("All the fields are OK");
                 //New Alert in order to ask the user if
                 //he really want to add that user
@@ -199,7 +218,7 @@ public class SignUpController {
                     alertNotAdded.setContentText("The user is not registered");
                     alertNotAdded.showAndWait();
                 }
-            }
+            
         } catch (Exception ex) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText(null);
@@ -279,6 +298,11 @@ public class SignUpController {
      */
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    private void focusAndSelectAll(TextField tf) {
+        tf.requestFocus();
+        tf.selectAll();
     }
 
 }
