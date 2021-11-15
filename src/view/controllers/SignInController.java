@@ -2,6 +2,7 @@ package view.controllers;
 
 import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
+import exceptions.PasswordFormatException;
 import exceptions.ServerDownException;
 import interfaces.Connectable;
 import java.io.IOException;
@@ -152,13 +153,24 @@ public class SignInController {
      * @throws MaxCharactersException If 255 characters are exceeded this
      * exception is thrown.
      */
-    private void checkEmptyFields() throws FieldsEmptyException, MaxCharactersException {
+    private void checkEmptyFields() throws FieldsEmptyException, MaxCharactersException, PasswordFormatException {
 
         //if one or more fields are empty , this method throws a FieldsEmptyException.
         if (tfUser.getText().trim().isEmpty() || tfPassword.getText().trim().isEmpty()) {
             LOGGER.warning("Fields empty");
+            if (tfUser.getText().trim().isEmpty()) {
+                tfUser.requestFocus();
+            } else {
+                tfPassword.requestFocus();
+            }
             throw new FieldsEmptyException();
         }
+
+        //if the password contains an space
+        if (tfPassword.getText().trim().contains(" ")) {
+            throw new PasswordFormatException();
+        }
+
         //if one or more fields of this window are filled with a string whose length is higher than 255 chars.
         if (tfUser.getText().trim().length() > 255 || tfPassword.getText().trim().length() > 255) {
             LOGGER.warning("Max character length reached");
@@ -176,7 +188,7 @@ public class SignInController {
      */
     private DataEncapsulator signIn(String login, String pass) throws Exception {
         try {
-            openSocket();
+            connectToServer();
             User user = User.getUser();
             user.setLogin(login);
             user.setPassword(pass);
@@ -249,7 +261,7 @@ public class SignInController {
      *
      * @throws ServerDownException if Server is down
      */
-    private void openSocket() throws ServerDownException {
+    private void connectToServer() throws ServerDownException {
         try {
             LOGGER.info("Opening connection to the server");
             connectable = ConnectableFactory.getConnectable();
