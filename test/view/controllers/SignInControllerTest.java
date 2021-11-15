@@ -61,7 +61,7 @@ public class SignInControllerTest extends ApplicationTest {
         clickOn("#tfPassword");
         write("abcd*1234");
 
-        clickOn("#primaryButton");
+        clickOn("#btnSignIn");
 
         /*Verify that the greeting label is visible on the welcome window
         in order to check if it's open.      
@@ -88,7 +88,7 @@ public class SignInControllerTest extends ApplicationTest {
         clickOn("#tfPassword");
         write("incorrect");
 
-        clickOn("#primaryButton");
+        clickOn("#btnSignIn");
 
         //verify that the exception message appears in the alert.
         verifyThat(alert, isVisible());
@@ -114,7 +114,7 @@ public class SignInControllerTest extends ApplicationTest {
         tfUser = lookup​("#tfUser").query();
         clickOn(tfUser);
         write("test");
-        clickOn("#primaryButton");
+        clickOn("#btnSignIn");
 
         //verify that the exception message appears in the alert.
         verifyThat(alert, isVisible());
@@ -126,14 +126,14 @@ public class SignInControllerTest extends ApplicationTest {
         passwd = lookup​("#tfPassword").query();
         clickOn(passwd);
         write("test");
-        clickOn("#primaryButton");
+        clickOn("#btnSignIn");
         verifyThat(alert, isVisible());
         clickOn("Aceptar");
         clickOn(passwd);
         eraseText(passwd.getText().length());
 
         //test both empty fields.
-        clickOn("#primaryButton");
+        clickOn("#btnSignIn");
         verifyThat(alert, isVisible());
         clickOn("Aceptar");
 
@@ -155,7 +155,7 @@ public class SignInControllerTest extends ApplicationTest {
         tfUser.setText(maxChar);
         passwd.setText("prueba");
 
-        clickOn("#primaryButton");
+        clickOn("#btnSignIn");
 
         //verify that the exception message appears in the alert.
         verifyThat(alert, isVisible());
@@ -169,7 +169,7 @@ public class SignInControllerTest extends ApplicationTest {
         passwd.setText(maxChar);
         tfUser.setText("prueba");
 
-        clickOn("#primaryButton");
+        clickOn("#btnSignIn");
 
         //verify that the exception message appears in the alert.
         verifyThat(alert, isVisible());
@@ -183,7 +183,7 @@ public class SignInControllerTest extends ApplicationTest {
         tfUser.setText(maxChar);
         passwd.setText(maxChar);
 
-        clickOn("#primaryButton");
+        clickOn("#btnSignIn");
 
         //verify that the exception message appears in the alert.
         verifyThat(alert, isVisible());

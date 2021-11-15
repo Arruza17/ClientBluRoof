@@ -11,35 +11,26 @@
 }
 
 
-#primaryButton{
+.primaryButton{
     -fx-pref-width: 100px;
     -fx-background-color: #0099ff;
     -fx-text-fill: white;
     -fx-font-size: 16px;
 }
 
-#primaryButton:hover{
+.primaryButton:hover{
     -fx-text-fill: white;
     -fx-background-color: #041e42;
 }
 
-#primaryButton:focused{
+.primaryButton:focused{
       -fx-border-style: solid;
       -fx-border-color: turquoise;
       -fx-border-width: 4px;
+      
+      
 }
 
-.button:hover{
-    -fx-text-fill: white;
-    -fx-background-color: #00214d;
-}
-
-.button{
-    -fx-width: 120px;
-    -fx-background-color: white;
-    -fx-text-fill: #0099ff;
-    -fx-font-size: 16px;
-}
 
 .label{
     -fx-font-size: 16px;

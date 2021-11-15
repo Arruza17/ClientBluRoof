@@ -34,13 +34,14 @@ import org.testfx.framework.junit.ApplicationTest;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SignUpControllerTest extends ApplicationTest {
 
+    private final String existentUsername="test";
     private final String MAX_CHARACTERS_EXAMPLE = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
     private static final Logger LOGGER = Logger.getLogger(SignUpControllerTest.class.getName());
-    private TextField tfUser;
-    private TextField tfFullName;
-    private TextField tfEmail;
-    private PasswordField passField;
-    private PasswordField rptPassword;
+    private TextField tfUser=lookup("#tfUser").query();
+    private TextField tfFullName=lookup("#tfFullName").query();
+    private TextField tfEmail=lookup("#tfEmail").query();
+    private PasswordField passField=lookup("#passField").query();
+    private PasswordField rptPassword=lookup("#rptPassword").query();
     private String username;
 
     /*
@@ -73,6 +74,7 @@ public class SignUpControllerTest extends ApplicationTest {
 
     @Test
     public void test02_sameUserSignUp() {
+        cleanFields();
         existentUserWrite();
         clickOn("#btnSignUp");
         clickOn("Aceptar");
@@ -363,22 +365,26 @@ public class SignUpControllerTest extends ApplicationTest {
 
     private void existentUserWrite() {
         
-         final String username="test";
-         final String email="test@test.test";
-         final String fullName="test test";
-         final String password="abcd*1234";
- 
-        clickOn("tfUser");
-       
-        write(username);
+        clickOn("#tfUser");      
+        write(existentUsername);
         clickOn("#tfFullName");
-        write(fullName);
+        write("test test");
         clickOn("#passField");
-        write(password);
+        write("abcd*1234");
         clickOn("#rptPassword");
-        write(password);
+        write("abcd*1234");
         clickOn("#tfEmail");
-        write(email);
+        write("test@test.test");
+        
+    }
+
+    private void cleanFields() {
+       
+       tfUser.setText("");
+       tfEmail.setText("");
+       tfFullName.setText("");
+       passField.setText("");
+       rptPassword.setText("");
         
     }
 }

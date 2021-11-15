@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="1080.0" maxWidth="1920.0" minHeight="400.0" minWidth="640.0" prefHeight="768.0" prefWidth="1024.0" styleClass="bgimg" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.SignInController">
+<BorderPane maxHeight="1080.0" maxWidth="1920.0" minHeight="400.0" minWidth="640.0" prefHeight="768.0" prefWidth="1024.0" styleClass="bgimg" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.SignInController">
    <center>
       <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="loginPanel" BorderPane.alignment="CENTER">
          <top>
@@ -89,7 +89,7 @@
             <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
                   <Pane prefHeight="200.0" prefWidth="370.0" />
-                  <Button id="primaryButton" fx:id="btnSignIn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#signIn" prefHeight="44.0" prefWidth="337.0" text="Sign In" textAlignment="CENTER" textFill="WHITE">
+                  <Button fx:id="btnSignIn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" onAction="#signIn" prefHeight="35.0" prefWidth="337.0" styleClass="primaryButton" text="Sign In" textAlignment="CENTER" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
