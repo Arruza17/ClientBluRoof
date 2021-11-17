@@ -83,6 +83,9 @@ public class SignUpControllerTest extends ApplicationTest {
         clickOn("#btnSignUp");
         clickOn("Aceptar");
         verifyThat(new LoginFoundException().getMessage(), isVisible());
+        //The following enter is to say that you want to add the user
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        //This enter is to accept the alert that the user already exists
         press(KeyCode.ENTER).release(KeyCode.ENTER);
     }
 
