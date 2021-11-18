@@ -6,12 +6,18 @@
 package view.controllers;
 
 import application.Application;
+import exceptions.MaxCharactersException;
+import exceptions.PasswordFormatException;
+import exceptions.ServerDownException;
+import exceptions.UserNotFoundException;
 
 import static org.testfx.matcher.base.NodeMatchers.*;
 import static org.testfx.matcher.control.TextInputControlMatchers.*;
 import java.util.concurrent.TimeoutException;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -48,13 +54,35 @@ public class SignInControllerTest extends ApplicationTest {
         FxToolkit.setupApplication(Application.class);
     }
 
+    @Test
+    public void test00_serverOk() {
+
+        clickOn("#tfUser");
+        write("test");
+
+        clickOn("#tfPassword");
+        write("abcd*1234");
+
+        clickOn("#primaryButton");
+
+        verifyThat(new ServerDownException().getMessage(), isVisible());
+
+        clickOn("Aceptar");
+        clickOn("#tfUser");
+        eraseText(4);
+        clickOn("#tfPassword");
+        eraseText(9);
+
+    }
+
     /**
      * Tests a login with correct credentials checking if the welcome window is
      * visible.
      */
     @Test
     public void test01_signInOk() {
-
+        clickOn("#btnSignOut");
+        clickOn("Aceptar");
         clickOn("#tfUser");
         write("test");
 
@@ -66,36 +94,57 @@ public class SignInControllerTest extends ApplicationTest {
         /*Verify that the greeting label is visible on the welcome window
         in order to check if it's open.      
          */
-        verifyThat("#lblHi", isVisible());
+        //Verify that the user's name is the correct one
+        String fullName = "Welcome back, test test";
+        verifyThat(fullName, isVisible());
         clickOn("#btnSignOut");
         clickOn("Aceptar");
 
     }
 
-    /**
-     * Tests if credentials not found in database alert is visible.
-     */
     @Test
-    public void test02_signInNotOk() {
-
-        //Exception message string.
-        String alert = "Login or password are incorrect";
-
-        //writing incorrect credentials.
+    public void test021_SignInBadUser() {
+        String alert = new UserNotFoundException().getMessage();
         clickOn("#tfUser");
         write("incorrect");
-
         clickOn("#tfPassword");
-        write("incorrect");
-
+        write("abcd*1234");
         clickOn("#primaryButton");
-
-        //verify that the exception message appears in the alert.
         verifyThat(alert, isVisible());
         clickOn("Aceptar");
-
         clickOn("#tfUser");
         eraseText(9);
+        clickOn("#tfPassword");
+        eraseText(9);
+    }
+
+    @Test
+    public void test022_SignInBadPasswd() {
+        //Verifying if password does not exist in db
+        String alert = new UserNotFoundException().getMessage();
+        clickOn("#tfUser");
+        write("test");
+        clickOn("#tfPassword");
+        write("incorrect");
+        clickOn("#primaryButton");
+        verifyThat(alert, isVisible());
+        clickOn("Aceptar");
+        clickOn("#tfUser");
+        eraseText(4);
+        clickOn("#tfPassword");
+        eraseText(9);
+
+        //Inputting wrong password format
+        alert = new PasswordFormatException().getMessage();
+        clickOn("#tfUser");
+        write("test");
+        clickOn("#tfPassword");
+        write("inco rect");
+        clickOn("#primaryButton");
+        verifyThat(alert, isVisible());
+        clickOn("Aceptar");
+        clickOn("#tfUser");
+        eraseText(4);
         clickOn("#tfPassword");
         eraseText(9);
 
@@ -148,7 +197,7 @@ public class SignInControllerTest extends ApplicationTest {
         //String that contains 255 chars.
         String maxChar = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
         //Exception message string.
-        String alert = "The maximum amount of characters is 255, try again with shorter information";
+        String alert = new MaxCharactersException().getMessage();
         tfUser = lookup​("#tfUser").query();
         passwd = lookup​("#tfPassword").query();
         //Test max characters (255) on userField.
