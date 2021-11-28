@@ -10,7 +10,6 @@
 
 }
 
-
 #primaryButton{
     -fx-pref-width: 100px;
     -fx-background-color: #0099ff;
@@ -35,6 +34,14 @@
     -fx-font-size: 16px;
 }
 
+.menuTop{
+    -fx-background-color:  rgba(0,33,77,0.90);
+}
+
+.menuLeft{
+    -fx-background-color:  rgba(0, 153, 255,0.90); 
+}
+
 .label{
     -fx-font-size: 16px;
 
@@ -42,4 +49,21 @@
 
 .hyperlink{
     -fx-font-size: 16px;   
+}
+
+.selectedMenu{
+    -fx-background-color:rgba(0,0,0,0.6)
+
+}
+
+.selectedMenu .label{
+    -fx-text-fill:white;
+}
+
+.unselectedMenu .label{
+    -fx-text-fill:black;
+}
+
+.unselectedMenu{
+    -fx-background-color:transparent
 }

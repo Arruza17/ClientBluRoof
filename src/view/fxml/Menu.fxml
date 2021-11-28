@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+
+<HBox alignment="CENTER_LEFT" styleClass="menuTop" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.MenuController">
+   <children>
+      <ImageView fx:id="homeBtn" fitHeight="150.0" fitWidth="188.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../resources/img/logo.png" />
+         </image>
+         <HBox.margin>
+            <Insets left="30.0" />
+         </HBox.margin>
+      </ImageView>
+      <ImageView fx:id="homeBtn1" fitHeight="150.0" fitWidth="188.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../resources/img/image-removebg-preview.png" />
+         </image>
+      </ImageView>
+   </children>
+</HBox>

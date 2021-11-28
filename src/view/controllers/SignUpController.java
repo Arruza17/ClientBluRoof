@@ -23,6 +23,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import logic.ConnectableFactory;
@@ -79,16 +80,13 @@ public class SignUpController {
         //Sets the .css to the Scene
         scene.getStylesheets().add(css);
         //Stage dimension setters
-        stage.setMaxWidth(MAX_WIDTH);
-        stage.setMinWidth(MIN_WIDTH);
-        stage.setMaxHeight(MAX_HEIGHT);
-        stage.setMinHeight(MIN_HEIGHT);
+        maximizeWindow();
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
         //Sets the scene to the stage
         stage.setScene(scene);
         stage.setTitle("SignUp");
         //Sets the window not resizable
-        stage.setResizable(false);
+    
         stage.setOnCloseRequest(this::handleWindowClosing);
         stage.show();
         LOGGER.info("SignUp Open Window");
@@ -281,4 +279,14 @@ public class SignUpController {
         this.stage = stage;
     }
 
+     private void maximizeWindow() {
+        Screen screen = Screen.getPrimary();
+        javafx.geometry.Rectangle2D bound = screen.getVisualBounds();
+        stage.setX(bound.getMinX());
+        stage.setY(bound.getMinY());
+        stage.setWidth(bound.getWidth());
+        stage.setHeight(bound.getHeight());
+        stage.setResizable(false);
+        stage.setMaximized(true);
+    }
 }

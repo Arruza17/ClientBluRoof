@@ -20,6 +20,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import logic.ConnectableFactory;
@@ -57,6 +58,8 @@ public class SignInController {
     private Button btnCancel;
     @FXML
     private Button btnSignUp;
+    
+    
 
     /**
      * Method used to load all stage settings when creating the stage.
@@ -71,12 +74,7 @@ public class SignInController {
         String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
         scene.getStylesheets().add(css);
         //Stage dimension setters
-        stage.setMaxWidth(MAX_WIDTH);
-        stage.setMinWidth(MIN_WIDTH);
-        stage.setMaxHeight(MAX_HEIGHT);
-        stage.setMinHeight(MIN_HEIGHT);
-        //Sets the window not resizable
-        stage.setResizable(false);
+        maximizeWindow();
         stage.setTitle("BluRoof SignIn Page");
         //Gets the icon of the window.
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
@@ -287,4 +285,14 @@ public class SignInController {
         this.connectable = connectable;
     }
 
+    private void maximizeWindow() {
+        Screen screen = Screen.getPrimary();
+        javafx.geometry.Rectangle2D bound = screen.getVisualBounds();
+        stage.setX(bound.getMinX());
+        stage.setY(bound.getMinY());
+        stage.setWidth(bound.getWidth());
+        stage.setHeight(bound.getHeight());
+        stage.setResizable(false);
+        stage.setMaximized(true);
+    }
 }

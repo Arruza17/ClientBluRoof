@@ -1,6 +1,10 @@
 package view.controllers;
 
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +16,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import model.User;
@@ -30,13 +41,10 @@ public class WelcomeController {
     private User user;
     private Stage stage;
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
+    private MenuController menu;
 
     @FXML
-    private Button btnSignOut;
-    @FXML
-    private Button btnClose;
-    @FXML
-    private Label lblHi;
+    private BorderPane mainPane;
 
     /**
      * Method used to load all stage settings when creating the stage.
@@ -51,19 +59,25 @@ public class WelcomeController {
         String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
         scene.getStylesheets().add(css);
         //Setting up the Max & Mins 
-        stage.setMaxWidth(MAX_WIDTH);
-        stage.setMinWidth(MIN_WIDTH);
-        stage.setMaxHeight(MAX_HEIGHT);
-        stage.setMinHeight(MIN_HEIGHT);
-        stage.setResizable(true);
+        maximizeWindow();
+
         stage.setTitle("BluRoof Welcome Page");
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
         stage.setScene(scene);
         stage.setTitle("BluRoof Main");
         stage.setOnCloseRequest(this::handleWindowClosing);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/Menu.fxml"));
+            Parent topMenu = (Parent) loader.load();
+            menu = loader.getController();
+            mainPane.setTop(topMenu);
+            menu.initStage(mainPane);
+        } catch (IOException ex) {
+            Logger.getLogger(WelcomeController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         stage.show();
         LOGGER.info("Welcome window shown");
-        lblHi.setText("Welcome back, " + user.getLogin());
 
     }
 
@@ -83,42 +97,6 @@ public class WelcomeController {
             e.consume();
         } else {
             LOGGER.info("Welcome window closed");
-        }
-    }
-
-    /**
-     * Method executed when the SignOut button is pressed
-     *
-     * @param e An event representing some type of Action
-     */
-    @FXML
-    private void handleSignOutAction(ActionEvent e) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Signing out");
-        alert.setContentText("Are you sure you want to sign out?");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            LOGGER.info("Welcome window closed");
-            exit(btnSignOut);
-
-        }
-    }
-
-    /**
-     * Method executed when the Close button is pressed
-     *
-     * @param e An event representing some type of Action
-     */
-    @FXML
-    private void handleCloseAction(ActionEvent e) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to close this window?");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            LOGGER.info("Welcome window closed");
-            exit(btnClose);
-
         }
     }
 
@@ -175,6 +153,29 @@ public class WelcomeController {
         if (user != null) {
             this.user = user;
         }
+    }
+
+    private void changeCenter(String uri) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(uri));
+            Pane view = loader.load();
+            view.setMaxSize(MAX_WIDTH, MAX_HEIGHT);
+            mainPane.setCenter(view);
+        } catch (IOException ex) {
+            Logger.getLogger(WelcomeController.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void maximizeWindow() {
+        Screen screen = Screen.getPrimary();
+        javafx.geometry.Rectangle2D bound = screen.getVisualBounds();
+        stage.setX(bound.getMinX());
+        stage.setY(bound.getMinY());
+        stage.setWidth(bound.getWidth());
+        stage.setHeight(bound.getHeight());
+        stage.setResizable(false);
+        stage.setMaximized(true);
     }
 
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="menuLeft" alignment="CENTER" spacing="20.0" styleClass="menuLeft" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.DropDownController">
+   <children>
+      <HBox fx:id="btnProfile" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#handleProfile" prefHeight="50.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Profile" />
+         </children>
+      </HBox>
+      <HBox fx:id="btnDwellings" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" onMouseClicked="#handleDwellings" prefHeight="50.0" prefWidth="200.0">
+         <children>
+            <Label text="Dwellings" />
+         </children>
+      </HBox>
+      <HBox fx:id="btnSignOut" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" onMouseClicked="#handleSignOutAction" prefHeight="50.0" prefWidth="200.0">
+         <children>
+            <Label text="Sign Out" />
+         </children>
+      </HBox>
+      <HBox fx:id="btnClose" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" onMouseClicked="#handleCloseAction" prefHeight="50.0" prefWidth="200.0">
+         <children>
+            <Label text="Close" />
+         </children>
+      </HBox>
+   </children>
+</VBox>
