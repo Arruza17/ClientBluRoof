@@ -61,19 +61,22 @@
             </VBox>
          </children>
          <BorderPane.margin>
-            <Insets top="25.0" />
+            <Insets left="25.0" right="25.0" top="25.0" />
          </BorderPane.margin>
       </HBox>
    </center>
    <bottom>
-      <HBox nodeOrientation="RIGHT_TO_LEFT" prefHeight="46.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="46.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <Button mnemonicParsing="false" text="Button" textAlignment="RIGHT">
+            <Button mnemonicParsing="false" text="Back" textAlignment="RIGHT">
                <HBox.margin>
                   <Insets bottom="10.0" top="10.0" />
                </HBox.margin>
             </Button>
          </children>
+         <BorderPane.margin>
+            <Insets right="25.0" />
+         </BorderPane.margin>
       </HBox>
    </bottom>
 </BorderPane>
