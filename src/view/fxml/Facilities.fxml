@@ -10,6 +10,8 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -48,13 +50,56 @@
          </children>
       </HBox>
    </top>
-   <center>
-      <TableView fx:id="table_facilities" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+   <bottom>
+      <TableView fx:id="tbl_facilities" prefHeight="309.0" prefWidth="612.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="id_Column" prefWidth="43.0" text="ID" />
           <TableColumn fx:id="adq_column" prefWidth="157.0" text="Adquisition Date" />
             <TableColumn fx:id="type_column" prefWidth="168.0" text="Type" />
         </columns>
       </TableView>
+   </bottom>
+   <center>
+      <HBox prefHeight="35.0" prefWidth="612.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="29.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../resources/img/add.png" />
+               </image>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </ImageView>
+            <ImageView fitHeight="29.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../resources/img/minus.png" />
+               </image>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </ImageView>
+            <ImageView fitHeight="29.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../resources/img/check.png" />
+               </image>
+               <HBox.margin>
+                  <Insets right="5.0" />
+               </HBox.margin>
+            </ImageView>
+            <ImageView fitHeight="29.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../resources/img/cancel.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="34.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets left="300.0" />
+               </HBox.margin>
+               <image>
+                  <Image url="@../resources/img/fax.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
    </center>
 </BorderPane>
