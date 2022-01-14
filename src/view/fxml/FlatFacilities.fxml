@@ -26,11 +26,42 @@
                            <graphic>
                               <ImageView fitHeight="142.0" fitWidth="177.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="../view.resources.img/facilities.png" />
+                                    <Image url="@../resources/img/facilities.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </Label>
+                        <VBox prefHeight="31.0" prefWidth="623.0">
+                           <children>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <ImageView fitHeight="33.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../resources/img/add.png" />
+                                       </image>
+                                       <HBox.margin>
+                                          <Insets left="4.0" />
+                                       </HBox.margin>
+                                    </ImageView>
+                                    <ImageView fitHeight="33.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../resources/img/minus.png" />
+                                       </image>
+                                    </ImageView>
+                                    <ImageView fitHeight="33.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../resources/img/check.png" />
+                                       </image>
+                                    </ImageView>
+                                    <ImageView fitHeight="33.0" fitWidth="29.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../resources/img/cancel.png" />
+                                       </image>
+                                    </ImageView>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
                      </children>
                   </VBox>
                </children>
