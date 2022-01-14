@@ -7,6 +7,8 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -15,14 +17,14 @@
    <top>
       <HBox prefHeight="63.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox prefHeight="100.0" prefWidth="113.0">
-               <children>
-                  <Label text="Services" />
-               </children>
-            </VBox>
-            <ChoiceBox fx:id="cbServices" prefHeight="31.0" prefWidth="117.0">
+            <Label text="Services">
                <HBox.margin>
-                  <Insets top="25.0" />
+                  <Insets left="15.0" top="30.0" />
+               </HBox.margin>
+            </Label>
+            <ChoiceBox fx:id="cbServices" prefHeight="31.0" prefWidth="226.0">
+               <HBox.margin>
+                  <Insets left="40.0" top="25.0" />
                </HBox.margin>
             </ChoiceBox>
             <Spinner fx:id="spinnerService" prefHeight="31.0" prefWidth="118.0">
@@ -32,20 +34,58 @@
             </Spinner>
             <Button fx:id="btnSearchService" mnemonicParsing="false" text="Search">
                <HBox.margin>
-                  <Insets left="125.0" top="25.0" />
+                  <Insets left="25.0" top="25.0" />
                </HBox.margin>
             </Button>
          </children>
       </HBox>
    </top>
    <center>
-      <TableView fx:id="tbvService" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn prefWidth="75.0" text="ID" />
-          <TableColumn prefWidth="75.0" text="Address" />
-            <TableColumn prefWidth="75.0" text="Name" />
-            <TableColumn prefWidth="75.0" text="Type" />
-        </columns>
-      </TableView>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox prefHeight="0.0" prefWidth="600.0" spacing="25.0">
+               <children>
+                  <ImageView fitHeight="23.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/add%20(2).png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="22.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/minus.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="22.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/check.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="22.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/cancel.png" />
+                     </image>
+                  </ImageView>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="15.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <TableView fx:id="tbvService" prefHeight="306.0" prefWidth="581.0">
+              <columns>
+                <TableColumn prefWidth="75.0" text="ID" />
+                <TableColumn prefWidth="75.0" text="Address" />
+                  <TableColumn prefWidth="75.0" text="Name" />
+                  <TableColumn prefWidth="73.0" text="Type" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
    </center>
+   <bottom>
+      <Button mnemonicParsing="false" text="Back" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="10.0" top="10.0" />
+         </BorderPane.margin>
+      </Button>
+   </bottom>
 </BorderPane>

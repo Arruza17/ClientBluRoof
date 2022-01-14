@@ -7,45 +7,88 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.NeighborhoodsController">
    <top>
-      <HBox prefHeight="63.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <HBox prefHeight="0.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox prefHeight="100.0" prefWidth="113.0">
-               <children>
-                  <Label text="Neighbourhood" />
-               </children>
-            </VBox>
-            <ChoiceBox fx:id="cbNeighborhood" prefHeight="31.0" prefWidth="117.0">
+            <Label prefHeight="21.0" prefWidth="133.0" text="Neighbourhoods">
+               <HBox.margin>
+                  <Insets left="15.0" top="30.0" />
+               </HBox.margin>
+            </Label>
+            <ChoiceBox fx:id="cbNeighborhood" prefHeight="31.0" prefWidth="162.0">
                <HBox.margin>
                   <Insets top="25.0" />
                </HBox.margin>
             </ChoiceBox>
-            <Spinner fx:id="spinnerNeighbourhood" prefHeight="31.0" prefWidth="118.0">
+            <Spinner fx:id="spinnerNeighbourhood" prefHeight="31.0" prefWidth="121.0">
                <HBox.margin>
-                  <Insets left="25.0" top="25.0" />
+                  <Insets left="15.0" top="25.0" />
                </HBox.margin>
             </Spinner>
-            <Button fx:id="btnSearch" mnemonicParsing="false" text="Search">
+            <Button fx:id="btnSearch" mnemonicParsing="false" prefHeight="31.0" prefWidth="80.0" text="Search">
                <HBox.margin>
-                  <Insets left="125.0" top="25.0" />
+                  <Insets left="15.0" right="15.0" top="25.0" />
                </HBox.margin>
             </Button>
+            <ImageView fitHeight="73.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../resources/img/fax.png" />
+               </image>
+               <HBox.margin>
+                  <Insets right="15.0" />
+               </HBox.margin>
+            </ImageView>
          </children>
+         <BorderPane.margin>
+            <Insets bottom="10.0" />
+         </BorderPane.margin>
       </HBox>
    </top>
    <center>
-      <TableView fx:id="tbvNeighborhood" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn prefWidth="75.0" text="ID" />
-          <TableColumn prefWidth="75.0" text="Name" />
-            <TableColumn prefWidth="75.0" text="Post code" />
-            <TableColumn prefWidth="75.0" text="Services" />
-        </columns>
-      </TableView>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="25.0">
+               <children>
+                  <ImageView fitHeight="23.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/add%20(2).png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="22.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/minus.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="22.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/check.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="22.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/cancel.png" />
+                     </image>
+                  </ImageView>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="15.0" />
+               </VBox.margin>
+            </HBox>
+            <TableView fx:id="tbvNeighborhood" prefHeight="385.0" prefWidth="600.0">
+               <columns>
+                  <TableColumn prefWidth="75.0" text="ID" />
+                  <TableColumn prefWidth="75.0" text="Name" />
+                  <TableColumn prefWidth="75.0" text="Post code" />
+               </columns>
+            </TableView>
+         </children>
+      </VBox>
    </center>
 </BorderPane>
