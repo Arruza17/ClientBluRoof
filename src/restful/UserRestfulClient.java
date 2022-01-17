@@ -8,6 +8,7 @@ package restful;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 
 /**
  * Jersey REST client generated for REST resource:UserFacadeREST
@@ -26,7 +27,7 @@ public class UserRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:22083/ServerBluRoof/webresources";
+    private static final String BASE_URI = "http://localhost:11094/ServerBluRoof/webresources";
 
     public UserRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -36,7 +37,7 @@ public class UserRestfulClient {
     public <T> T resetPassword(Class<T> responseType, String user) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("reset/{0}", new Object[]{user}));
-        return resource.get(responseType);
+        return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(responseType);
     }
 
     public String countREST() throws ClientErrorException {
@@ -65,7 +66,7 @@ public class UserRestfulClient {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findAll(Class<T> responseType) throws ClientErrorException {
+    public <T> T findAll(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
@@ -83,7 +84,7 @@ public class UserRestfulClient {
     public <T> T changePassword(Class<T> responseType, String user, String pass) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("update/{0}/password/{1}", new Object[]{user, pass}));
-        return resource.get(responseType);
+        return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(responseType);
     }
 
     public void close() {

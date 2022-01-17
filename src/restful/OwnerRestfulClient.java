@@ -26,7 +26,7 @@ public class OwnerRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:22083/ServerBluRoof/webresources";
+    private static final String BASE_URI = "http://localhost:11094/ServerBluRoof/webresources";
 
     public OwnerRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -42,7 +42,7 @@ public class OwnerRestfulClient {
     public <T> T findOwnerByDwelling(Class<T> responseType, String dwellingId) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("owner/{0}", new Object[]{dwellingId}));
-        return resource.get(responseType);
+        return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(responseType);
     }
 
     public void edit(Object requestEntity, String id) throws ClientErrorException {

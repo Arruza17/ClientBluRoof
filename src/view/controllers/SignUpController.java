@@ -9,7 +9,6 @@ import exceptions.LoginFoundException;
 import exceptions.MaxCharactersException;
 import exceptions.PasswordFormatException;
 import exceptions.PassNotEqualException;
-import interfaces.Connectable;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -25,8 +24,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import logic.ConnectableFactory;
 import model.User;
 
 /**
@@ -35,13 +32,12 @@ import model.User;
  * @author Ander Arruza and Adrián Pérez
  */
 public class SignUpController {
-    
-    private Connectable connectable;
+
     private final int MAX_WIDTH = 1920;
     private final int MAX_HEIGHT = 1024;
     private final int MIN_WIDTH = 1024;
     private final int MIN_HEIGHT = 768;
-    
+
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
 
     /**
@@ -106,8 +102,8 @@ public class SignUpController {
      * @throws PassNotEqualException if the password fields are not the same
      * @throws PasswordFormatException if the password have less tha 6
      * characters
-     * @throws FullNameFormatException if the full name doesn't contain any space
-     * character
+     * @throws FullNameFormatException if the full name doesn't contain any
+     * space character
      * @throws EmailFormatException if the email is not in the valid form
      */
     private boolean checkFields() throws FieldsEmptyException, MaxCharactersException, PassNotEqualException, PasswordFormatException, FullNameFormatException, EmailFormatException {
@@ -136,7 +132,7 @@ public class SignUpController {
             //throw validation Error
             LOGGER.warning("The field passField and rptPassword are not the same");
             throw new PassNotEqualException();
-            
+
         }
         //Checks if the password fields are less than 6 characters
         if (passField.getText().trim().length() < 6
@@ -185,8 +181,7 @@ public class SignUpController {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     //ADDING THE USER TO THE DATABASE
-                    connectable = ConnectableFactory.getConnectable();
-                    connectable.signUp(newUser);
+                    
                     //TELLING THE USER THAT EVERYTHING HAD WORK
                     LOGGER.info("New User succesfully added");
                     Alert alert1 = new Alert(AlertType.INFORMATION);
@@ -198,7 +193,7 @@ public class SignUpController {
                     Stage stage = (Stage) btnCancel.getScene().getWindow();
                     // Close current window 
                     stage.close();
-                    
+
                 }
             }
         } catch (Exception ex) {
@@ -209,7 +204,7 @@ public class SignUpController {
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at signUp method");
             if (ex.getMessage().equals(new LoginFoundException().getMessage())) {
                 tfUser.requestFocus();
-            }else if(ex.getMessage().equals(new PassNotEqualException().getMessage())){
+            } else if (ex.getMessage().equals(new PassNotEqualException().getMessage())) {
                 passField.requestFocus();
             }
         }
@@ -221,13 +216,13 @@ public class SignUpController {
      * @return the created User
      */
     private User createUser() {
-        User user = User.getUser();
+        User user = new User();
         user.setLogin(tfUser.getText().toString().trim());
         user.setFullName(tfFullName.getText().toString().trim());
         user.setPassword(passField.getText().toString().trim());
         user.setEmail(tfEmail.getText().toString().trim());
-        user.setPrivilege(UserPrivilege.ENABLED);
-        user.setStatus(UserStatus.USER);
+        //user.setPrivilege();
+        user.setStatus(UserStatus.ENABLED.name());
         return user;
     }
 
@@ -275,5 +270,5 @@ public class SignUpController {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-    
+
 }
