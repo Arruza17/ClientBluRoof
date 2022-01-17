@@ -4,10 +4,10 @@ import enumerations.UserPrivilege;
 import enumerations.UserStatus;
 import exceptions.EmailFormatException;
 import exceptions.FieldsEmptyException;
-import exceptions.FullNameGapException;
+import exceptions.FullNameFormatException;
 import exceptions.LoginFoundException;
 import exceptions.MaxCharactersException;
-import exceptions.PassMinCharacterException;
+import exceptions.PasswordFormatException;
 import exceptions.PassNotEqualException;
 import interfaces.Connectable;
 import java.util.Optional;
@@ -104,13 +104,13 @@ public class SignUpController {
      * @throws MaxCharactersException if any of the fields are more than 255
      * characters
      * @throws PassNotEqualException if the password fields are not the same
-     * @throws PassMinCharacterException if the password have less tha 6
+     * @throws PasswordFormatException if the password have less tha 6
      * characters
-     * @throws FullNameGapException if the full name doesn't contain any space
+     * @throws FullNameFormatException if the full name doesn't contain any space
      * character
      * @throws EmailFormatException if the email is not in the valid form
      */
-    private boolean checkFields() throws FieldsEmptyException, MaxCharactersException, PassNotEqualException, PassMinCharacterException, FullNameGapException, EmailFormatException {
+    private boolean checkFields() throws FieldsEmptyException, MaxCharactersException, PassNotEqualException, PasswordFormatException, FullNameFormatException, EmailFormatException {
         //Checks if all the fields are written
         if (tfUser.getText().trim().isEmpty()
                 || tfFullName.getText().trim().isEmpty()
@@ -143,13 +143,13 @@ public class SignUpController {
                 || rptPassword.getText().trim().length() < 6) {
             //throw validation Error
             LOGGER.warning("The password have <6 characters");
-            throw new PassMinCharacterException();
+            throw new PasswordFormatException();
         }
         //Checks if the fullName contains at least one space
         if (!tfFullName.getText().trim().contains(" ")) {
             LOGGER.warning("The surmane is not written");
             //throw validation Error
-            throw new FullNameGapException();
+            throw new FullNameFormatException();
         }
         //Checks if the email is in the correct format
         if (!validateEmail(tfEmail.getText().trim())) {
