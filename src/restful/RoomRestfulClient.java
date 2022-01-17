@@ -5,6 +5,7 @@
  */
 package restful;
 
+import interfaces.RoomManager;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -20,9 +21,9 @@ import javax.ws.rs.client.WebTarget;
  *        client.close();
  * </pre>
  *
- * @author Ander Arruza
+ * @author jorge
  */
-public class RoomRestfulClient {
+public class RoomRestfulClient implements RoomManager{
 
     private WebTarget webTarget;
     private Client client;
