@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.OwnerWindowController">
+   <center>
+      <TableView fx:id="tableDwelling" BorderPane.alignment="CENTER">
+         <columns>
+            <TableColumn fx:id="colType" prefWidth="96.0" text="Type" />
+            <TableColumn fx:id="colAddress" prefWidth="105.0" text="Address" />
+            <TableColumn fx:id="colWiFi" minWidth="1.0" prefWidth="75.0" text="WiFi" />
+            <TableColumn fx:id="colSquareMeters" prefWidth="88.0" text="m²" />
+            <TableColumn fx:id="colConstructionDate" prefWidth="114.0" text="Construction Date" />
+            <TableColumn fx:id="colRating" prefWidth="114.0" text="Rating" />
+            <TableColumn fx:id="colMoreInfo" prefWidth="114.0" text="More info" />
+         </columns></TableView>
+   </center>
+   <top>
+      <HBox alignment="CENTER_LEFT" spacing="15.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox>
+                     <children>
+                        <ImageView fitHeight="55.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+                           <HBox.margin>
+                              <Insets left="15.0" />
+                           </HBox.margin>
+                           <image>
+                              <Image url="@../resources/img/dwelling/dwelling.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="lblTitle" text="My Dwellings">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Separator>
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </Separator>
+      			<HBox alignment="CENTER_LEFT" spacing="35.0">
+      				<ComboBox fx:id="CBDwellings" accessibleHelp="HOLA" onAction="#handleChangeComponents" promptText="Select" HBox.hgrow="ALWAYS">
+                        <HBox.margin>
+                           <Insets left="15.0" />
+                        </HBox.margin>
+                     </ComboBox>
+      				<Separator orientation="VERTICAL" HBox.hgrow="ALWAYS">
+      				   <HBox.margin>
+      					  <Insets />
+      				   </HBox.margin>
+      				   <padding>
+      					  <Insets bottom="10.0" top="10.0" />
+      				   </padding>
+      				</Separator>
+      				<DatePicker fx:id="dpConstructionDate" promptText="Construction date" />
+                     <Separator orientation="VERTICAL">
+                        <padding>
+                           <Insets bottom="10.0" top="10.0" />
+                        </padding>
+                     </Separator>
+      				<Spinner fx:id="spRating" accessibleText="Number" />
+      				<Separator orientation="VERTICAL" HBox.hgrow="ALWAYS">
+                        <padding>
+                           <Insets bottom="10.0" top="10.0" />
+                        </padding>
+      				</Separator>
+                     <ImageView fx:id="imgSearch" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleFilterSearch" pickOnBounds="true" preserveRatio="true">
+                        <HBox.margin>
+                           <Insets right="15.0" />
+                        </HBox.margin>
+                        <image>
+                           <Image url="@../resources/img/dwelling/search.png" />
+                        </image>
+                     </ImageView>
+      			</HBox>
+                  <Separator>
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </Separator>
+                  <HBox spacing="5.0">
+                     <children>
+                        <ImageView fx:id="imgCreateComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleAddComment" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/add.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets top="5.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <ImageView fx:id="imgConfirmComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleConfirmComment" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/check.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <ImageView fx:id="imgCancelComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleCancelComment" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/cancel.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <ImageView fx:id="imgDeleteDwelling" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleDeleteDwelling" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/minus.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <ImageView fx:id="imgPrint" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handlePrintDwellings" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/imprimir.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets left="5.0" top="5.0" />
+                           </HBox.margin>
+                        </ImageView>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" />
+         </padding>
+      </HBox>
+   </top>
+</BorderPane>

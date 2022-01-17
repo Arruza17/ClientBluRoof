@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import view.controllers.OwnerWindowController;
 import view.controllers.SignInController;
 
 /**
@@ -33,9 +34,9 @@ public class Application extends javafx.application.Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/SignIn.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/OwnerWindow.fxml"));
         Parent root = (Parent) fxmlLoader.load();
-        SignInController controller = ((SignInController) fxmlLoader.getController());
+        OwnerWindowController controller = ((OwnerWindowController) fxmlLoader.getController());
         controller.setStage(primaryStage);
         //Initialize stage
         LOGGER.info("Openning SignIn Window");
