@@ -62,7 +62,7 @@
                      </VBox.margin>
                   </Separator>
       			<HBox alignment="CENTER_LEFT" spacing="35.0">
-      				<ComboBox fx:id="CBDwellings" accessibleHelp="HOLA" onAction="#handleChangeComponents" promptText="Select" HBox.hgrow="ALWAYS">
+      				<ComboBox fx:id="cbDwellings" onAction="#handleChangeComponents" promptText="Select" HBox.hgrow="ALWAYS">
                         <HBox.margin>
                            <Insets left="15.0" />
                         </HBox.margin>
@@ -81,7 +81,7 @@
                            <Insets bottom="10.0" top="10.0" />
                         </padding>
                      </Separator>
-      				<Spinner fx:id="spRating" accessibleText="Number" />
+      				<Spinner fx:id="spRating" accessibleText="Number" editable="true" min="1" max="5" />
       				<Separator orientation="VERTICAL" HBox.hgrow="ALWAYS">
                         <padding>
                            <Insets bottom="10.0" top="10.0" />

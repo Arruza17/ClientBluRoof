@@ -1,10 +1,10 @@
 package view.controllers;
 
+import model.DwellingTableBean;
 import exceptions.BussinessLogicException;
 import interfaces.DwellingManager;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,11 +24,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.core.GenericType;
 import model.Dwelling;
 import model.User;
-import restful.DwellingRestfulClient;
 
 /**
  * FXML Controller class
@@ -41,11 +38,11 @@ public class OwnerWindowController {
     @FXML
     private Label lblTitle;
     @FXML
-    private ComboBox<?> CBDwellings;
+    private ComboBox<?> cbDwellings;
     @FXML
     private DatePicker dpConstructionDate;
     @FXML
-    private Spinner<?> spRating;
+    private Spinner<Float> spRating;
     @FXML
     private ImageView imgSearch;
     @FXML
@@ -106,30 +103,41 @@ public class OwnerWindowController {
         stage.setTitle("DwellingWindow");
         //Sets the window not resizable
         stage.setResizable(false);
+        //Add the combobox values
+        ObservableList<String> optionsForCombo
+                = FXCollections.observableArrayList(
+                        "Select ",
+                        "2",
+                        "3"
+                );
+        cbDwellings.getItems();
 
         //if logged as an owner
         lblTitle.setText("My Dwellings");
-
         colAddress.setCellValueFactory(
                 new PropertyValueFactory<>("address"));
         colSquareMeters.setCellValueFactory(
                 new PropertyValueFactory<>("squareMeters"));
         colWiFi.setCellValueFactory(
                 new PropertyValueFactory<>("hasWiFi"));
+        colConstructionDate.setCellValueFactory(
+                new PropertyValueFactory<>("constructionDate"));
+        colRating.setCellValueFactory(
+                new PropertyValueFactory<>("rating"));
 
         ObservableList<Dwelling> dwellings = null;
+        List <DwellingTableBean> dwellingTableBean = null;
         try {
-        dwellings = FXCollections.observableArrayList(dwellingManager.findAll());
-
-        }catch (BussinessLogicException e) {
-             Alert alert = new Alert(AlertType.INFORMATION);
+            dwellings = FXCollections.observableArrayList(dwellingManager.findAll());
+            
+        } catch (BussinessLogicException e) {
+            Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("AYUDA");
             alert.setHeaderText("Error");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
-
-
+        
         tableDwelling.setItems(dwellings);
 
         //Shows the stage
