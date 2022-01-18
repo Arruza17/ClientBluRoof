@@ -1,6 +1,8 @@
 package view.controllers;
 
 import com.sun.istack.internal.logging.Logger;
+import factories.DwellingManagerFactory;
+import interfaces.DwellingManager;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,6 +36,8 @@ import model.User;
 public class DwellingController {
     
     private static final Logger LOGGER = Logger.getLogger(DwellingController.class);
+    
+    private DwellingManager dwellingManager;
     
     private DwellingBean dwelling;
     
@@ -236,6 +240,10 @@ public class DwellingController {
      */
     void handleViewFacilities(ActionEvent event) {
         
+    }
+
+    public void setDwellingManager(DwellingManager dwellingManager) {
+        this.dwellingManager = dwellingManager;
     }
     
 }

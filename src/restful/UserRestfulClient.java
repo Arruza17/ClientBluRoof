@@ -26,7 +26,7 @@ public class UserRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:22083/ServerBluRoof/webresources";
+    private static final String BASE_URI = "http://localhost:37270/ServerBluRoof/webresources";
 
     public UserRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();

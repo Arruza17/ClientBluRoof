@@ -35,6 +35,7 @@ import restful.DwellingRestfulClient;
  */
 public class OwnerWindowController {
 
+    private DwellingManager dwellingManager;
     @FXML
     private Label lblTitle;
     @FXML
@@ -80,7 +81,6 @@ public class OwnerWindowController {
 
     private Stage stage;
 
-    private DwellingManager dwellingManager;
 
     /**
      * This method is used to initialize the stage
@@ -121,7 +121,7 @@ public class OwnerWindowController {
                 .observableArrayList(dwe.findAll(
                         new GenericType<List<DwellingBean>>() {
                 }));
-        tableDwelling.setItems(dwellings);
+        //tableDwelling.setItems(dwellings);
 
         //Shows the stage
         stage.show();
@@ -159,5 +159,8 @@ public class OwnerWindowController {
     public void setStage(Stage primaryStage) {
         this.stage = primaryStage;
     }
-
+    
+    public void setDwellingManager(DwellingManager dwellingManager) {
+        this.dwellingManager = dwellingManager;
+    }
 }

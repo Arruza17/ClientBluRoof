@@ -67,6 +67,30 @@ public class DwellingBean implements Serializable {
      */
     private List<CommentBean> comments;
 
+    /**
+     * 
+     * @param id
+     * @param address
+     * @param hasWiFi
+     * @param squareMeters
+     * @param neighbourhood
+     * @param constructionDate
+     * @param host
+     * @param rating
+     * @param comments 
+     */
+    public DwellingBean(SimpleLongProperty id, SimpleStringProperty address, SimpleBooleanProperty hasWiFi, SimpleDoubleProperty squareMeters, SimpleObjectProperty<Neighbourhood> neighbourhood, SimpleObjectProperty<Date> constructionDate, SimpleObjectProperty<Owner> host, SimpleFloatProperty rating, List<CommentBean> comments) {
+        this.id = id;
+        this.address = address;
+        this.hasWiFi = hasWiFi;
+        this.squareMeters = squareMeters;
+        this.neighbourhood = neighbourhood;
+        this.constructionDate = constructionDate;
+        this.host = host;
+        this.rating = rating;
+        this.comments = comments;
+    }
+    
     //GETTERS AND SETTERS
     /**
      * Returns the id

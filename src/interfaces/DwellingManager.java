@@ -28,7 +28,7 @@ public interface DwellingManager {
 
     public void create(Object requestEntity) throws ClientErrorException;
 
-    public <T> T findAll(GenericType<T> responseType) throws ClientErrorException;
+    public <T> T findAllDwellings(GenericType<T> responseType) throws ClientErrorException;
 
     public void remove(String id) throws ClientErrorException;
 
