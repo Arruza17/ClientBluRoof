@@ -1,13 +1,11 @@
 package application;
 
 import factories.DwellingManagerFactory;
-import interfaces.DwellingManager;
 import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import view.controllers.OwnerWindowController;
-import view.controllers.SignInController;
 
 /**
  * Entry point for the java application

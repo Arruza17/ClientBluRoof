@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class Dwelling implements Serializable {
     private SimpleLongProperty id;
     /**
      * Where the Dwelling is located, the structure should be: STREET,
- FLOOR-LETTER, CP example: Altzaga Kalea 1-A, 48950
+     * FLOOR-LETTER, CP example: Altzaga Kalea 1-A, 48950
      */
     private SimpleStringProperty address;
     /**
@@ -68,22 +69,17 @@ public class Dwelling implements Serializable {
     private List<Comment> comments;
 
     public Dwelling() {
+        this.id = new SimpleLongProperty();
+        this.address = new SimpleStringProperty();
+        this.hasWiFi = new SimpleBooleanProperty();
+        this.squareMeters = new SimpleDoubleProperty();
+        this.neighbourhood = new SimpleObjectProperty();
+        this.constructionDate = new SimpleObjectProperty();
+        this.host = new SimpleObjectProperty();
+        this.rating = new SimpleFloatProperty();
+        this.comments = new ArrayList<>();
     }
 
-    
-    
-    /**
-     * 
-     * @param id
-     * @param address
-     * @param hasWiFi
-     * @param squareMeters
-     * @param neighbourhood
-     * @param constructionDate
-     * @param host
-     * @param rating
-     * @param comments 
-     */
     public Dwelling(SimpleLongProperty id, SimpleStringProperty address, SimpleBooleanProperty hasWiFi, SimpleDoubleProperty squareMeters, SimpleObjectProperty<Neighbourhood> neighbourhood, SimpleObjectProperty<Date> constructionDate, SimpleObjectProperty<Owner> host, SimpleFloatProperty rating, List<Comment> comments) {
         this.id = id;
         this.address = address;
@@ -95,7 +91,7 @@ public class Dwelling implements Serializable {
         this.rating = rating;
         this.comments = comments;
     }
-    
+
     //GETTERS AND SETTERS
     /**
      * Returns the id
@@ -245,7 +241,7 @@ public class Dwelling implements Serializable {
 
     /**
      * Returns a list of all the comments of the Dwelling made by different
- guests
+     * guests
      *
      * @return all the comments
      */
@@ -276,8 +272,8 @@ public class Dwelling implements Serializable {
 
     /**
      * Compares two Dwelling objects for equality. This method consider a
- Dwelling equal to another Dwelling if their id fields have the
- same value.
+     * Dwelling equal to another Dwelling if their id fields have the same
+     * value.
      *
      * @param object The other Dwelling object to compare to.
      * @return true if ids are equals.
@@ -304,7 +300,5 @@ public class Dwelling implements Serializable {
     public String toString() {
         return "Dwelling{" + "id=" + id + '}';
     }
-
-
 
 }

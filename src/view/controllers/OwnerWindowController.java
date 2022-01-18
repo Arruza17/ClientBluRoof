@@ -1,16 +1,15 @@
 package view.controllers;
 
+import exceptions.BussinessLogicException;
 import interfaces.DwellingManager;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -91,7 +90,6 @@ public class OwnerWindowController {
      */
     public void initStage(Parent root) {
 
-        DwellingRestfulClient dwe = new DwellingRestfulClient();
         LOGGER.info("Initializing Owner/Guest-Window stage");
         //Creation of a new Scene
         Scene scene = new Scene(root);
@@ -121,11 +119,10 @@ public class OwnerWindowController {
 
         ObservableList<Dwelling> dwellings = null;
         try {
-        dwellings = FXCollections
-                .observableArrayList(dwe.findAll(new GenericType<List<Dwelling>>() {
-                }));
-        } catch (ClientErrorException e) {
-            Alert alert = new Alert(AlertType.INFORMATION);
+        dwellings = FXCollections.observableArrayList(dwellingManager.findAll());
+
+        }catch (BussinessLogicException e) {
+             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("AYUDA");
             alert.setHeaderText("Error");
             alert.setContentText(e.getMessage());

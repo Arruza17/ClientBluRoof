@@ -29,10 +29,13 @@ public class DwellingRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:22083/ServerBluRoof/webresources";
+    private static final String BASE_URI = "http://localhost:37302/ServerBluRoof/webresources";
     private static final Logger LOGGER = Logger.getLogger("DwellingRestfulClient");
 
-
+    /**
+     * Construct a DwellingRestfulClient. It creates a RESTful web client and establishes
+     * the path of the WebTarget object associated to the client.
+     */
     public DwellingRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("entities.dwelling");
@@ -81,7 +84,7 @@ public class DwellingRestfulClient {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findAll(GenericType<T> responseType) throws ClientErrorException {
+    public <T> T findAll_XML(GenericType<T> responseType) throws ClientErrorException {
         LOGGER.info("GETTING ALL DWELLINGS DATA");
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);

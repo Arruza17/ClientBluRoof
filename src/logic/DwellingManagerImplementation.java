@@ -5,9 +5,12 @@
  */
 package logic;
 
+import exceptions.BussinessLogicException;
 import interfaces.DwellingManager;
+import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.GenericType;
+import model.Dwelling;
 import restful.DwellingRestfulClient;
 
 /**
@@ -16,59 +19,22 @@ import restful.DwellingRestfulClient;
  */
 public class DwellingManagerImplementation implements DwellingManager {
     
-    private DwellingRestfulClient dwellingRestfulClient;
+    private final DwellingRestfulClient dwellingRestfulClient;
     
     public DwellingManagerImplementation() {
+        dwellingRestfulClient = new DwellingRestfulClient();
     }
 
     @Override
-    public String countREST() throws ClientErrorException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Dwelling> findAll() throws BussinessLogicException {
+        List <Dwelling> dwellings = null;
+        try{
+            dwellings = dwellingRestfulClient.findAll_XML(new GenericType<List<Dwelling>>(){});
+        }catch(ClientErrorException e){
+            throw new BussinessLogicException(e.getMessage());
+        }
+        return dwellings;
     }
 
-    @Override
-    public <T> T findByMinConstructionDate(Class<T> responseType, String date) throws ClientErrorException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void edit(Object requestEntity, String id) throws ClientErrorException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public <T> T findByMinRating(Class<T> responseType, String rate) throws ClientErrorException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public <T> T find(Class<T> responseType, String id) throws ClientErrorException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public <T> T findRange(Class<T> responseType, String from, String to) throws ClientErrorException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void create(Object requestEntity) throws ClientErrorException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public <T> T findAllDwellings(GenericType<T> responseType) throws ClientErrorException {
-        return dwellingRestfulClient.findAll(responseType);
-    }
-
-    @Override
-    public void remove(String id) throws ClientErrorException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
 }
