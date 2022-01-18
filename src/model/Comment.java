@@ -9,7 +9,7 @@ import java.util.Date;
  *
  * @author Ander Arruza
  */
-public class CommentBean implements Serializable {
+public class Comment implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,7 +38,7 @@ public class CommentBean implements Serializable {
     /**
      * Relational field containing the relation between comment and the dwelling
      */
-    private DwellingBean dwelling;
+    private Dwelling dwelling;
 
     //GETTERS AND SETTERS
     /**
@@ -136,7 +136,7 @@ public class CommentBean implements Serializable {
      *
      * @return the dwelling to get
      */
-    public DwellingBean getDwelling() {
+    public Dwelling getDwelling() {
         return dwelling;
     }
 
@@ -145,12 +145,12 @@ public class CommentBean implements Serializable {
      *
      * @param dwelling the dwelling to set
      */
-    public void setDwelling(DwellingBean dwelling) {
+    public void setDwelling(Dwelling dwelling) {
         this.dwelling = dwelling;
     }
 
     /**
-     * Returns the CommentBean id
+     * Returns the Comment id
      *
      * @return the CommentId to get
      */
@@ -168,7 +168,7 @@ public class CommentBean implements Serializable {
     }
 
     /**
-     * Integer representation for CommentBean instance.
+     * Integer representation for Comment instance.
      *
      * @return a hash code value for this object.
      */
@@ -180,19 +180,19 @@ public class CommentBean implements Serializable {
     }
 
     /**
-     * Compares two CommentBean objects for equality. This method consider a CommentBean
- equal to another CommentBean if their id fields have the same value.
+     * Compares two Comment objects for equality. This method consider a Comment
+ equal to another Comment if their id fields have the same value.
      *
-     * @param object The other CommentBean object to compare to.
+     * @param object The other Comment object to compare to.
      * @return true if ids are equals.
      */
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CommentBean)) {
+        if (!(object instanceof Comment)) {
             return false;
         }
-        CommentBean other = (CommentBean) object;
+        Comment other = (Comment) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -200,9 +200,9 @@ public class CommentBean implements Serializable {
     }
 
     /**
-     * Obtains a string representation of the CommentBean.
+     * Obtains a string representation of the Comment.
      *
-     * @return The String representing the CommentBean.
+     * @return The String representing the Comment.
      */
     @Override
     public String toString() {

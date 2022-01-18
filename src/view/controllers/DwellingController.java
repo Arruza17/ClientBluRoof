@@ -21,8 +21,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import model.CommentBean;
-import model.DwellingBean;
+import model.Comment;
+import model.Dwelling;
 import model.Flat;
 import model.Owner;
 import model.User;
@@ -39,7 +39,7 @@ public class DwellingController {
     
     private DwellingManager dwellingManager;
     
-    private DwellingBean dwelling;
+    private Dwelling dwelling;
     
     private User user;
     
@@ -196,7 +196,7 @@ public class DwellingController {
     private void loadAllComments() {
         LOGGER.info("GETTING ALL THE COMMENTS FROM THE LOGICAL PART");
         try {
-            List<CommentBean> comments = dwelling.getComments();
+            List<Comment> comments = dwelling.getComments();
             //Set factories for cell values
             colUser.setCellValueFactory(
                     new PropertyValueFactory<>("user"));

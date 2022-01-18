@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Ander Arruza
  */
 @XmlRootElement
-public class DwellingBean implements Serializable {
+public class Dwelling implements Serializable {
 
     private static final long serialVersionUID = 1L;
     /**
@@ -32,12 +32,12 @@ public class DwellingBean implements Serializable {
      */
     private SimpleLongProperty id;
     /**
-     * Where the DwellingBean is located, the structure should be: STREET,
-     * FLOOR-LETTER, CP example: Altzaga Kalea 1-A, 48950
+     * Where the Dwelling is located, the structure should be: STREET,
+ FLOOR-LETTER, CP example: Altzaga Kalea 1-A, 48950
      */
     private SimpleStringProperty address;
     /**
-     * If the DwellingBean has WiFi or not
+     * If the Dwelling has WiFi or not
      */
     private SimpleBooleanProperty hasWiFi;
     /**
@@ -65,8 +65,13 @@ public class DwellingBean implements Serializable {
     /**
      * List of the comments made by the users about the dwelling.
      */
-    private List<CommentBean> comments;
+    private List<Comment> comments;
 
+    public Dwelling() {
+    }
+
+    
+    
     /**
      * 
      * @param id
@@ -79,7 +84,7 @@ public class DwellingBean implements Serializable {
      * @param rating
      * @param comments 
      */
-    public DwellingBean(SimpleLongProperty id, SimpleStringProperty address, SimpleBooleanProperty hasWiFi, SimpleDoubleProperty squareMeters, SimpleObjectProperty<Neighbourhood> neighbourhood, SimpleObjectProperty<Date> constructionDate, SimpleObjectProperty<Owner> host, SimpleFloatProperty rating, List<CommentBean> comments) {
+    public Dwelling(SimpleLongProperty id, SimpleStringProperty address, SimpleBooleanProperty hasWiFi, SimpleDoubleProperty squareMeters, SimpleObjectProperty<Neighbourhood> neighbourhood, SimpleObjectProperty<Date> constructionDate, SimpleObjectProperty<Owner> host, SimpleFloatProperty rating, List<Comment> comments) {
         this.id = id;
         this.address = address;
         this.hasWiFi = hasWiFi;
@@ -239,26 +244,26 @@ public class DwellingBean implements Serializable {
     }
 
     /**
-     * Returns a list of all the comments of the DwellingBean made by different
-     * guests
+     * Returns a list of all the comments of the Dwelling made by different
+ guests
      *
      * @return all the comments
      */
-    public List<CommentBean> getComments() {
+    public List<Comment> getComments() {
         return comments;
     }
 
     /**
-     * Sets a list of all the comments of the DwellingBean
+     * Sets a list of all the comments of the Dwelling
      *
      * @param comments the list to set
      */
-    public void setComments(List<CommentBean> comments) {
+    public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
 
     /**
-     * Integer representation for DwellingBean instance.
+     * Integer representation for Dwelling instance.
      *
      * @return a hash code value for this object.
      */
@@ -270,20 +275,20 @@ public class DwellingBean implements Serializable {
     }
 
     /**
-     * Compares two DwellingBean objects for equality. This method consider a
-     * DwellingBean equal to another DwellingBean if their id fields have the
-     * same value.
+     * Compares two Dwelling objects for equality. This method consider a
+ Dwelling equal to another Dwelling if their id fields have the
+ same value.
      *
-     * @param object The other DwellingBean object to compare to.
+     * @param object The other Dwelling object to compare to.
      * @return true if ids are equals.
      */
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DwellingBean)) {
+        if (!(object instanceof Dwelling)) {
             return false;
         }
-        DwellingBean other = (DwellingBean) object;
+        Dwelling other = (Dwelling) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -291,13 +296,15 @@ public class DwellingBean implements Serializable {
     }
 
     /**
-     * Obtains a string representation of the DwellingBean.
+     * Obtains a string representation of the Dwelling.
      *
-     * @return The String representing the DwellingBean.
+     * @return The String representing the Dwelling.
      */
     @Override
     public String toString() {
         return "Dwelling{" + "id=" + id + '}';
     }
+
+
 
 }
