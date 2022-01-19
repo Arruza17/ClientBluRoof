@@ -1,5 +1,6 @@
 package application;
 
+import factories.UserManagerFactory;
 import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,7 +13,7 @@ import view.controllers.SignInController;
  * @author BluRoof
  */
 public class Application extends javafx.application.Application {
-
+    
     private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
 
     /**
@@ -37,9 +38,10 @@ public class Application extends javafx.application.Application {
         Parent root = (Parent) fxmlLoader.load();
         SignInController controller = ((SignInController) fxmlLoader.getController());
         controller.setStage(primaryStage);
+        controller.setUm(UserManagerFactory.createUsersManager(UserManagerFactory.REST_WEB_CLIENT_TYPE));
         //Initialize stage
         LOGGER.info("Openning SignIn Window");
         controller.initStage(root);
-
+        
     }
 }

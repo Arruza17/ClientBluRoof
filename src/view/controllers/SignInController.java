@@ -1,9 +1,11 @@
 package view.controllers;
 
 import enumerations.UserPrivilege;
+import exceptions.BusinessLogicException;
 import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
 import exceptions.ServerDownException;
+import interfaces.UserManager;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -34,9 +36,11 @@ import model.User;
  * @author Yeray Sampedro, Jorge Crespo, Ander Arruza
  */
 public class SignInController {
-
+    
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
-
+    
+    private UserManager um;
+    
     @FXML
     private TextField tfUser;
     @FXML
@@ -106,7 +110,7 @@ public class SignInController {
             alert.showAndWait();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
         }
-
+        
     }
 
     /**
@@ -116,9 +120,27 @@ public class SignInController {
      */
     @FXML
     public void signIn(ActionEvent action) {
-        User user = new User();
-        // user.setPrivilege(UserPrivilege.ADMIN.name());
-        welcomeWindow(user);
+        try {
+            //User user = um.login(tfUser.getText(), tfPassword.getText());
+            User user = new User();
+            user.setPrivilege(tfUser.getText());
+            if (user != null) {
+                Parent root;
+                FXMLLoader loader = null;                
+                loader = new FXMLLoader(getClass().getResource("/view/fxml/Welcome.fxml"));
+                root = (Parent) loader.load();
+                Stage stageWelcome = new Stage();
+                WelcomeController controller = ((WelcomeController) loader.getController());
+                controller.setStage(stageWelcome);
+                controller.setUm(um);
+                controller.setUser(user);
+                this.stage.close();
+                LOGGER.info("Initializing Welcome window and closing SignIn window");
+                controller.initStage(root);             
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -161,33 +183,9 @@ public class SignInController {
         } else {
             LOGGER.info("SignIn Window is closed");
         }
-
+        
     }
-
-    /**
-     * This method is executed when the user gets Logged in
-     *
-     * @param user The user
-     */
-    private void welcomeWindow(User user) {
-       Parent root;
-        FXMLLoader loader = null;
-        try {
-            loader = new FXMLLoader(getClass().getResource("/view/fxml/Admins.fxml"));
-            root = (Parent) loader.load();
-            Stage stageWelcome = new Stage();
-            AdminController controller = ((AdminController) loader.getController());
-            controller.setStage(stageWelcome);
-            this.stage.close();
-            LOGGER.info("Initializing Welcome window and closing SignIn window");
-            controller.initStage(root);
-        } catch (Exception ex) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Error generating the window");
-            alert.setContentText(ex.getMessage());
-        }
-    }
-
+    
     @FXML
     private void retrievePassword(ActionEvent event) {
         //Create a textInputDialog to ask the user the login
@@ -196,19 +194,19 @@ public class SignInController {
         txi.setContentText("Type the username of the account you would like to reset the password from. In case it exists, you will receive an email with your new resetted password");
         txi.showAndWait();
         String login = txi.getEditor().getText();
-
         if (!login.isEmpty()) {
-            //Call business logic to reset the password
             try {
+                //Call business logic to reset the password
+                um.resetPassword(login);              
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Password reset");
-                alert.setContentText("Password resetted for user " + login);
+                alert.setContentText("The password was successfully resetted");
                 alert.showAndWait();
-            } catch (Exception e) {
+            } catch (BusinessLogicException e) {
                 //Exception catched if there's any issue with the business logic
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Error with the reset");
-                alert.setContentText("There was an error resetting the password");
+                alert.setContentText(e.getMessage());
                 alert.showAndWait();
                 LOGGER.log(Level.SEVERE, "SignInController --> retrievePassword():{0}", e.getLocalizedMessage());
             }
@@ -242,4 +240,22 @@ public class SignInController {
         this.stage = stage;
     }
 
+    /**
+     * Method that gets the Implementation of user manager
+     *
+     * @return um the user manager
+     */
+    public UserManager getUm() {
+        return um;
+    }
+
+    /**
+     * Method that sets the UserManager impoementation gotten with the factory
+     *
+     * @param um
+     */
+    public void setUm(UserManager um) {
+        this.um = um;
+    }
+    
 }

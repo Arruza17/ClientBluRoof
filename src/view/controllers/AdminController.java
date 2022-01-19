@@ -5,17 +5,13 @@
  */
 package view.controllers;
 
-import cipher.Cipher;
 import exceptions.BusinessLogicException;
 import interfaces.UserManager;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -75,10 +71,9 @@ public class AdminController {
      *
      * @param root
      */
-    public void initStage(Parent root) {
-        Scene scene = new Scene(root);
-        stage.setTitle("BluRoof Admin");
-
+    public void initStage() {
+        //Scene scene = new Scene(root);
+        
         colFullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         colLogin.setCellValueFactory(new PropertyValueFactory<>("login"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -89,8 +84,6 @@ public class AdminController {
         try {
             users = FXCollections.observableArrayList(userManager.findAllAdmins());
             tblAdmin.setItems(users);
-
-            System.out.println(userManager.login("yeraysampedro", "abcd*1234"));
         } catch (BusinessLogicException ex) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("Error");
@@ -112,8 +105,9 @@ public class AdminController {
         imgDel.setDisable(true);
         imgDel.setOpacity(0.25);
 
-        stage.setScene(scene);
-        stage.show();
+        
+        //stage.setScene(scene);      
+
     }
 
     public void setStage(Stage stage) {

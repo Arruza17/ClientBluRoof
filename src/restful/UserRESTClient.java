@@ -27,7 +27,7 @@ public class UserRESTClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:11094/ServerBluRoof/webresources";
+    private static final String BASE_URI = "http://localhost:8080/ServerBluRoof/webresources";
 
     public UserRESTClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -36,8 +36,9 @@ public class UserRESTClient {
 
     public <T> T resetPassword(GenericType<T> responseType, String user) throws ClientErrorException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("reset/{0}", new Object[]{user}));
-        return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(responseType);
+        resource = resource.path(java.text.MessageFormat.format("reset/{0}", new Object[]{user}));     
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+        
     }
 
     public String countREST() throws ClientErrorException {
@@ -85,7 +86,7 @@ public class UserRESTClient {
     public <T> T changePassword(GenericType<T> responseType, String user, String pass) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("update/{0}/password/{1}", new Object[]{user, pass}));
-        return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(responseType);
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
     public <T> T findAllAdmins(GenericType<T> responseType) throws ClientErrorException {
