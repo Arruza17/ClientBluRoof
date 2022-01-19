@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -17,31 +18,36 @@
    <top>
       <HBox prefHeight="63.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Services">
+            <Label prefHeight="21.0" prefWidth="70.0" text="Services">
                <HBox.margin>
                   <Insets left="15.0" top="30.0" />
                </HBox.margin>
             </Label>
-            <ChoiceBox fx:id="cbServices" prefHeight="31.0" prefWidth="226.0">
+            <ChoiceBox fx:id="cbServices" prefHeight="31.0" prefWidth="163.0">
                <HBox.margin>
-                  <Insets left="40.0" top="25.0" />
+                  <Insets left="15.0" top="25.0" />
                </HBox.margin>
             </ChoiceBox>
-            <Spinner fx:id="spinnerService" prefHeight="31.0" prefWidth="118.0">
+            <Spinner fx:id="spinnerService" prefHeight="31.0" prefWidth="81.0">
                <HBox.margin>
                   <Insets left="25.0" top="25.0" />
                </HBox.margin>
             </Spinner>
-            <Button fx:id="btnSearchService" mnemonicParsing="false" text="Search">
+            <TextField prefHeight="31.0" prefWidth="157.0">
                <HBox.margin>
                   <Insets left="25.0" top="25.0" />
+               </HBox.margin>
+            </TextField>
+            <Button fx:id="btnSearchService" mnemonicParsing="false" prefHeight="31.0" prefWidth="81.0" text="Search">
+               <HBox.margin>
+                  <Insets left="25.0" right="26.0" top="25.0" />
                </HBox.margin>
             </Button>
          </children>
       </HBox>
    </top>
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
             <HBox prefHeight="0.0" prefWidth="600.0" spacing="25.0">
                <children>
@@ -70,7 +76,7 @@
                   <Insets bottom="5.0" left="15.0" top="10.0" />
                </VBox.margin>
             </HBox>
-            <TableView fx:id="tbvService" prefHeight="306.0" prefWidth="581.0">
+            <TableView fx:id="tbvService" prefHeight="208.0" prefWidth="600.0">
               <columns>
                 <TableColumn prefWidth="75.0" text="ID" />
                 <TableColumn prefWidth="75.0" text="Address" />
@@ -78,6 +84,14 @@
                   <TableColumn prefWidth="73.0" text="Type" />
               </columns>
             </TableView>
+            <ImageView fitHeight="64.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../resources/img/fax.png" />
+               </image>
+               <VBox.margin>
+                  <Insets right="15.0" />
+               </VBox.margin>
+            </ImageView>
          </children>
       </VBox>
    </center>
