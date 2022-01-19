@@ -121,9 +121,7 @@ public class SignInController {
     @FXML
     public void signIn(ActionEvent action) {
         try {
-            //User user = um.login(tfUser.getText(), tfPassword.getText());
-            User user = new User();
-            user.setPrivilege(tfUser.getText());
+            User user = um.login(tfUser.getText(), tfPassword.getText());        
             if (user != null) {
                 Parent root;
                 FXMLLoader loader = null;                
@@ -139,6 +137,8 @@ public class SignInController {
                 controller.initStage(root);             
             }
         } catch (IOException ex) {
+            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BusinessLogicException ex) {
             Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
