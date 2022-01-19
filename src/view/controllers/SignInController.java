@@ -176,7 +176,7 @@ public class SignInController {
             loader = new FXMLLoader(getClass().getResource("/view/fxml/Admins.fxml"));
             root = (Parent) loader.load();
             Stage stageWelcome = new Stage();
-            AdminsCRUDController controller = ((AdminsCRUDController) loader.getController());
+            AdminController controller = ((AdminController) loader.getController());
             controller.setStage(stageWelcome);
             this.stage.close();
             LOGGER.info("Initializing Welcome window and closing SignIn window");

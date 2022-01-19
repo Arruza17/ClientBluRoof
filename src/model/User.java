@@ -1,6 +1,8 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
 import javafx.beans.property.LongProperty;
@@ -22,7 +24,7 @@ public class User implements Serializable {
      * Identification field for user.
      */
 
-    private LongProperty id;
+    private SimpleStringProperty id;
 
     private SimpleStringProperty login;
     /**
@@ -63,6 +65,34 @@ public class User implements Serializable {
 
     private List<LastSignIn> lastSignIns;
 
+    public User(SimpleStringProperty id, SimpleStringProperty login, SimpleStringProperty fullName, SimpleStringProperty password, SimpleStringProperty email, SimpleObjectProperty<Date> birthDate, SimpleStringProperty status, SimpleStringProperty privilege, SimpleObjectProperty<Date> lastPasswordChange, SimpleStringProperty phoneNumber, List<LastSignIn> lastSignIns) {
+        this.id = id;
+        this.login = login;
+        this.fullName = fullName;
+        this.password = password;
+        this.email = email;
+        this.birthDate = birthDate;
+        this.status = status;
+        this.privilege = privilege;
+        this.lastPasswordChange = lastPasswordChange;
+        this.phoneNumber = phoneNumber;
+        this.lastSignIns = lastSignIns;
+    }
+
+    public User() {
+         this.id = new SimpleStringProperty();
+        this.login =  new SimpleStringProperty();
+        this.fullName =  new SimpleStringProperty();
+        this.password =  new SimpleStringProperty();
+        this.email =  new SimpleStringProperty();
+        this.birthDate =  new SimpleObjectProperty();
+        this.status =  new SimpleStringProperty();
+        this.privilege =  new SimpleStringProperty();
+        this.lastPasswordChange =  new SimpleObjectProperty();
+        this.phoneNumber = new SimpleStringProperty();;
+        this.lastSignIns = new ArrayList<LastSignIn>();
+    }
+
     @XmlTransient
     public List<LastSignIn> getLastSignIns() {
         return lastSignIns;
@@ -78,7 +108,7 @@ public class User implements Serializable {
      * @return id the identification number
      */
     public Long getId() {
-        return this.id.get();
+        return Long.parseLong(this.id.get());
     }
 
     /**
@@ -87,7 +117,7 @@ public class User implements Serializable {
      * @param id the identification number to be set
      */
     public void setId(Long id) {
-        this.id.set(id);
+        this.id.set(String.valueOf(id));
     }
 
     /**
@@ -114,7 +144,7 @@ public class User implements Serializable {
      * @return fullName the user's full name
      */
     public String getFullName() {
-       return this.fullName.get();
+        return this.fullName.get();
     }
 
     /**
@@ -160,7 +190,7 @@ public class User implements Serializable {
      * @param email the email to set
      */
     public void setEmail(String email) {
-        this.email .set(email);
+        this.email.set(email);
     }
 
     /**
