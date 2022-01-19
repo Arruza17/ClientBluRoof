@@ -29,7 +29,7 @@ public class DwellingRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:22083/ServerBluRoof/webresources";
+    private static final String BASE_URI = "http://localhost:37302/ServerBluRoof/webresources";
     private static final Logger LOGGER = Logger.getLogger("DwellingRestfulClient");
 
     /**
@@ -52,7 +52,8 @@ public class DwellingRestfulClient {
         return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(String.class);
     }
 
-    public <T> T findByMinConstructionDate(Class<T> responseType, String date) throws ClientErrorException {
+    public <T> T findByMinConstructionDate(GenericType<T> responseType, String date) throws ClientErrorException {
+        LOGGER.info("GETTING ALL DWELLINGS DATA BY MIN CONSTRUCTION DATE");
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("minConstructionDate/{0}", new Object[]{date}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -62,7 +63,8 @@ public class DwellingRestfulClient {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findByMinRating(Class<T> responseType, String rate) throws ClientErrorException {
+    public <T> T findByMinRating(GenericType<T> responseType, String rate) throws ClientErrorException {
+        LOGGER.info("GETTING ALL DWELLINGS DATA BY MIN RATING");
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("minRate/{0}", new Object[]{rate}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);

@@ -19,13 +19,12 @@
    <center>
       <TableView fx:id="tableDwelling" BorderPane.alignment="CENTER">
          <columns>
-            <TableColumn fx:id="colType" prefWidth="96.0" text="Type" />
-            <TableColumn fx:id="colAddress" prefWidth="105.0" text="Address" />
-            <TableColumn fx:id="colWiFi" minWidth="1.0" prefWidth="75.0" text="WiFi" />
-            <TableColumn fx:id="colSquareMeters" prefWidth="88.0" text="m²" />
-            <TableColumn fx:id="colConstructionDate" prefWidth="114.0" text="Construction Date" />
-            <TableColumn fx:id="colRating" prefWidth="114.0" text="Rating" />
-            <TableColumn fx:id="colMoreInfo" prefWidth="114.0" text="More info" />
+            <TableColumn fx:id="colAddress" maxWidth="500.0" minWidth="20.0" prefWidth="200.0" styleClass="table-column-right" text="Address" />
+            <TableColumn fx:id="colWiFi" maxWidth="100.0" minWidth="1.0" prefWidth="100.0" text="WiFi" />
+            <TableColumn fx:id="colSquareMeters" prefWidth="83.0" text="m²" />
+            <TableColumn fx:id="colConstructionDate" prefWidth="150.0" text="Construction Date" />
+            <TableColumn fx:id="colRating" prefWidth="88.0" text="Rating" />
+            <TableColumn fx:id="colMoreInfo" prefWidth="132.0" text="More info" />
          </columns></TableView>
    </center>
    <top>
@@ -81,7 +80,7 @@
                            <Insets bottom="10.0" top="10.0" />
                         </padding>
                      </Separator>
-      				<Spinner fx:id="spRating" accessibleText="Number" editable="true" min="1" max="5" />
+      				<Spinner fx:id="spRating" accessibleText="Number" editable="true" max="5" min="1" />
       				<Separator orientation="VERTICAL" HBox.hgrow="ALWAYS">
                         <padding>
                            <Insets bottom="10.0" top="10.0" />

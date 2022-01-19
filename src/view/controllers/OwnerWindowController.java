@@ -3,12 +3,16 @@ package view.controllers;
 import model.DwellingTableBean;
 import exceptions.BussinessLogicException;
 import interfaces.DwellingManager;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -46,7 +50,7 @@ public class OwnerWindowController {
     @FXML
     private DatePicker dpConstructionDate;
     @FXML
-    private Spinner<Float> spRating;
+    private Spinner<Integer> spRating;
     @FXML
     private ImageView imgSearch;
     @FXML
@@ -61,8 +65,6 @@ public class OwnerWindowController {
     private ImageView imgPrint;
     @FXML
     private TableView<DwellingTableBean> tableDwelling;
-    @FXML
-    private TableColumn<DwellingTableBean, String> colType;
     @FXML
     private TableColumn<DwellingTableBean, String> colAddress;
     @FXML
@@ -84,6 +86,12 @@ public class OwnerWindowController {
 
     private Stage stage;
 
+    private final String SELECT_ALL_DWELLINGS = "Select all my dwellings";
+
+    private final String SELECT_BY_MIN_CONSTRUCTION_DATE = "Select from min construction date";
+
+    private final String SELECT_BY_MIN_RATING = "Select from min rating";
+
     /**
      * This method is used to initialize the stage
      *
@@ -94,19 +102,22 @@ public class OwnerWindowController {
         LOGGER.info("Initializing Owner/Guest-Window stage");
         //Creation of a new Scene
         Scene scene = new Scene(root);
-        /*
+
         //Save the route of the .css file
         String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
         //Sets the .css to the Scene
-        scene.getStylesheets().add(css);
-        stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
-         */
+        //scene.getStylesheets().add(css);
+        //stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
+
         //Sets the scene to the stage
         stage.setScene(scene);
         //Sets the Title of the Window
         stage.setTitle("DwellingWindow");
         //Sets the window not resizable
         stage.setResizable(false);
+        //Sets the column RATING & SQUARE METERS ro center-right
+        colRating.setStyle("-fx-alignment: CENTER-RIGHT;");
+        colSquareMeters.setStyle("-fx-alignment: CENTER-RIGHT;");
         //Sets the datePicker and spinner to disabled
         dpConstructionDate.setDisable(true);
         spRating.setDisable(true);
@@ -119,18 +130,20 @@ public class OwnerWindowController {
         imgDeleteDwelling.setDisable(true);
         imgDeleteDwelling.setOpacity(0.25);
         //Add the combobox values
-        ObservableList<String> optionsForCombo
-                = FXCollections.observableArrayList(
-                        "Select all my dwellings",
-                        "Select from min construction date",
-                        "Select from min rating"
-                );
+        ObservableList<String> optionsForCombo;
+        optionsForCombo = FXCollections.observableArrayList(
+                SELECT_ALL_DWELLINGS,
+                SELECT_BY_MIN_CONSTRUCTION_DATE,
+                SELECT_BY_MIN_RATING
+        );
         cbDwellings.setItems(optionsForCombo);
+        //Add listener to the rows selected
+        tableDwelling.getSelectionModel().selectedItemProperty()
+                .addListener(this::handleTableSelectionChanged);
 
         //if logged as an owner
         lblTitle.setText("My Dwellings");
-        colType.setCellValueFactory(
-                new PropertyValueFactory<>("type"));
+
         colAddress.setCellValueFactory(
                 new PropertyValueFactory<>("address"));
         colWiFi.setCellValueFactory(
@@ -143,14 +156,16 @@ public class OwnerWindowController {
                 new PropertyValueFactory<>("rating"));
         colMoreInfo.setCellValueFactory(
                 new PropertyValueFactory<>("moreInfo"));
-
+        //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
+        cbDwellings.getSelectionModel().selectFirst();
+        colAddress.setMaxWidth(100);
         List<DwellingTableBean> dwellings = new ArrayList<>();
         try {
             List<Dwelling> allDwellings = dwellingManager.findAll();
             if (allDwellings.size() > 0) {
                 for (Dwelling d : allDwellings) {
                     //String type = (d instanceof Flat) ? "Flat" : "Room";
-                    dwellings.add(new DwellingTableBean(d, "TYPE"));
+                    dwellings.add(new DwellingTableBean(d));
                 }
                 ObservableList<DwellingTableBean> dwellingsTableBean = FXCollections.observableArrayList(dwellings);
                 tableDwelling.setItems(dwellingsTableBean);
@@ -170,26 +185,107 @@ public class OwnerWindowController {
 
         //Shows the stage
         stage.show();
+
         LOGGER.info("Owner/Guest-Window Open");
     }
 
     @FXML
     private void handleChangeComponents(ActionEvent event) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("AYUDA");
-        alert.setHeaderText("Cambio de elemento");
-        alert.setContentText("A");
-        alert.showAndWait();
+        switch (cbDwellings.getValue()) {
+            case SELECT_ALL_DWELLINGS:
+                dpConstructionDate.setDisable(true);
+                spRating.setDisable(true);
+                break;
+            case SELECT_BY_MIN_CONSTRUCTION_DATE:
+                dpConstructionDate.setDisable(false);
+                spRating.setDisable(true);
+                break;
+            case SELECT_BY_MIN_RATING:
+                dpConstructionDate.setDisable(true);
+                spRating.setDisable(false);
+                break;
+            default:
+                break;
+        }
+
     }
 
     @FXML
     private void handleFilterSearch(MouseEvent event) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("AYUDA");
-        alert.setHeaderText("Boton de search clickado");
-        alert.setContentText("A");
-        alert.showAndWait();
+        try {
+            switch (cbDwellings.getValue()) {
+                case SELECT_ALL_DWELLINGS:
 
+                    break;
+                case SELECT_BY_MIN_CONSTRUCTION_DATE:
+                    if (dpConstructionDate.getValue() != null) {
+                        //default time zone
+                        ZoneId defaultZoneId = ZoneId.systemDefault();
+                        //local date + atStartOfDay() + default time zone + toInstant() = Date
+                        Date date = Date.from(dpConstructionDate.getValue().atStartOfDay(defaultZoneId).toInstant());
+                        dwellingManager.findByDate(date);
+                    } else {
+                        //THROW NEW EXCEPTION OF FIELDS EMPTY
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Empty fields");
+                        alert.setHeaderText("The construction date is null");
+                        alert.setContentText("Try again");
+                        alert.showAndWait();
+                    }
+                    break;
+                case SELECT_BY_MIN_RATING:
+                    System.out.println(spRating.getValue());
+                    if (checkSpinnervalue()) {
+                        List <Dwelling> ds = dwellingManager.findByRating(spRating.getValue());
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+
+        } catch (BussinessLogicException ex) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error while searching");
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
+        }
+
+    }
+
+    private boolean checkSpinnervalue() {
+        boolean everyThingOk = true;
+        if (spRating.getValue() != null) {
+            if (spRating.getValue() instanceof Integer) {
+                if (spRating.getValue() > 1 || spRating.getValue() < 5) {
+
+                } else {
+                    everyThingOk = false;
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("SPINNER VALUE CANT BE <1 and >5");
+                    alert.setContentText("ERROR");
+                    alert.showAndWait();
+                }
+            } else {
+                everyThingOk = false;
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("SPINNER VALUE IS NOT A NUMBER");
+                alert.setContentText("ERROR");
+                alert.showAndWait();
+            }
+
+        } else {
+            everyThingOk = false;
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("SPINNER VALUE IS NULL");
+            alert.setContentText("ERROR");
+            alert.showAndWait();
+        }
+        return everyThingOk;
     }
 
     @FXML
@@ -215,6 +311,25 @@ public class OwnerWindowController {
         alert.setHeaderText("Boton de print");
         alert.setContentText("A");
         alert.showAndWait();
+    }
+
+    /**
+     * Method to control if there's a item selected in the table
+     *
+     * @param observableValue
+     * @param oldValue
+     * @param newValue
+     */
+    private void handleTableSelectionChanged(ObservableValue observableValue, Object oldValue, Object newValue) {
+
+        if (newValue != null) {
+            imgDeleteDwelling.setDisable(true);
+            imgDeleteDwelling.setOpacity(1);
+
+        } else {
+            imgDeleteDwelling.setDisable(false);
+            imgDeleteDwelling.setOpacity(0.25);
+        }
     }
 
     public void setStage(Stage primaryStage) {

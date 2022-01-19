@@ -23,7 +23,6 @@ import javafx.scene.control.Hyperlink;
  */
 public class DwellingTableBean {
 
-    private SimpleStringProperty type;
 
     private SimpleStringProperty address;
 
@@ -37,8 +36,7 @@ public class DwellingTableBean {
 
     private Hyperlink moreInfo;
 
-    public DwellingTableBean(Dwelling d, String type) {
-        this.type = new SimpleStringProperty(type);
+    public DwellingTableBean(Dwelling d) {
         this.address = new SimpleStringProperty(d.getAddress());
         this.wifi = new SimpleBooleanProperty(d.getHasWiFi());
         this.squareMeters = new SimpleDoubleProperty(d.getSquareMeters());
@@ -61,13 +59,6 @@ public class DwellingTableBean {
       
     }
 
-    public String getType() {
-        return type.get();
-    }
-
-    public void setType(String type) {
-        this.type.set(type);
-    }
 
     public String getAddress() {
         return address.get();
