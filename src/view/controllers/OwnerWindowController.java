@@ -3,9 +3,12 @@ package view.controllers;
 import model.DwellingTableBean;
 import exceptions.BussinessLogicException;
 import interfaces.DwellingManager;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,6 +28,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Dwelling;
+import model.Flat;
 import model.User;
 
 /**
@@ -38,7 +42,7 @@ public class OwnerWindowController {
     @FXML
     private Label lblTitle;
     @FXML
-    private ComboBox<?> cbDwellings;
+    private ComboBox<String> cbDwellings;
     @FXML
     private DatePicker dpConstructionDate;
     @FXML
@@ -56,21 +60,21 @@ public class OwnerWindowController {
     @FXML
     private ImageView imgPrint;
     @FXML
-    private TableView<Dwelling> tableDwelling;
+    private TableView<DwellingTableBean> tableDwelling;
     @FXML
-    private TableColumn<Dwelling, String> colType;
+    private TableColumn<DwellingTableBean, String> colType;
     @FXML
-    private TableColumn<Dwelling, String> colAddress;
+    private TableColumn<DwellingTableBean, String> colAddress;
     @FXML
-    private TableColumn<Dwelling, Boolean> colWiFi;
+    private TableColumn<DwellingTableBean, Boolean> colWiFi;
     @FXML
-    private TableColumn<Dwelling, Double> colSquareMeters;
+    private TableColumn<DwellingTableBean, Double> colSquareMeters;
     @FXML
-    private TableColumn<Dwelling, Date> colConstructionDate;
+    private TableColumn<DwellingTableBean, Date> colConstructionDate;
     @FXML
-    private TableColumn<Dwelling, String> colRating;
+    private TableColumn<DwellingTableBean, String> colRating;
     @FXML
-    private TableColumn<Dwelling, String> colMoreInfo;
+    private TableColumn<DwellingTableBean, String> colMoreInfo;
 
     private static final Logger LOGGER = Logger.getLogger(DwellingController.class.getSimpleName());
 
@@ -103,33 +107,59 @@ public class OwnerWindowController {
         stage.setTitle("DwellingWindow");
         //Sets the window not resizable
         stage.setResizable(false);
+        //Sets the datePicker and spinner to disabled
+        dpConstructionDate.setDisable(true);
+        spRating.setDisable(true);
+        //Sets the confirm & cancel imgs to not clickable
+        imgConfirmComment.setDisable(true);
+        imgConfirmComment.setOpacity(0.25);
+        imgCancelComment.setDisable(true);
+        imgCancelComment.setOpacity(0.25);
+        //Sets the the delete imgs to not clickable
+        imgDeleteDwelling.setDisable(true);
+        imgDeleteDwelling.setOpacity(0.25);
         //Add the combobox values
         ObservableList<String> optionsForCombo
                 = FXCollections.observableArrayList(
-                        "Select ",
-                        "2",
-                        "3"
+                        "Select all my dwellings",
+                        "Select from min construction date",
+                        "Select from min rating"
                 );
-        cbDwellings.getItems();
+        cbDwellings.setItems(optionsForCombo);
 
         //if logged as an owner
         lblTitle.setText("My Dwellings");
+        colType.setCellValueFactory(
+                new PropertyValueFactory<>("type"));
         colAddress.setCellValueFactory(
                 new PropertyValueFactory<>("address"));
+        colWiFi.setCellValueFactory(
+                new PropertyValueFactory<>("wifi"));
         colSquareMeters.setCellValueFactory(
                 new PropertyValueFactory<>("squareMeters"));
-        colWiFi.setCellValueFactory(
-                new PropertyValueFactory<>("hasWiFi"));
         colConstructionDate.setCellValueFactory(
                 new PropertyValueFactory<>("constructionDate"));
         colRating.setCellValueFactory(
                 new PropertyValueFactory<>("rating"));
+        colMoreInfo.setCellValueFactory(
+                new PropertyValueFactory<>("moreInfo"));
 
-        ObservableList<Dwelling> dwellings = null;
-        List <DwellingTableBean> dwellingTableBean = null;
+        List<DwellingTableBean> dwellings = new ArrayList<>();
         try {
-            dwellings = FXCollections.observableArrayList(dwellingManager.findAll());
-            
+            List<Dwelling> allDwellings = dwellingManager.findAll();
+            if (allDwellings.size() > 0) {
+                for (Dwelling d : allDwellings) {
+                    //String type = (d instanceof Flat) ? "Flat" : "Room";
+                    dwellings.add(new DwellingTableBean(d, "TYPE"));
+                }
+                ObservableList<DwellingTableBean> dwellingsTableBean = FXCollections.observableArrayList(dwellings);
+                tableDwelling.setItems(dwellingsTableBean);
+            } else {
+                //The imgPrint will be disabled if there are not dwellings
+                imgPrint.setDisable(true);
+                imgPrint.setOpacity(0.25);
+            }
+
         } catch (BussinessLogicException e) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("AYUDA");
@@ -137,8 +167,6 @@ public class OwnerWindowController {
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
-        
-        tableDwelling.setItems(dwellings);
 
         //Shows the stage
         stage.show();
@@ -147,10 +175,21 @@ public class OwnerWindowController {
 
     @FXML
     private void handleChangeComponents(ActionEvent event) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("AYUDA");
+        alert.setHeaderText("Cambio de elemento");
+        alert.setContentText("A");
+        alert.showAndWait();
     }
 
     @FXML
     private void handleFilterSearch(MouseEvent event) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("AYUDA");
+        alert.setHeaderText("Boton de search clickado");
+        alert.setContentText("A");
+        alert.showAndWait();
+
     }
 
     @FXML
@@ -171,6 +210,11 @@ public class OwnerWindowController {
 
     @FXML
     private void handlePrintDwellings(MouseEvent event) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("AYUDA");
+        alert.setHeaderText("Boton de print");
+        alert.setContentText("A");
+        alert.showAndWait();
     }
 
     public void setStage(Stage primaryStage) {
@@ -180,4 +224,9 @@ public class OwnerWindowController {
     public void setDwellingManager(DwellingManager dwellingManager) {
         this.dwellingManager = dwellingManager;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }
