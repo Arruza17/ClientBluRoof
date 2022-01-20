@@ -8,6 +8,8 @@ package restful;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
+import org.glassfish.hk2.utilities.reflection.Logger;
 
 /**
  * Jersey REST client generated for REST resource:FacilityFacadeREST
@@ -23,10 +25,10 @@ import javax.ws.rs.client.WebTarget;
  * @author Ander Arruza
  */
 public class FacilityRestfulClient {
-
+    private Logger log=Logger.getLogger();
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:22083/ServerBluRoof/webresources";
+    private static final String BASE_URI = "http://localhost:16245/ServerBluRoof/webresources";
 
     public FacilityRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -65,7 +67,7 @@ public class FacilityRestfulClient {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findAll(Class<T> responseType) throws ClientErrorException {
+    public <T> T findAll(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }

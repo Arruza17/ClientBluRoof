@@ -1,10 +1,13 @@
 package application;
 
+import factories.FacilityManagerFactory;
 import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import model.FacilityManagerImplementation;
 import view.controllers.SignInController;
+import view.fxml.FacilitiesController;
 
 /**
  * Entry point for the java application
@@ -33,10 +36,11 @@ public class Application extends javafx.application.Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/SignIn.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/Facilities.fxml"));
         Parent root = (Parent) fxmlLoader.load();
-        SignInController controller = ((SignInController) fxmlLoader.getController());
+        FacilitiesController controller = ((FacilitiesController) fxmlLoader.getController());
         controller.setStage(primaryStage);
+        controller.setFacMan(FacilityManagerFactory.createFacilityManager(FacilityManagerFactory.REST_WEB_CLIENT_TYPE));
         //Initialize stage
         LOGGER.info("Openning SignIn Window");
         controller.initStage(root);

@@ -3,20 +3,6 @@ package model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import static javax.persistence.CascadeType.ALL;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -26,40 +12,14 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author Adrián
  */
-@NamedQueries({
-    @NamedQuery(name = "findFacilityByAdqDate", query = "SELECT f FROM Facility f WHERE f.adquisitionDate=:date")
-    ,
-    @NamedQuery(name = "findFacilityByType", query = "SELECT f FROM Facility f WHERE f.type=:facilityType"),})
 
-@Entity
-@Table(schema = "bluroof")
 @XmlRootElement
 public class Facility implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    /**
-     * Identification field for facility.
-     */
     private Long id;
-    /**
-     * Enumeration that contains diferent types of facilities.
-     */
-    @Enumerated(EnumType.STRING)
     private FacilityType type;
-
-    /**
-     * Adquisition date of the facility.
-     */
-    @Temporal(TemporalType.DATE)
     private Date adquisitionDate;
-
-    /**
-     *
-     * @return the id of the facility.
-     */
-    @OneToMany(cascade = ALL, mappedBy = "facility", fetch = FetchType.EAGER)
     private List<FlatFacility> flatFacilities;
 
     @XmlTransient

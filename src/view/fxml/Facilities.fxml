@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -15,14 +16,18 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="612.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.FacilitiesController">
    <top>
       <HBox prefHeight="58.0" prefWidth="612.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox prefHeight="58.0" prefWidth="59.0">
+            <VBox prefHeight="58.0" prefWidth="90.0">
                <children>
                   <Label text="Filter" />
-                  <ComboBox fx:id="cb_Facilities"/>
+                  <ComboBox fx:id="cb_Facilities" prefHeight="31.0" prefWidth="89.0">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></ComboBox>
                </children>
             </VBox>
             <Separator orientation="VERTICAL" prefHeight="200.0" HBox.hgrow="ALWAYS" />
@@ -30,21 +35,33 @@
                <HBox.margin>
                   <Insets top="25.0" />
                </HBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </DatePicker>
             <TextField fx:id="tf_Facilities">
                <HBox.margin>
                   <Insets left="5.0" top="25.0" />
                </HBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </TextField>
             <Spinner fx:id="sp_Facilities" prefHeight="10.0" prefWidth="57.0">
                <HBox.margin>
                   <Insets left="10.0" top="25.0" />
                </HBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Spinner>
             <Button id="S_Flat" fx:id="srch_Btn" mnemonicParsing="false" text="Search">
                <HBox.margin>
                   <Insets left="30.0" top="20.0" />
                </HBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
          </children>
       </HBox>
@@ -69,6 +86,9 @@
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
             <ImageView fx:id="iv_minus" fitHeight="29.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -77,6 +97,9 @@
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
             <ImageView fx:id="iv_check" fitHeight="29.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -85,11 +108,17 @@
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
             <ImageView fx:id="iv_cancel" fitHeight="29.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../resources/img/cancel.png" />
                </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
             <ImageView fx:id="iv_print" fitHeight="34.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
                <HBox.margin>
@@ -98,6 +127,9 @@
                <image>
                   <Image url="@../resources/img/fax.png" />
                </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
          </children>
       </HBox>
