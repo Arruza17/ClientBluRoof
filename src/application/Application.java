@@ -1,9 +1,11 @@
 package application;
 
+import factories.ServiceManagerFactory;
 import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import view.controllers.ServicesController;
 import view.controllers.SignInController;
 
 /**
@@ -33,10 +35,11 @@ public class Application extends javafx.application.Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/SignIn.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/Services.fxml"));
         Parent root = (Parent) fxmlLoader.load();
-        SignInController controller = ((SignInController) fxmlLoader.getController());
+        ServicesController controller = ((ServicesController) fxmlLoader.getController());
         controller.setStage(primaryStage);
+        controller.setServiceManager(ServiceManagerFactory.createServiceManager(ServiceManagerFactory.REST_WEB_CLIENT_TYPE));
         //Initialize stage
         LOGGER.info("Openning SignIn Window");
         controller.initStage(root);

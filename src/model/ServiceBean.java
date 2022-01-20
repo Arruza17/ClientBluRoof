@@ -16,37 +16,103 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class ServiceBean {
 
-    private final SimpleIntegerProperty id;
-    private final SimpleStringProperty type;
-    private final SimpleStringProperty address;
-    private final SimpleStringProperty name;
-    private final SimpleObjectProperty<Neighbourhood> neighbourhood;
+    private  SimpleLongProperty id;
+    private  SimpleStringProperty type;
+    private  SimpleStringProperty address;
+    private  SimpleStringProperty name;
+    private  SimpleObjectProperty<Neighbourhood> neighbourhood;
 
-    public ServiceBean(Integer id, String type, String address, String name, Neighbourhood neighbourhood) {
-        this.id = new SimpleIntegerProperty(id);
-        this.type = new SimpleStringProperty(type);
-        this.address = new SimpleStringProperty(address);
-        this.name = new SimpleStringProperty(name);
-        this.neighbourhood = new SimpleObjectProperty<Neighbourhood>(neighbourhood);
+    
+
+    public ServiceBean(Service s) {
+         this.id = new SimpleLongProperty(s.getId());
+        this.type = new SimpleStringProperty(s.getType());
+        this.address = new SimpleStringProperty(s.getAddress());
+        this.name = new SimpleStringProperty(s.getName());
+        this.neighbourhood = new SimpleObjectProperty<Neighbourhood>(s.getNeighborhood());
     }
 
-    public SimpleIntegerProperty getId() {
-        return id;
+   
+    /**
+     *
+     * @return id of the service.
+     */
+    public Long getId() {
+        return this.id.get();
     }
 
-    public SimpleStringProperty getType() {
-        return type;
+    /**
+     *
+     * @param id service id.
+     */
+    public void setId(Long id) {
+        this.id.set(id);
     }
 
-    public SimpleStringProperty getAddress() {
-        return address;
+    /**
+     *
+     * @return type of service.
+     */
+    public String getType() {
+        return this.type.get();
     }
 
-    public SimpleStringProperty getName() {
-        return name;
+    /**
+     *
+     * @param type service type.
+     */
+    public void setType(String type) {
+        this.type.set(type);
     }
 
-    public SimpleObjectProperty<Neighbourhood> getNeighbourhood() {
-        return neighbourhood;
+    /**
+     *
+     * @return address of the service.
+     */
+    public String getAddress() {
+        return this.type.get();
     }
+
+    /**
+     *
+     * @param address service address.
+     */
+    public void setAddress(String address) {
+        this.address.set(address);
+    }
+
+    /**
+     *
+     * @return name of the service.
+     */
+    public String getName() {
+        return this.name.get();
+    }
+
+    /**
+     *
+     * @param name service name.
+     */
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    /**
+     *
+     * @return the neighborhood of the service.
+     */
+    public Neighbourhood getNeighborhood() {
+        return this.neighbourhood.get();
+    }
+
+    /**
+     *
+     * @param neighborhood service neighborhood.
+     */
+    public void setNeighborhood(Neighbourhood neighborhood) {
+        this.neighbourhood.set(neighborhood);
+    }
+
+    
+   
 }

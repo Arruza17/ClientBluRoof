@@ -1,54 +1,53 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package model;
 
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlRootElement;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * Entity representing Services. Contains personal data, identification data and
- * relational data for accessing neighborhood data. data.
  *
- * @author Adrián
+ * @author 2dam
  */
-
-
-
 public class Service implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    /**
-     *  * Identification field for service
-     */
-   
-    private Long id;
-    /**
-     * enumeration that contains different types of services.
-     */
-   
-    private ServiceType type;
-    /**
-     * Service address.
-     */
- 
-    private String address;
-    /**
-     * Service name.
-     */
-   
-    private String name;
-    /**
-     * Service neighborhood.
-     */
+    private SimpleLongProperty id;
+    private SimpleStringProperty type;
+    private SimpleStringProperty address;
+    private SimpleStringProperty name;
+    private SimpleObjectProperty<Neighbourhood> neighbourhood;
 
-    
-    private Neighbourhood neighbourhood;
+    public Service() {
+
+        this.id = new SimpleLongProperty();
+        this.type = new SimpleStringProperty();
+        this.address = new SimpleStringProperty();
+        this.name = new SimpleStringProperty();
+        this.neighbourhood = new SimpleObjectProperty<Neighbourhood>();
+    }
+
+    public Service(SimpleLongProperty id, SimpleStringProperty type, SimpleStringProperty address, SimpleStringProperty name, SimpleObjectProperty neighbourhood) {
+        this.id = id;
+        this.type = type;
+        this.address = address;
+        this.name = name;
+        this.neighbourhood = neighbourhood;
+
+    }
 
     /**
      *
      * @return id of the service.
      */
     public Long getId() {
-        return id;
+        return this.id.get();
     }
 
     /**
@@ -56,23 +55,23 @@ public class Service implements Serializable {
      * @param id service id.
      */
     public void setId(Long id) {
-        this.id = id;
+        this.id.set(id);
     }
 
     /**
      *
      * @return type of service.
      */
-    public ServiceType getType() {
-        return type;
+    public String getType() {
+        return this.type.get();
     }
 
     /**
      *
      * @param type service type.
      */
-    public void setType(ServiceType type) {
-        this.type = type;
+    public void setType(String type) {
+        this.type.set(type);
     }
 
     /**
@@ -80,7 +79,7 @@ public class Service implements Serializable {
      * @return address of the service.
      */
     public String getAddress() {
-        return address;
+        return this.type.get();
     }
 
     /**
@@ -88,7 +87,7 @@ public class Service implements Serializable {
      * @param address service address.
      */
     public void setAddress(String address) {
-        this.address = address;
+        this.address.set(address);
     }
 
     /**
@@ -96,7 +95,7 @@ public class Service implements Serializable {
      * @return name of the service.
      */
     public String getName() {
-        return name;
+        return this.name.get();
     }
 
     /**
@@ -104,16 +103,15 @@ public class Service implements Serializable {
      * @param name service name.
      */
     public void setName(String name) {
-        this.name = name;
+        this.name.set(name);
     }
 
     /**
      *
      * @return the neighborhood of the service.
      */
-    @XmlTransient
     public Neighbourhood getNeighborhood() {
-        return neighbourhood;
+        return this.neighbourhood.get();
     }
 
     /**
@@ -121,7 +119,7 @@ public class Service implements Serializable {
      * @param neighborhood service neighborhood.
      */
     public void setNeighborhood(Neighbourhood neighborhood) {
-        this.neighbourhood = neighborhood;
+        this.neighbourhood.set(neighborhood);
     }
 
     /**

@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package exceptions;
 
 /**
  *
  * @author 2dam
  */
-class Neighbourhood {
-    
+public class BussinessLogicException extends Exception{
+      public BussinessLogicException(String msg) {
+        super(msg);
+    }
 }
