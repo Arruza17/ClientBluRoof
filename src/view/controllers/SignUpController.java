@@ -1,5 +1,6 @@
 package view.controllers;
 
+import enumerations.ActualState;
 import enumerations.UserPrivilege;
 import enumerations.UserStatus;
 import exceptions.EmailFormatException;
@@ -9,21 +10,41 @@ import exceptions.LoginFoundException;
 import exceptions.MaxCharactersException;
 import exceptions.PasswordFormatException;
 import exceptions.PassNotEqualException;
+import factories.UserChildFactory;
+import interfaces.UserChild;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import model.Guest;
+import model.Owner;
 import model.User;
 
 /**
@@ -61,6 +82,14 @@ public class SignUpController {
     private TextField tfFullName;
     @FXML
     private PasswordField rptPassword;
+    @FXML
+    private TextField tfPhoneNo;
+    @FXML
+    private DatePicker dpBdate;
+    @FXML
+    private ToggleGroup userType;
+    @FXML
+    private HBox hbChange;
 
     /**
      * This method is used to initialize the stage
@@ -86,6 +115,28 @@ public class SignUpController {
         stage.setTitle("SignUp");
         //Sets the window not resizable
         stage.setResizable(false);
+        userType.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+                RadioButton selectedRadioButton = (RadioButton) newValue;
+                hbChange.getChildren().clear();
+                VBox vbox;
+                Label label;
+                if (selectedRadioButton.getText().equalsIgnoreCase("Owner")) {
+                    label = new Label("Are you going to reside in the house?");
+                    CheckBox cb = new CheckBox();
+                    vbox = new VBox(label, cb);
+                } else {
+                    label = new Label("What is your actual situation? ");
+                    ObservableList<ActualState> list = FXCollections.observableArrayList(Arrays.asList(ActualState.values()));
+                    ComboBox cb = new ComboBox(list);
+                    cb.getSelectionModel().selectFirst();
+                    vbox = new VBox(label, cb);
+
+                }
+                hbChange.getChildren().add(vbox);
+            }
+        });
 
         stage.show();
         LOGGER.info("SignUp Open Window");
@@ -112,17 +163,22 @@ public class SignUpController {
                 || tfFullName.getText().trim().isEmpty()
                 || passField.getText().trim().isEmpty()
                 || rptPassword.getText().trim().isEmpty()
-                || tfEmail.getText().trim().isEmpty()) {
+                || tfEmail.getText().trim().isEmpty()
+                || tfPhoneNo.getText().trim().isEmpty()
+                || dpBdate.getValue().equals(null)
+                || userType.getSelectedToggle().equals(null)) {
             //throw validation Error
             LOGGER.warning("Some fields are empty");
             throw new FieldsEmptyException();
         }
+
         //Checks if the fields have more than 255 characters
         if (tfUser.getText().trim().length() > 255
                 || tfFullName.getText().trim().length() > 255
                 || passField.getText().trim().length() > 255
                 || rptPassword.getText().trim().length() > 255
-                || tfEmail.getText().trim().length() > 255) {
+                || tfEmail.getText().trim().length() > 255
+                || tfPhoneNo.getText().trim().length() > 255) {
             //throw validation Error
             LOGGER.warning("Some field/s are more than >255 characters");
             throw new MaxCharactersException();
@@ -134,12 +190,19 @@ public class SignUpController {
             throw new PassNotEqualException();
 
         }
+        //Checks if the password field has an space within
+        if (passField.getText().trim().contains(" ")) {
+            //throw validation Error
+            LOGGER.warning("Password contains an space");
+            throw new PasswordFormatException();
+        }
+
         //Checks if the password fields are less than 6 characters
         if (passField.getText().trim().length() < 6
                 || rptPassword.getText().trim().length() < 6) {
             //throw validation Error
-            LOGGER.warning("The password have <6 characters");
-            throw new PasswordFormatException();
+            LOGGER.warning("The password has -6 characters");
+            throw new PasswordFormatException(rptPassword.getText().trim().length());
         }
         //Checks if the fullName contains at least one space
         if (!tfFullName.getText().trim().contains(" ")) {
@@ -174,23 +237,51 @@ public class SignUpController {
                 alert.setTitle("Sign Up CONFIRMATION");
                 alert.setHeaderText("Are you sure you want to add?");
                 //Create's an user with the params
-                newUser = createUser();
-                alert.setContentText("UserName = " + newUser.getLogin()
-                        + "\nFullName = " + newUser.getFullName()
-                        + "\nEmail = " + newUser.getEmail());
+                RadioButton selectedRadioButton = (RadioButton) userType.getSelectedToggle();
+                User user;
+
+                if (selectedRadioButton.getText().equals("Owner")) {
+                    user = new Owner();
+                    ObservableList<Node> obs = hbChange.getChildren();
+                    VBox vb = (VBox) obs.get(0);
+                    ObservableList<Node> children = vb.getChildren();
+                    CheckBox cb = (CheckBox) children.get(children.size() - 1);
+                    ((Owner) user).setIsResident(cb.isSelected());
+
+                } else {
+                    user = new Guest();
+                    ObservableList<Node> obs = hbChange.getChildren();
+                    VBox vb = (VBox) obs.get(0);
+                    ObservableList<Node> children = vb.getChildren();
+                    ComboBox cb = (ComboBox) children.get(children.size() - 1);
+                    ((Guest) user).setActualState(ActualState.valueOf(cb.getSelectionModel().getSelectedItem().toString()));
+
+                }
+                user.setLogin(tfUser.getText().toString().trim());
+                user.setFullName(tfFullName.getText().toString().trim());
+                user.setPassword(passField.getText().toString().trim());
+                user.setEmail(tfEmail.getText().toString().trim());
+                user.setPrivilege(selectedRadioButton.getText());
+                user.setStatus(UserStatus.ENABLED.name());
+                String content = "UserName = " + user.getLogin()
+                        + "\nFullName = " + user.getFullName()
+                        + "\nEmail = " + user.getEmail();
+                String extra = (user instanceof Owner ? "\nIsResident: " + ((Owner) user).getIsResident() : "\nActualState: " + ((Guest) user).getActualState().name());
+                alert.setContentText(content + extra);
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     //ADDING THE USER TO THE DATABASE
-                    
+                    UserChild uc = UserChildFactory.createUserChild(UserChildFactory.REST_WEB_CLIENT_TYPE);
+                    uc.register(user);
                     //TELLING THE USER THAT EVERYTHING HAD WORK
                     LOGGER.info("New User succesfully added");
-                    Alert alert1 = new Alert(AlertType.INFORMATION);
-                    alert1.setTitle("New User");
-                    alert1.setHeaderText(null);
-                    alert1.setContentText("User corretly added");
-                    alert1.showAndWait();
-                    LOGGER.info("Closing SignUp Window");
-                    Stage stage = (Stage) btnCancel.getScene().getWindow();
+                    //Alert alert1 = new Alert(AlertType.INFORMATION);
+                    //alert1.setTitle("New User");
+                    //alert1.setHeaderText(null);
+                    //alert1.setContentText("User corretly added");
+                    //alert1.showAndWait();
+                    //LOGGER.info("Closing SignUp Window");
+                    //Stage stage = (Stage) btnCancel.getScene().getWindow();
                     // Close current window 
                     stage.close();
 
@@ -208,22 +299,6 @@ public class SignUpController {
                 passField.requestFocus();
             }
         }
-    }
-
-    /**
-     * This method generates a new user retreiving all the values of the fields
-     *
-     * @return the created User
-     */
-    private User createUser() {
-        User user = new User();
-        user.setLogin(tfUser.getText().toString().trim());
-        user.setFullName(tfFullName.getText().toString().trim());
-        user.setPassword(passField.getText().toString().trim());
-        user.setEmail(tfEmail.getText().toString().trim());
-        //user.setPrivilege();
-        user.setStatus(UserStatus.ENABLED.name());
-        return user;
     }
 
     /**

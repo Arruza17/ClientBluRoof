@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane styleClass="loginPanel" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.AdminController">
+<BorderPane styleClass="loginPanel" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.AdminController">
    <padding>
       <Insets top="10.0" />
    </padding>
@@ -79,7 +79,7 @@
                   </ImageView>
                   <ImageView fx:id="imgDel" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleTableDelete" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../resources/img/general/cancel.png" />
+                        <Image url="@../resources/img/general/minus.png" />
                      </image>
                   </ImageView>
                   <ImageView fx:id="imgCommit" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleTableCommit" pickOnBounds="true" preserveRatio="true">
@@ -89,7 +89,7 @@
                   </ImageView>
                   <ImageView fx:id="imgCancel" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleTableCancel" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../resources/img/general/minus.png" />
+                        <Image url="@../resources/img/general/cancel.png" />
                      </image>
                   </ImageView>
                </children>

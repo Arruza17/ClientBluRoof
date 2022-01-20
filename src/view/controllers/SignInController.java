@@ -36,11 +36,11 @@ import model.User;
  * @author Yeray Sampedro, Jorge Crespo, Ander Arruza
  */
 public class SignInController {
-    
+
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
-    
+
     private UserManager um;
-    
+
     @FXML
     private TextField tfUser;
     @FXML
@@ -110,7 +110,7 @@ public class SignInController {
             alert.showAndWait();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
         }
-        
+
     }
 
     /**
@@ -121,10 +121,10 @@ public class SignInController {
     @FXML
     public void signIn(ActionEvent action) {
         try {
-            User user = um.login(tfUser.getText(), tfPassword.getText());        
+            User user = um.login(tfUser.getText(), tfPassword.getText());
             if (user != null) {
                 Parent root;
-                FXMLLoader loader = null;                
+                FXMLLoader loader = null;
                 loader = new FXMLLoader(getClass().getResource("/view/fxml/Welcome.fxml"));
                 root = (Parent) loader.load();
                 Stage stageWelcome = new Stage();
@@ -134,12 +134,15 @@ public class SignInController {
                 controller.setUser(user);
                 this.stage.close();
                 LOGGER.info("Initializing Welcome window and closing SignIn window");
-                controller.initStage(root);             
+                controller.initStage(root);
             }
         } catch (IOException ex) {
             Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BusinessLogicException ex) {
-            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Could not log in");
+            alert.setContentText(ex.getMessage());
+           alert.show();
         }
     }
 
@@ -183,21 +186,22 @@ public class SignInController {
         } else {
             LOGGER.info("SignIn Window is closed");
         }
-        
+
     }
-    
+
     @FXML
     private void retrievePassword(ActionEvent event) {
         //Create a textInputDialog to ask the user the login
         TextInputDialog txi = new TextInputDialog();
         txi.setHeaderText("Password reset");
-        txi.setContentText("Type the username of the account you would like to reset the password from. In case it exists, you will receive an email with your new resetted password");
+        txi.setContentText("Type the username of the account you would like to reset the password from.\n In case it exists, you will receive an email with your new resetted password");
         txi.showAndWait();
         String login = txi.getEditor().getText();
         if (!login.isEmpty()) {
             try {
                 //Call business logic to reset the password
-                um.resetPassword(login);              
+                um.resetPassword(login);
+
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText("Password reset");
                 alert.setContentText("The password was successfully resetted");
@@ -257,5 +261,5 @@ public class SignInController {
     public void setUm(UserManager um) {
         this.um = um;
     }
-    
+
 }

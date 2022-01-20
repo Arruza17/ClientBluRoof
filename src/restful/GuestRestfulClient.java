@@ -8,6 +8,7 @@ package restful;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import model.Guest;
 
 /**
  * Jersey REST client generated for REST resource:GuestFacadeREST
@@ -26,7 +27,7 @@ public class GuestRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:22083/ServerBluRoof/webresources";
+    private static final String BASE_URI = "http://localhost:8080/ServerBluRoof/webresources";
 
     public GuestRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -55,7 +56,7 @@ public class GuestRestfulClient {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public void create(Object requestEntity) throws ClientErrorException {
+    public void create(Guest requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 

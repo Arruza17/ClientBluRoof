@@ -8,6 +8,7 @@ package restful;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import model.Owner;
 
 /**
  * Jersey REST client generated for REST resource:OwnerFacadeREST
@@ -26,7 +27,7 @@ public class OwnerRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:11094/ServerBluRoof/webresources";
+    private static final String BASE_URI = "http://localhost:8080/ServerBluRoof/webresources";
 
     public OwnerRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -61,7 +62,7 @@ public class OwnerRestfulClient {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public void create(Object requestEntity) throws ClientErrorException {
+    public void create(Owner requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
