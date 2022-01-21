@@ -59,5 +59,14 @@ public class DwellingManagerImplementation implements DwellingManager {
         }
         return dwellings;    }
 
+    @Override
+    public void remove(Long id) throws BussinessLogicException {
+        try{
+            dwellingRestfulClient.remove(String.valueOf(id));
+        }catch(ClientErrorException e){
+            throw new BussinessLogicException(e.getMessage());
+        }
+    }
+
     
 }

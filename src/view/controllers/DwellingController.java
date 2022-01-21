@@ -24,7 +24,6 @@ import javafx.stage.Stage;
 import model.Comment;
 import model.Dwelling;
 import model.Flat;
-import model.Owner;
 import model.User;
 
 /**
@@ -174,7 +173,7 @@ public class DwellingController {
         }
 
         //If logged in as a user the Confirm and Cancel images will be disabled
-        if (user instanceof Owner) {
+        if (user != null) {
             imgConfirmComment.setDisable(true);
             imgCancelComment.setDisable(true);
             //If logged as an owner none of the buttons above the table will be shown

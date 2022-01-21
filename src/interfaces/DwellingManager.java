@@ -6,6 +6,7 @@
 package interfaces;
 
 import exceptions.BussinessLogicException;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import model.Dwelling;
@@ -20,4 +21,6 @@ public interface DwellingManager {
     public List<Dwelling> findByDate(Date date) throws BussinessLogicException;
     
     public List<Dwelling> findByRating(Integer rating) throws BussinessLogicException;
+    
+    public void remove(Long id) throws BussinessLogicException;
 }

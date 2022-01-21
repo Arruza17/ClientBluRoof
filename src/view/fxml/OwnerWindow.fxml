@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -21,7 +22,7 @@
          <columns>
             <TableColumn fx:id="colAddress" maxWidth="500.0" minWidth="20.0" prefWidth="200.0" styleClass="table-column-right" text="Address" />
             <TableColumn fx:id="colWiFi" maxWidth="100.0" minWidth="1.0" prefWidth="100.0" text="WiFi" />
-            <TableColumn fx:id="colSquareMeters" prefWidth="83.0" text="m²" />
+            <TableColumn fx:id="colSquareMeters" maxWidth="200.0" minWidth="50.0" prefWidth="100.0" text="m²" />
             <TableColumn fx:id="colConstructionDate" prefWidth="150.0" text="Construction Date" />
             <TableColumn fx:id="colRating" prefWidth="88.0" text="Rating" />
             <TableColumn fx:id="colMoreInfo" prefWidth="132.0" text="More info" />
@@ -74,13 +75,13 @@
       					  <Insets bottom="10.0" top="10.0" />
       				   </padding>
       				</Separator>
-      				<DatePicker fx:id="dpConstructionDate" promptText="Construction date" />
+      				<DatePicker fx:id="dpConstructionDate" editable="false" promptText="Construction date" />
                      <Separator orientation="VERTICAL">
                         <padding>
                            <Insets bottom="10.0" top="10.0" />
                         </padding>
                      </Separator>
-      				<Spinner fx:id="spRating" accessibleText="Number" editable="true" max="5" min="1" />
+      				<Spinner fx:id="spRating" accessibleText="Number" max="5" min="1" />
       				<Separator orientation="VERTICAL" HBox.hgrow="ALWAYS">
                         <padding>
                            <Insets bottom="10.0" top="10.0" />
@@ -93,6 +94,9 @@
                         <image>
                            <Image url="@../resources/img/dwelling/search.png" />
                         </image>
+                        <cursor>
+                           <Cursor fx:constant="HAND" />
+                        </cursor>
                      </ImageView>
       			</HBox>
                   <Separator>
@@ -109,6 +113,9 @@
                            <HBox.margin>
                               <Insets top="5.0" />
                            </HBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ImageView>
                         <ImageView fx:id="imgConfirmComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleConfirmComment" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -117,6 +124,9 @@
                            <HBox.margin>
                               <Insets bottom="5.0" top="5.0" />
                            </HBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ImageView>
                         <ImageView fx:id="imgCancelComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleCancelComment" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -125,6 +135,9 @@
                            <HBox.margin>
                               <Insets bottom="5.0" top="5.0" />
                            </HBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ImageView>
                         <ImageView fx:id="imgDeleteDwelling" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleDeleteDwelling" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -133,6 +146,9 @@
                            <HBox.margin>
                               <Insets bottom="5.0" top="5.0" />
                            </HBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ImageView>
                         <ImageView fx:id="imgPrint" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handlePrintDwellings" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -141,6 +157,9 @@
                            <HBox.margin>
                               <Insets left="5.0" top="5.0" />
                            </HBox.margin>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </ImageView>
                      </children>
                      <VBox.margin>

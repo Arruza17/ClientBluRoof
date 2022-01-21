@@ -23,6 +23,7 @@ import javafx.scene.control.Hyperlink;
  */
 public class DwellingTableBean {
 
+    private Long id;
 
     private SimpleStringProperty address;
 
@@ -37,28 +38,36 @@ public class DwellingTableBean {
     private Hyperlink moreInfo;
 
     public DwellingTableBean(Dwelling d) {
+        this.id = d.getId();
         this.address = new SimpleStringProperty(d.getAddress());
         this.wifi = new SimpleBooleanProperty(d.getHasWiFi());
         this.squareMeters = new SimpleDoubleProperty(d.getSquareMeters());
         this.constructionDate = new SimpleObjectProperty<>(d.getConstructionDate());
         this.rating = new SimpleFloatProperty(d.getRating());
         Hyperlink hl = new Hyperlink("More info");
-        hl.setOnAction(new EventHandler<ActionEvent>(){
+        hl.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-              Alert alert = new Alert(AlertType.CONFIRMATION);
-              alert.setTitle(address.get());
-              alert.show();
-              //Generar ventana dwelling
-              //ControladorDwelling cd = new ControladorDwelling
-              //cd.setDwelling(d)
-               
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle(address.get());
+                alert.show();
+                //Generar ventana dwelling
+                //ControladorDwelling cd = new ControladorDwelling
+                //cd.setDwelling(d)
+
             }
         });
-        this.moreInfo = hl ;
-      
+        this.moreInfo = hl;
+
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getAddress() {
         return address.get();
@@ -107,7 +116,5 @@ public class DwellingTableBean {
     public void setMoreInfo(Hyperlink moreInfo) {
         this.moreInfo = moreInfo;
     }
-
-   
 
 }

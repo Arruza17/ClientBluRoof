@@ -3,15 +3,13 @@ package view.controllers;
 import model.DwellingTableBean;
 import exceptions.BussinessLogicException;
 import interfaces.DwellingManager;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,6 +19,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -32,7 +31,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Dwelling;
-import model.Flat;
 import model.User;
 
 /**
@@ -92,6 +90,8 @@ public class OwnerWindowController {
 
     private final String SELECT_BY_MIN_RATING = "Select from min rating";
 
+    private ObservableList<DwellingTableBean> dwellingsTableBean;
+
     /**
      * This method is used to initialize the stage
      *
@@ -102,13 +102,11 @@ public class OwnerWindowController {
         LOGGER.info("Initializing Owner/Guest-Window stage");
         //Creation of a new Scene
         Scene scene = new Scene(root);
-
         //Save the route of the .css file
         String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
         //Sets the .css to the Scene
         //scene.getStylesheets().add(css);
         //stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
-
         //Sets the scene to the stage
         stage.setScene(scene);
         //Sets the Title of the Window
@@ -118,6 +116,8 @@ public class OwnerWindowController {
         //Sets the column RATING & SQUARE METERS ro center-right
         colRating.setStyle("-fx-alignment: CENTER-RIGHT;");
         colSquareMeters.setStyle("-fx-alignment: CENTER-RIGHT;");
+        //Sets the column More info to center
+        colMoreInfo.setStyle("-fx-alignment: CENTER;");
         //Sets the datePicker and spinner to disabled
         dpConstructionDate.setDisable(true);
         spRating.setDisable(true);
@@ -143,7 +143,7 @@ public class OwnerWindowController {
 
         //if logged as an owner
         lblTitle.setText("My Dwellings");
-
+        //Setting the cell value factories
         colAddress.setCellValueFactory(
                 new PropertyValueFactory<>("address"));
         colWiFi.setCellValueFactory(
@@ -158,31 +158,8 @@ public class OwnerWindowController {
                 new PropertyValueFactory<>("moreInfo"));
         //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
         cbDwellings.getSelectionModel().selectFirst();
-        colAddress.setMaxWidth(100);
-        List<DwellingTableBean> dwellings = new ArrayList<>();
-        try {
-            List<Dwelling> allDwellings = dwellingManager.findAll();
-            if (allDwellings.size() > 0) {
-                for (Dwelling d : allDwellings) {
-                    //String type = (d instanceof Flat) ? "Flat" : "Room";
-                    dwellings.add(new DwellingTableBean(d));
-                }
-                ObservableList<DwellingTableBean> dwellingsTableBean = FXCollections.observableArrayList(dwellings);
-                tableDwelling.setItems(dwellingsTableBean);
-            } else {
-                //The imgPrint will be disabled if there are not dwellings
-                imgPrint.setDisable(true);
-                imgPrint.setOpacity(0.25);
-            }
-
-        } catch (BussinessLogicException e) {
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("AYUDA");
-            alert.setHeaderText("Error");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
-        }
-
+        //Load all the dwellings by default
+        loadAllDwellings();
         //Shows the stage
         stage.show();
 
@@ -215,15 +192,13 @@ public class OwnerWindowController {
         try {
             switch (cbDwellings.getValue()) {
                 case SELECT_ALL_DWELLINGS:
-
+                    loadAllDwellings();
                     break;
                 case SELECT_BY_MIN_CONSTRUCTION_DATE:
                     if (dpConstructionDate.getValue() != null) {
-                        //default time zone
-                        ZoneId defaultZoneId = ZoneId.systemDefault();
-                        //local date + atStartOfDay() + default time zone + toInstant() = Date
-                        Date date = Date.from(dpConstructionDate.getValue().atStartOfDay(defaultZoneId).toInstant());
-                        dwellingManager.findByDate(date);
+                        Date date = Date.from(dpConstructionDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        List<Dwelling> ds = dwellingManager.findByDate(date);
+                        System.out.println(ds.size());
                     } else {
                         //THROW NEW EXCEPTION OF FIELDS EMPTY
                         Alert alert = new Alert(AlertType.INFORMATION);
@@ -234,9 +209,33 @@ public class OwnerWindowController {
                     }
                     break;
                 case SELECT_BY_MIN_RATING:
-                    System.out.println(spRating.getValue());
-                    if (checkSpinnervalue()) {
-                        List <Dwelling> ds = dwellingManager.findByRating(spRating.getValue());
+                    List<Dwelling> ds = dwellingManager.findByRating(spRating.getValue());
+                    tableDwelling.getItems().clear();
+                    List<DwellingTableBean> dwellings = new ArrayList<>();
+                    if (ds != null) {
+                        if (ds.size() > 0) {
+                            for (Dwelling d : ds) {
+                                dwellings.add(new DwellingTableBean(d));
+                            }
+                            dwellingsTableBean = FXCollections.observableArrayList(dwellings);
+                            tableDwelling.setItems(dwellingsTableBean);
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("Search successful");
+                            alert.setHeaderText("Dwellings have been found");
+                            alert.showAndWait();
+                        } else {
+                            Alert alert = new Alert(AlertType.WARNING);
+                            alert.setTitle("No data");
+                            alert.setHeaderText("No dwellings");
+                            alert.setContentText("No dwellings found with " + spRating.getValue().toString() + " rating or more");
+                            alert.showAndWait();
+                        }
+                    } else {
+                        Alert alert = new Alert(AlertType.ERROR);
+                        alert.setTitle("Empty fields");
+                        alert.setHeaderText("ERRROR AAAA");
+                        alert.setContentText("Try again");
+                        alert.showAndWait();
                     }
 
                     break;
@@ -254,40 +253,6 @@ public class OwnerWindowController {
 
     }
 
-    private boolean checkSpinnervalue() {
-        boolean everyThingOk = true;
-        if (spRating.getValue() != null) {
-            if (spRating.getValue() instanceof Integer) {
-                if (spRating.getValue() > 1 || spRating.getValue() < 5) {
-
-                } else {
-                    everyThingOk = false;
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText("SPINNER VALUE CANT BE <1 and >5");
-                    alert.setContentText("ERROR");
-                    alert.showAndWait();
-                }
-            } else {
-                everyThingOk = false;
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("SPINNER VALUE IS NOT A NUMBER");
-                alert.setContentText("ERROR");
-                alert.showAndWait();
-            }
-
-        } else {
-            everyThingOk = false;
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("SPINNER VALUE IS NULL");
-            alert.setContentText("ERROR");
-            alert.showAndWait();
-        }
-        return everyThingOk;
-    }
-
     @FXML
     private void handleAddComment(MouseEvent event) {
     }
@@ -302,6 +267,33 @@ public class OwnerWindowController {
 
     @FXML
     private void handleDeleteDwelling(MouseEvent event) {
+        DwellingTableBean selectedDwelling = tableDwelling.getSelectionModel()
+                .getSelectedItem();
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setHeaderText(null);
+        alert.setTitle("Confirmation");
+        alert.setContentText("Do you want to delete this dwelling?");
+        alert.showAndWait();
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            try {
+                dwellingManager.remove(selectedDwelling.getId());
+                dwellingsTableBean.remove(selectedDwelling);
+                tableDwelling.refresh();
+            } catch (BussinessLogicException ex) {
+                Alert alert1 = new Alert(AlertType.ERROR);
+                alert1.setTitle("AYUDA");
+                alert1.setHeaderText("Error");
+                alert1.setContentText(ex.getMessage());
+                alert1.showAndWait();
+            }
+        } else {
+            Alert alert3 = new Alert(AlertType.INFORMATION);
+            alert3.setTitle("Dwelling not deleted");
+            alert3.setHeaderText(null);
+            alert3.setContentText(null);
+            alert3.showAndWait();
+        }
     }
 
     @FXML
@@ -323,12 +315,13 @@ public class OwnerWindowController {
     private void handleTableSelectionChanged(ObservableValue observableValue, Object oldValue, Object newValue) {
 
         if (newValue != null) {
-            imgDeleteDwelling.setDisable(true);
+            imgDeleteDwelling.setDisable(false);
             imgDeleteDwelling.setOpacity(1);
 
         } else {
-            imgDeleteDwelling.setDisable(false);
+            imgDeleteDwelling.setDisable(true);
             imgDeleteDwelling.setOpacity(0.25);
+
         }
     }
 
@@ -342,6 +335,36 @@ public class OwnerWindowController {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    private void loadAllDwellings() {
+        try {
+            List<DwellingTableBean> dwellings = new ArrayList<>();
+            List<Dwelling> allDwellings = dwellingManager.findAll();
+            if (allDwellings.size() > 0) {
+                for (Dwelling d : allDwellings) {
+                    //String type = (d instanceof Flat) ? "Flat" : "Room";
+                    dwellings.add(new DwellingTableBean(d));
+                }
+                ObservableList<DwellingTableBean> dwellingsTableBean = FXCollections.observableArrayList(dwellings);
+                //The imgPrint will be disabled if there are not dwellings
+                imgPrint.setDisable(false);
+                imgPrint.setOpacity(1);
+                //Add the items to the tableView
+                tableDwelling.setItems(dwellingsTableBean);
+
+            } else {
+                //The imgPrint will be disabled if there are not dwellings
+                imgPrint.setDisable(true);
+                imgPrint.setOpacity(0.25);
+            }
+        } catch (BussinessLogicException ex) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("AYUDA");
+            alert.setHeaderText("Error");
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
+        }
     }
 
 }
