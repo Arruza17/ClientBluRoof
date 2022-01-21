@@ -19,7 +19,7 @@ import javafx.scene.control.Hyperlink;
  * @author jorge
  */
 public class FacilityTableBean {
-    private SimpleLongProperty id;
+    private Long id;
 
     private SimpleObjectProperty<FacilityType> type;
 
@@ -28,34 +28,37 @@ public class FacilityTableBean {
     private Hyperlink moreInfo;
 
     public FacilityTableBean(Facility f) {
-        this.id= new SimpleLongProperty(f.getId());
+        this.id= f.getId();
         this.type =new SimpleObjectProperty<>(f.getType());
         this.adqDate= new SimpleObjectProperty<>(f.getAdquisitionDate());
-       
     }
 
-    public SimpleLongProperty getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(SimpleLongProperty id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public SimpleObjectProperty<FacilityType> getType() {
-        return type;
+   
+
+    
+
+    public FacilityType getType() {
+        return type.get();
     }
 
-    public void setType(SimpleObjectProperty<FacilityType> type) {
-        this.type = type;
+    public void setType(FacilityType type) {
+        this.type.set(type);
     }
 
-    public SimpleObjectProperty<Date> getAdqDate() {
-        return adqDate;
+    public Date getAdqDate() {
+        return adqDate.get();
     }
 
-    public void setAdqDate(SimpleObjectProperty<Date> adqDate) {
-        this.adqDate = adqDate;
+    public void setAdqDate(Date date) {
+        this.adqDate.set(date);
     }
 
     public Hyperlink getMoreInfo() {

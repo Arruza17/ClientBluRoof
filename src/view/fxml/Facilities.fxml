@@ -47,7 +47,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </TextField>
-            <Spinner fx:id="sp_Facilities" prefHeight="10.0" prefWidth="57.0">
+            <Spinner fx:id="sp_Facilities" prefHeight="31.0" prefWidth="84.0">
                <HBox.margin>
                   <Insets left="10.0" top="25.0" />
                </HBox.margin>
@@ -57,7 +57,7 @@
             </Spinner>
             <Button id="S_Flat" fx:id="srch_Btn" mnemonicParsing="false" text="Search">
                <HBox.margin>
-                  <Insets left="30.0" top="20.0" />
+                  <Insets left="5.0" top="20.0" />
                </HBox.margin>
                <cursor>
                   <Cursor fx:constant="HAND" />

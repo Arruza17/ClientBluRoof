@@ -105,7 +105,6 @@ public class FacilitiesController {
             List<Facility> allFacilities = facMan.selectAll();
             if (allFacilities.size() > 0) {
                 for (Facility f : allFacilities) {
-                    //String type = (d instanceof Flat) ? "Flat" : "Room";
                     facilities.add(new FacilityTableBean(f));
                 }
                 ObservableList<FacilityTableBean> facilityTableBean = 
