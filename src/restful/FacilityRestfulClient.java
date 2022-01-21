@@ -57,7 +57,7 @@ public class FacilityRestfulClient {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T findFacilityByAdqDate(Class<T> responseType, String date) throws ClientErrorException {
+    public <T> T findFacilityByAdqDate(GenericType<T> responseType, String date) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("adquisitionDate/{0}", new Object[]{date}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -76,7 +76,7 @@ public class FacilityRestfulClient {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
-    public <T> T findFacilityByType(Class<T> responseType, String facilityType) throws ClientErrorException {
+    public <T> T findFacilityByType(GenericType<T> responseType, String facilityType) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("type/{0}", new Object[]{facilityType}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);

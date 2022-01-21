@@ -24,7 +24,7 @@
             <VBox prefHeight="58.0" prefWidth="90.0">
                <children>
                   <Label text="Filter" />
-                  <ComboBox fx:id="cb_Facilities" prefHeight="31.0" prefWidth="89.0">
+                  <ComboBox fx:id="cb_Facilities" onAction="#handleCbChange" prefHeight="31.0" prefWidth="89.0">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></ComboBox>
@@ -55,7 +55,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Spinner>
-            <Button id="S_Flat" fx:id="srch_Btn" mnemonicParsing="false" text="Search">
+            <Button id="S_Flat" fx:id="srch_Btn" onAction="#searchAction" mnemonicParsing="false" text="Search">
                <HBox.margin>
                   <Insets left="5.0" top="20.0" />
                </HBox.margin>

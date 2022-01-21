@@ -8,6 +8,7 @@ package view.fxml;
 import exceptions.BusinessLogicException;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -77,7 +78,9 @@ public class FacilitiesController {
     @FXML
     private ImageView iv_cancel;
     private FacilityManager facMan;
-
+    private final String date = "Date";
+    private final String type = "Type";
+    private final String id = "Id";
     /**
      * Initializes the controller class.
      */
@@ -95,20 +98,20 @@ public class FacilitiesController {
         iv_check.setDisable(true);
         iv_check.setOpacity(0.25);
         ObservableList<String> options
-                = FXCollections.observableArrayList("id", "Type", "Date");
+                = FXCollections.observableArrayList(id, type, date);
         cb_Facilities.setItems(options);
         cb_Facilities.getSelectionModel().selectFirst();
         tbl_facilities.getSelectionModel().selectedItemProperty()
                 .addListener(this::handleTableSelectionChanged);
-       List<FacilityTableBean> facilities = new ArrayList<>();
+        List<FacilityTableBean> facilities = new ArrayList<>();
         try {
             List<Facility> allFacilities = facMan.selectAll();
             if (allFacilities.size() > 0) {
                 for (Facility f : allFacilities) {
                     facilities.add(new FacilityTableBean(f));
                 }
-                ObservableList<FacilityTableBean> facilityTableBean = 
-                        FXCollections.observableArrayList(facilities);
+                ObservableList<FacilityTableBean> facilityTableBean
+                        = FXCollections.observableArrayList(facilities);
                 tbl_facilities.setItems(facilityTableBean);
             } else {
                 //The imgPrint will be disabled if there are not dwellings
@@ -116,7 +119,7 @@ public class FacilitiesController {
                 iv_print.setOpacity(0.25);
             }
         } catch (BusinessLogicException ex) {
-             Alert alert = new Alert(AlertType.INFORMATION);
+            Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("AYUDA");
             alert.setHeaderText("Error");
             alert.setContentText(ex.getMessage());
@@ -129,6 +132,7 @@ public class FacilitiesController {
                 new PropertyValueFactory<>("adqDate"));
         type_column.setCellValueFactory(
                 new PropertyValueFactory<>("type"));
+
         more_Info_Column.setCellValueFactory(
                 new PropertyValueFactory<>("moreInfo"));
         stage.show();
@@ -139,8 +143,68 @@ public class FacilitiesController {
     }
 
     @FXML
-    void searchAction(ActionEvent action) {
+    void handleCbChange(ActionEvent action) {
+        switch (cb_Facilities.getValue()) {
+            case id:
+                tf_Facilities.setDisable(true);
+                dp_Facilities.setDisable(true);
+                sp_Facilities.setDisable(false);
+                break;
+            case type:
+                tf_Facilities.setDisable(false);
+                dp_Facilities.setDisable(true);
+                sp_Facilities.setDisable(true);
+                break;
+            case date:
+                tf_Facilities.setDisable(true);
+                dp_Facilities.setDisable(false);
+                sp_Facilities.setDisable(true);
+                break;
 
+        }
+
+    }
+
+    @FXML
+    void searchAction(ActionEvent action) {
+        switch (cb_Facilities.getValue()) {
+            case date:
+                 if (dp_Facilities.getValue() != null) {
+            try {
+                Date date = Date.from(dp_Facilities.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+                List<Facility> fs = facMan.selectByDate(date);
+                System.out.println(fs.size());
+            } catch (BusinessLogicException ex) {
+                Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                    } else {
+                        //THROW NEW EXCEPTION OF FIELDS EMPTY
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Empty fields");
+                        alert.setHeaderText("The construction date is null");
+                        alert.setContentText("Try again");
+                        alert.showAndWait();
+                    }
+                 break;
+            case type:
+                if(tf_Facilities.getText().trim()!=null){
+                try{
+                  
+                    System.out.println(tf_Facilities.getText());
+                     List<FacilityTableBean> facilities = new ArrayList<>();
+        List<Facility> fs=facMan.selectByType(tf_Facilities.getText());
+            if (fs.size() > 0) {
+                for (Facility f : fs) {
+                    facilities.add(new FacilityTableBean(f));
+                }
+                ObservableList<FacilityTableBean> facilityTableBean
+                        = FXCollections.observableArrayList(facilities);
+                    tbl_facilities.setItems(facilityTableBean);
+            }}catch(BusinessLogicException ex){
+                }
+                }
+                break;
+        }
     }
 
     @FXML
@@ -173,5 +237,6 @@ public class FacilitiesController {
     }
 
     private void handleTableSelectionChanged(ObservableValue observableValue, Object oldValue, Object newValue) {
+
     }
 }

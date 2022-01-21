@@ -7,6 +7,7 @@ package model;
 
 
 import exceptions.BusinessLogicException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,5 +16,6 @@ import java.util.List;
  */
 public interface FacilityManager {
     public List<Facility> selectAll() throws BusinessLogicException;
-    
+    public List<Facility> selectByDate(Date date) throws BusinessLogicException;
+    public List<Facility> selectByType(String type) throws BusinessLogicException;
 }
