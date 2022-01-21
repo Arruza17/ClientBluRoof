@@ -5,13 +5,14 @@
  */
 package view.controllers;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+
 import exceptions.BussinessLogicException;
 import interfaces.ServicesManager;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -41,6 +42,8 @@ import model.ServiceBean;
  */
 public class ServicesController {
 
+     private static final Logger LOGGER = Logger.getLogger(ServicesController.class.getName());
+    
     private ServicesManager serviceManager;
 
     private Service service;
@@ -134,16 +137,18 @@ public class ServicesController {
           tcId.setCellValueFactory(
                 new PropertyValueFactory<>("id"));
         tcAddress.setCellValueFactory(
-                new PropertyValueFactory<>("wifi"));
+                new PropertyValueFactory<>("address"));
         tcName.setCellValueFactory(
-                new PropertyValueFactory<>("squareMeters"));
+                new PropertyValueFactory<>("name"));
         tcType.setCellValueFactory(
-                new PropertyValueFactory<>("constructionDate"));
+                new PropertyValueFactory<>("type"));
        
         //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
         cbService.getSelectionModel().selectFirst();
         tcAddress.setMaxWidth(100);
         List<ServiceBean> services = new ArrayList<>();
+        
+        
         try {
             List<Service> allServices = serviceManager.findAll();
             if (allServices.size() > 0) {
@@ -167,7 +172,7 @@ public class ServicesController {
             alert.showAndWait();
         }
 
-        
+        stage.show();
         
     }
 
