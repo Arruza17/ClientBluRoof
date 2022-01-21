@@ -18,7 +18,7 @@ import model.Dwelling;
 public interface DwellingManager {
     public List<Dwelling> findAll() throws BussinessLogicException;
     
-    public List<Dwelling> findByDate(Date date) throws BussinessLogicException;
+    public List<Dwelling> findByDate(String date) throws BussinessLogicException;
     
     public List<Dwelling> findByRating(Integer rating) throws BussinessLogicException;
     

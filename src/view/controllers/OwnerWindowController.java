@@ -1,8 +1,10 @@
 package view.controllers;
 
+import com.sun.javafx.embed.AbstractEvents;
 import model.DwellingTableBean;
 import exceptions.BussinessLogicException;
 import interfaces.DwellingManager;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +30,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Dwelling;
@@ -159,10 +162,26 @@ public class OwnerWindowController {
         //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
         cbDwellings.getSelectionModel().selectFirst();
         //Load all the dwellings by default
-        loadAllDwellings();
+        imgSearch.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, // double x,
+                0, // double y,
+                0, // double screenX,
+                0, // double screenY,
+                MouseButton.PRIMARY, // MouseButton button,
+                0, // int clickCount,
+                false, // boolean shiftDown,
+                false, // boolean controlDown,
+                false, // boolean altDown,
+                false, // boolean metaDown,
+                true, // boolean primaryButtonDown,
+                false, // boolean middleButtonDown,
+                false, // boolean secondaryButtonDown,
+                false, // boolean synthesized,
+                false, // boolean popupTrigger,
+                false, // boolean stillSincePress,
+                null // PickResult pickResult
+        ));
         //Shows the stage
         stage.show();
-
         LOGGER.info("Owner/Guest-Window Open");
     }
 
@@ -189,16 +208,55 @@ public class OwnerWindowController {
 
     @FXML
     private void handleFilterSearch(MouseEvent event) {
+        if (tableDwelling.getItems().size() > 1) {
+            dwellingsTableBean.clear();
+        }
         try {
             switch (cbDwellings.getValue()) {
                 case SELECT_ALL_DWELLINGS:
-                    loadAllDwellings();
+                    try {
+                        List<Dwelling> allDwellings = dwellingManager.findAll();
+                        List<DwellingTableBean> dwellings = new ArrayList<>();
+                        if (allDwellings.size() > 0) {
+                            for (Dwelling d : allDwellings) {
+                                //String type = (d instanceof Flat) ? "Flat" : "Room";
+                                dwellings.add(new DwellingTableBean(d));
+                            }
+                            dwellingsTableBean = FXCollections.observableArrayList(dwellings);
+                            //The imgPrint will be disabled if there are not dwellings
+                            imgPrint.setDisable(false);
+                            imgPrint.setOpacity(1);
+                            //Add the items to the tableView
+                            tableDwelling.setItems(dwellingsTableBean);
+
+                        } else {
+                            //The imgPrint will be disabled if there are not dwellings
+                            imgPrint.setDisable(true);
+                            imgPrint.setOpacity(0.25);
+                        }
+                    } catch (BussinessLogicException ex) {
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("AYUDA");
+                        alert.setHeaderText("Error");
+                        alert.setContentText(ex.getMessage());
+                        alert.showAndWait();
+                    }
                     break;
                 case SELECT_BY_MIN_CONSTRUCTION_DATE:
                     if (dpConstructionDate.getValue() != null) {
                         Date date = Date.from(dpConstructionDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-                        List<Dwelling> ds = dwellingManager.findByDate(date);
-                        System.out.println(ds.size());
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        List<Dwelling> allDwelling = dwellingManager.findByDate(simpleDateFormat.format(date).toString());
+
+                        for (Dwelling d : allDwelling) {
+                            //String type = (d instanceof Flat) ? "Flat" : "Room";
+                            dwellingsTableBean.add(new DwellingTableBean(d));
+                        }
+
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Search successful");
+                        alert.setHeaderText("Dwellings have been found");
+                        alert.showAndWait();
                     } else {
                         //THROW NEW EXCEPTION OF FIELDS EMPTY
                         Alert alert = new Alert(AlertType.INFORMATION);
@@ -210,15 +268,13 @@ public class OwnerWindowController {
                     break;
                 case SELECT_BY_MIN_RATING:
                     List<Dwelling> ds = dwellingManager.findByRating(spRating.getValue());
-                    tableDwelling.getItems().clear();
-                    List<DwellingTableBean> dwellings = new ArrayList<>();
+
                     if (ds != null) {
                         if (ds.size() > 0) {
                             for (Dwelling d : ds) {
-                                dwellings.add(new DwellingTableBean(d));
+                                dwellingsTableBean.add(new DwellingTableBean(d));
                             }
-                            dwellingsTableBean = FXCollections.observableArrayList(dwellings);
-                            tableDwelling.setItems(dwellingsTableBean);
+
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("Search successful");
                             alert.setHeaderText("Dwellings have been found");
@@ -242,6 +298,8 @@ public class OwnerWindowController {
                 default:
                     break;
             }
+            tableDwelling.setItems(dwellingsTableBean);
+            tableDwelling.refresh();
 
         } catch (BussinessLogicException ex) {
             Alert alert = new Alert(AlertType.ERROR);
@@ -338,33 +396,7 @@ public class OwnerWindowController {
     }
 
     private void loadAllDwellings() {
-        try {
-            List<DwellingTableBean> dwellings = new ArrayList<>();
-            List<Dwelling> allDwellings = dwellingManager.findAll();
-            if (allDwellings.size() > 0) {
-                for (Dwelling d : allDwellings) {
-                    //String type = (d instanceof Flat) ? "Flat" : "Room";
-                    dwellings.add(new DwellingTableBean(d));
-                }
-                ObservableList<DwellingTableBean> dwellingsTableBean = FXCollections.observableArrayList(dwellings);
-                //The imgPrint will be disabled if there are not dwellings
-                imgPrint.setDisable(false);
-                imgPrint.setOpacity(1);
-                //Add the items to the tableView
-                tableDwelling.setItems(dwellingsTableBean);
 
-            } else {
-                //The imgPrint will be disabled if there are not dwellings
-                imgPrint.setDisable(true);
-                imgPrint.setOpacity(0.25);
-            }
-        } catch (BussinessLogicException ex) {
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("AYUDA");
-            alert.setHeaderText("Error");
-            alert.setContentText(ex.getMessage());
-            alert.showAndWait();
-        }
     }
 
 }
