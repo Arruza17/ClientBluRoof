@@ -59,5 +59,14 @@ private FacilityRestfulClient frc;
         }
         return fac;
     }
+
+    @Override
+    public List<Facility> selectById(Long id) throws BusinessLogicException {
+       List<Facility> fac=null;
+       try{
+       fac=frc.find(new GenericType<List<Facility>>(){}, id.toString());
+       }catch(ClientErrorException ex){}
+    return fac;
+    }
     
 }

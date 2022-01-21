@@ -54,7 +54,7 @@ public class FacilitiesController {
     @FXML
     private TextField tf_Facilities;
     @FXML
-    private Spinner<Integer> sp_Facilities;
+    private Spinner<Long> sp_Facilities;
     @FXML
     private Button srch_Btn;
     @FXML
@@ -81,6 +81,7 @@ public class FacilitiesController {
     private final String date = "Date";
     private final String type = "Type";
     private final String id = "Id";
+    private Long spValue=Long.MIN_VALUE;
     /**
      * Initializes the controller class.
      */
@@ -135,6 +136,7 @@ public class FacilitiesController {
 
         more_Info_Column.setCellValueFactory(
                 new PropertyValueFactory<>("moreInfo"));
+        sp_Facilities.getValueFactory().setValue(spValue);
         stage.show();
     }
 
@@ -169,39 +171,59 @@ public class FacilitiesController {
     void searchAction(ActionEvent action) {
         switch (cb_Facilities.getValue()) {
             case date:
-                 if (dp_Facilities.getValue() != null) {
+                if (dp_Facilities.getValue() != null) {
+                    try {
+                        Date date = Date.from(dp_Facilities.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        List<Facility> fs = facMan.selectByDate(date);
+                        System.out.println(fs.size());
+                    } catch (BusinessLogicException ex) {
+                        Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    //THROW NEW EXCEPTION OF FIELDS EMPTY
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Empty fields");
+                    alert.setHeaderText("The construction date is null");
+                    alert.setContentText("Try again");
+                    alert.showAndWait();
+                }
+                break;
+            case type:
+                if (tf_Facilities.getText().trim() != null) {
+                    try {
+
+                     
+                        List<FacilityTableBean> facilities = new ArrayList<>();
+                        List<Facility> fs = facMan.selectByType(tf_Facilities.getText());
+                        if (fs.size() > 0) {
+                            for (Facility f : fs) {
+                                facilities.add(new FacilityTableBean(f));
+                            }
+                            ObservableList<FacilityTableBean> facilityTableBean
+                                    = FXCollections.observableArrayList(facilities);
+                            tbl_facilities.setItems(facilityTableBean);
+                        }
+                    } catch (BusinessLogicException ex) {
+                    }
+                }
+                break;
+            case id:
+                if(sp_Facilities.getValue()!=null){
             try {
-                Date date = Date.from(dp_Facilities.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-                List<Facility> fs = facMan.selectByDate(date);
-                System.out.println(fs.size());
+                List<FacilityTableBean> facilities=new ArrayList<>();
+                List<Facility> fs=facMan.selectById(sp_Facilities.getValue());
+                if (fs.size() > 0) {
+                            for (Facility f : fs) {
+                                facilities.add(new FacilityTableBean(f));
+                            }
+                            ObservableList<FacilityTableBean> facilityTableBean
+                                    = FXCollections.observableArrayList(facilities);
+                            tbl_facilities.setItems(facilityTableBean);
+                        }
             } catch (BusinessLogicException ex) {
                 Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
             }
-                    } else {
-                        //THROW NEW EXCEPTION OF FIELDS EMPTY
-                        Alert alert = new Alert(AlertType.INFORMATION);
-                        alert.setTitle("Empty fields");
-                        alert.setHeaderText("The construction date is null");
-                        alert.setContentText("Try again");
-                        alert.showAndWait();
-                    }
-                 break;
-            case type:
-                if(tf_Facilities.getText().trim()!=null){
-                try{
-                  
-                    System.out.println(tf_Facilities.getText());
-                     List<FacilityTableBean> facilities = new ArrayList<>();
-        List<Facility> fs=facMan.selectByType(tf_Facilities.getText());
-            if (fs.size() > 0) {
-                for (Facility f : fs) {
-                    facilities.add(new FacilityTableBean(f));
-                }
-                ObservableList<FacilityTableBean> facilityTableBean
-                        = FXCollections.observableArrayList(facilities);
-                    tbl_facilities.setItems(facilityTableBean);
-            }}catch(BusinessLogicException ex){
-                }
+                
                 }
                 break;
         }
