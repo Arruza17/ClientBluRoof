@@ -5,7 +5,7 @@
  */
 package interfaces;
 
-import exceptions.BussinessLogicException;
+import exceptions.BusinessLogicException;
 import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.WebTarget;
@@ -18,14 +18,20 @@ import model.Service;
  */
 public interface ServicesManager {
 
-    public List<Service> findServiceByType(String serviceType) throws BussinessLogicException;
+    public List<Service> findServiceByType(String serviceType) throws BusinessLogicException;
 
     public Service find(String id) throws ClientErrorException;
 
-    public List<Service> findServiceByAddress(String serviceAddress) throws BussinessLogicException;
+    public List<Service> findServiceByAddress(String serviceAddress) throws BusinessLogicException;
 
-    public List<Service> findServiceByName(String serviceName) throws BussinessLogicException;
+    public List<Service> findServiceByName(String serviceName) throws BusinessLogicException;
 
-    public List<Service> findAll() throws BussinessLogicException;
+    public List<Service> findAll() throws BusinessLogicException;
+    
+    public void updateService(Service service) throws BusinessLogicException;
+
+    public void createService(Service service) throws BusinessLogicException;
+    
+    public void deleteService(String id) throws BusinessLogicException;
 
 }

@@ -5,7 +5,7 @@
  */
 package logic;
 
-import exceptions.BussinessLogicException;
+import exceptions.BusinessLogicException;
 import interfaces.ServicesManager;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,6 +22,7 @@ import restful.ServiceRestfulClient;
 public class ServiceManagerImplementation implements ServicesManager{
 
     private final ServiceRestfulClient serviceRestfulClient;
+    private Logger LOGGER;
     
       public ServiceManagerImplementation() {
         serviceRestfulClient = new ServiceRestfulClient();
@@ -29,12 +30,12 @@ public class ServiceManagerImplementation implements ServicesManager{
     
     
     @Override
-    public List<Service> findServiceByType(String serviceType) throws BussinessLogicException {
+    public List<Service> findServiceByType(String serviceType) throws BusinessLogicException {
         List <Service> services = null;
         try{
             services = serviceRestfulClient.findServiceByType(new GenericType<List<Service>>(){},serviceType);
         }catch(ClientErrorException e){
-            throw new BussinessLogicException(e.getMessage());
+            throw new BusinessLogicException(e.getMessage());
         }
         return services;
     }
@@ -46,8 +47,8 @@ public class ServiceManagerImplementation implements ServicesManager{
             service = serviceRestfulClient.findServiceByAddress(new GenericType<Service>(){},id);
         }catch(ClientErrorException e){
              try {
-                 throw new BussinessLogicException(e.getMessage());
-             } catch (BussinessLogicException ex) {
+                 throw new BusinessLogicException(e.getMessage());
+             } catch (BusinessLogicException ex) {
                  Logger.getLogger(ServiceManagerImplementation.class.getName()).log(Level.SEVERE, null, ex);
              }
         }
@@ -55,36 +56,62 @@ public class ServiceManagerImplementation implements ServicesManager{
     }
 
     @Override
-    public List<Service> findServiceByAddress(String serviceAddress) throws BussinessLogicException {
+    public List<Service> findServiceByAddress(String serviceAddress) throws BusinessLogicException {
         List <Service> services = null;
         try{
             services = serviceRestfulClient.findServiceByAddress(new GenericType<List<Service>>(){},serviceAddress);
         }catch(ClientErrorException e){
-            throw new BussinessLogicException(e.getMessage());
+            throw new BusinessLogicException(e.getMessage());
         }
         return services;
     }
 
     @Override
-    public List<Service> findServiceByName(String serviceName) throws BussinessLogicException {
+    public List<Service> findServiceByName(String serviceName) throws BusinessLogicException {
        List <Service> services = null;
         try{
             services = serviceRestfulClient.findServiceByName(new GenericType<List<Service>>(){},serviceName);
         }catch(ClientErrorException e){
-            throw new BussinessLogicException(e.getMessage());
+            throw new BusinessLogicException(e.getMessage());
         }
         return services;
     }
 
     @Override
-    public List<Service> findAll() throws BussinessLogicException {
+    public List<Service> findAll() throws BusinessLogicException {
          List <Service> services = null;
         try{
             services = serviceRestfulClient.findAll(new GenericType<List<Service>>(){});
         }catch(ClientErrorException e){
-            throw new BussinessLogicException(e.getMessage());
+            throw new BusinessLogicException(e.getMessage());
         }
         return services;
+    }
+
+    @Override
+    public void updateService(Service service) throws BusinessLogicException {
+        
+    }
+
+    @Override
+    public void createService(Service service) throws BusinessLogicException {
+       
+        try {
+            LOGGER.log(Level.INFO, "ServiceManager: Creating service {0}.", service.getName());
+            //Send user data to web client for creation. 
+            serviceRestfulClient.create(service);
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE,
+                    "UsersManager: Exception creating user, {0}",
+                    ex.getMessage());
+            throw new BusinessLogicException("Error creating user:\n" + ex.getMessage());
+        }
+        
+    }
+
+    @Override
+    public void deleteService(String id) throws BusinessLogicException {
+        
     }
 
    

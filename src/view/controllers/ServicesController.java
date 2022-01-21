@@ -5,8 +5,7 @@
  */
 package view.controllers;
 
-
-import exceptions.BussinessLogicException;
+import exceptions.BusinessLogicException;
 import interfaces.ServicesManager;
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,10 +26,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Service;
 import model.ServiceBean;
@@ -42,8 +44,8 @@ import model.ServiceBean;
  */
 public class ServicesController {
 
-     private static final Logger LOGGER = Logger.getLogger(ServicesController.class.getName());
-    
+    private static final Logger LOGGER = Logger.getLogger(ServicesController.class.getName());
+
     private ServicesManager serviceManager;
 
     private Service service;
@@ -133,8 +135,8 @@ public class ServicesController {
 
         tbvService.getSelectionModel().selectedItemProperty()
                 .addListener(this::handleTableSelectionChanged);
-        
-          tcId.setCellValueFactory(
+
+        tcId.setCellValueFactory(
                 new PropertyValueFactory<>("id"));
         tcAddress.setCellValueFactory(
                 new PropertyValueFactory<>("address"));
@@ -142,14 +144,30 @@ public class ServicesController {
                 new PropertyValueFactory<>("name"));
         tcType.setCellValueFactory(
                 new PropertyValueFactory<>("type"));
-       
-        //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
+
+        tbvService.setEditable(true);
+        tbvService.setMinWidth(500);
+
+           //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
         cbService.getSelectionModel().selectFirst();
         tcAddress.setMaxWidth(100);
+        
+        //Making table columns editable. 
+        setEditableColumns();
+
+        loadAllServices();
+        
+        stage.show();
+
+        
+        
+    }
+
+    private void loadAllServices() {
         List<ServiceBean> services = new ArrayList<>();
-        
-        
+
         try {
+
             List<Service> allServices = serviceManager.findAll();
             if (allServices.size() > 0) {
                 for (Service s : allServices) {
@@ -164,7 +182,7 @@ public class ServicesController {
                 imgPrint.setOpacity(0.25);
             }
 
-        } catch (BussinessLogicException e) {
+        } catch (BusinessLogicException e) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("AYUDA");
             alert.setHeaderText("Error");
@@ -172,12 +190,8 @@ public class ServicesController {
             alert.showAndWait();
         }
 
-        stage.show();
+        tbvService.refresh();
         
-    }
-
-    private void loadAllServices() {
-
     }
 
     public void setStage(Stage primaryStage) {
@@ -223,5 +237,82 @@ public class ServicesController {
             imgDelete.setOpacity(0.25);
         }
     }
-    
+
+    @FXML
+    private void handleServiceCreation(MouseEvent event) {
+
+    }
+
+    private void setEditableColumns() {
+      
+  //Making name Services table column editable
+
+        tcName.setCellFactory(TextFieldTableCell.<ServiceBean>forTableColumn());
+        tcName.setOnEditCommit(
+                (CellEditEvent<ServiceBean, String> t) -> {
+                    ((ServiceBean) t.getTableView().getItems().get(
+                            t.getTablePosition().getRow())).setName(t.getNewValue());
+                    tbvService.getSelectionModel().select(t.getTablePosition().getRow(), tcName);
+                    tbvService.edit(t.getTablePosition().getRow(), tcName);
+                    imgCommit.setDisable(false);
+                    imgCommit.setOpacity(1);
+                    imgCancel.setDisable(false);
+                    imgCancel.setOpacity(1);
+                });
+
+        tcName.setOnEditCancel((CellEditEvent<ServiceBean, String> t) -> {
+            tbvService.refresh();
+            imgCommit.setDisable(true);
+            imgCommit.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
+        });
+
+        //Making address Services table column editable
+        tcAddress.setCellFactory(TextFieldTableCell.<ServiceBean>forTableColumn());
+        tcAddress.setOnEditCommit(
+                (CellEditEvent<ServiceBean, String> t) -> {
+                    ((ServiceBean) t.getTableView().getItems().get(
+                            t.getTablePosition().getRow())).setAddress(t.getNewValue());
+                    tbvService.getSelectionModel().select(t.getTablePosition().getRow(), tcAddress);
+                    tbvService.edit(t.getTablePosition().getRow(), tcAddress);
+                    imgCommit.setDisable(false);
+                    imgCommit.setOpacity(1);
+                    imgCancel.setDisable(false);
+                    imgCancel.setOpacity(1);
+                });
+        
+          tcAddress.setOnEditCancel((CellEditEvent<ServiceBean, String> t) -> {
+            tbvService.refresh();
+            imgCommit.setDisable(true);
+            imgCommit.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
+        });
+
+     
+           //Making type Services table column editable
+        tcType.setCellFactory(TextFieldTableCell.<ServiceBean>forTableColumn());
+        tcType.setOnEditCommit(
+                (CellEditEvent<ServiceBean, String> t) -> {
+                    ((ServiceBean) t.getTableView().getItems().get(
+                            t.getTablePosition().getRow())).setType(t.getNewValue());
+                    tbvService.getSelectionModel().select(t.getTablePosition().getRow(), tcType);
+                    tbvService.edit(t.getTablePosition().getRow(), tcType);
+                    imgCommit.setDisable(false);
+                    imgCommit.setOpacity(1);
+                    imgCancel.setDisable(false);
+                    imgCancel.setOpacity(1);
+                });
+        
+          tcType.setOnEditCancel((CellEditEvent<ServiceBean, String> t) -> {
+            tbvService.refresh();
+            imgCommit.setDisable(true);
+            imgCommit.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
+        });
+
+    }
+
 }
