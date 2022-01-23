@@ -31,8 +31,8 @@ import model.Dwelling;
 import model.User;
 
 /**
- *
- * @author ander
+ * Controller for the newDwelling.fxml
+ * @author Ander Arruza
  */
 public class NewDwellingController {
 
@@ -68,11 +68,11 @@ public class NewDwellingController {
 
     private User user;
 
-    private final String regex = "^([+]?(\\d+\\.)?\\d+)$";
+    private final String regex = "^((\\d+\\.)?\\d+)$";
 
     /**
-     *
-     * @param root
+     * Method for initializing NewDwellingController Stage. 
+     * @param root The Parent object representing root node of view graph.
      */
     public void initStage(Parent root) {
         LOGGER.info("Initializing NewDwelling stage");

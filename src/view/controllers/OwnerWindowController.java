@@ -49,7 +49,7 @@ import model.Dwelling;
 import model.User;
 
 /**
- * FXML Controller class
+ * FXML Controller class for OwnerWindow.fxml
  *
  * @author Ander Arruza
  */
@@ -102,9 +102,9 @@ public class OwnerWindowController {
     private ObservableList<DwellingTableBean> dwellingsTableBean;
 
     /**
-     * This method is used to initialize the stage
+     * Method for initializing OwnerWindowController Stage.
      *
-     * @param root The parent object representing root node of the view graph
+     * @param root The Parent object representing root node of view graph.
      */
     public void initStage(Parent root) {
 
@@ -215,6 +215,10 @@ public class OwnerWindowController {
         LOGGER.info("Owner/Guest-Window Open");
     }
 
+    /**
+     *
+     * @param event
+     */
     @FXML
     private void handleChangeComponents(ActionEvent event) {
         switch (cbDwellings.getValue()) {
@@ -236,6 +240,10 @@ public class OwnerWindowController {
 
     }
 
+    /**
+     *
+     * @param event
+     */
     @FXML
     private void handleFilterSearch(MouseEvent event) {
         if (tableDwelling.getItems().size() > 1) {
@@ -341,6 +349,10 @@ public class OwnerWindowController {
 
     }
 
+    /**
+     *
+     * @param event
+     */
     @FXML
     private void handleNewDwelling(MouseEvent event) {
         try {
@@ -360,6 +372,10 @@ public class OwnerWindowController {
         }
     }
 
+    /**
+     *
+     * @param event
+     */
     @FXML
     private void handleDeleteDwelling(MouseEvent event) {
         DwellingTableBean selectedDwelling = tableDwelling.getSelectionModel()
@@ -390,6 +406,10 @@ public class OwnerWindowController {
         }
     }
 
+    /**
+     *
+     * @param event
+     */
     @FXML
     private void handlePrintDwellings(MouseEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -419,14 +439,26 @@ public class OwnerWindowController {
         }
     }
 
+    /**
+     *
+     * @param primaryStage
+     */
     public void setStage(Stage primaryStage) {
         this.stage = primaryStage;
     }
 
+    /**
+     *
+     * @param dwellingManager
+     */
     public void setDwellingManager(DwellingManager dwellingManager) {
         this.dwellingManager = dwellingManager;
     }
 
+    /**
+     *
+     * @param user
+     */
     public void setUser(User user) {
         this.user = user;
     }

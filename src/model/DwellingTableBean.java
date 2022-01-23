@@ -19,7 +19,7 @@ import javafx.scene.control.Hyperlink;
 
 /**
  *
- * @author ander
+ * @author Ander Arruza
  */
 public class DwellingTableBean {
 

@@ -16,8 +16,9 @@ import model.Dwelling;
 import restful.DwellingRestfulClient;
 
 /**
- *
- * @author ander
+ * Class that implements the DwellingManager methods
+ * Manager Implementation for the RestFul service
+ * @author Ander Arruza
  */
 public class DwellingManagerImplementation implements DwellingManager {
 
