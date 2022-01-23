@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane styleClass="loginPanel" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.AdminController">
+<BorderPane styleClass="loginPanel" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.AdminController">
    <padding>
       <Insets top="10.0" />
    </padding>
@@ -22,7 +22,7 @@
         <columns>
           <TableColumn fx:id="colFullName" maxWidth="300.0" minWidth="150.0" prefWidth="-1.0" resizable="false" text="Full Name" />
             <TableColumn fx:id="colLogin" maxWidth="300.0" minWidth="150.0" prefWidth="-1.0" resizable="false" text="Login" />
-            <TableColumn fx:id="colEmail" maxWidth="300.0" minWidth="150.0" prefWidth="-1.0" resizable="false" text="Email" />
+            <TableColumn fx:id="colEmail" maxWidth="300.0" minWidth="255.0" prefWidth="-1.0" resizable="false" text="Email" />
           <TableColumn fx:id="colBirthDate" maxWidth="300.0" minWidth="150.0" prefWidth="-1.0" resizable="false" text="Birth Date" />
             <TableColumn fx:id="colPhone" maxWidth="300.0" minWidth="150.0" prefWidth="-1.0" resizable="false" text="Phone Number" />
         </columns>
@@ -45,7 +45,7 @@
                   <Separator orientation="VERTICAL" />
                   <VBox alignment="CENTER" fillWidth="false">
                      <children>
-                        <Button fx:id="btnSearch" mnemonicParsing="false" text="Search">
+                        <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#searchByLogin" text="Search">
                            <VBox.margin>
                               <Insets right="10.0" />
                            </VBox.margin>
@@ -55,7 +55,7 @@
                   <Separator orientation="VERTICAL" />
                   <VBox alignment="CENTER" fillWidth="false">
                      <children>
-                        <ImageView fx:id="imgPrint" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgPrint" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#printReport" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../resources/img/general/print.png" />
                            </image>

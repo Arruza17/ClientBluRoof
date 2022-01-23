@@ -21,7 +21,7 @@ import javax.ws.rs.core.GenericType;
  *        client.close();
  * </pre>
  *
- * @author YERAY
+ * @author YERAYa
  */
 public class UserRESTClient {
 

@@ -163,8 +163,8 @@ public class UserManagerImplementation implements UserManager {
         User changedUser = null;
         try {
             LOGGER.log(Level.INFO, "UsersManager: Changing {0}'s password ", user);
-            //user = webClient.changePassword(new GenericType<User>(){
-            // }, user, pass);
+            webClient.changePassword( new GenericType<User>() {
+            }, user, new Cipher().cipher(pass.getBytes()));
         } catch (ClientErrorException ex) {
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception changing password, {0}",

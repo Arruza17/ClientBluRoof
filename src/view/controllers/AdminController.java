@@ -8,22 +8,28 @@ package view.controllers;
 import enumerations.UserPrivilege;
 import enumerations.UserStatus;
 import exceptions.BusinessLogicException;
+import exceptions.FieldsEmptyException;
 import interfaces.UserManager;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.SimpleObjectProperty;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -38,15 +44,14 @@ import model.User;
 /**
  * FXML Controller class
  *
- * @author YERAY
+ * @author Yeray Sampedro
  */
 public class AdminController {
 
-    private static final Logger LOGGER = Logger.getLogger("AdminController");
+    private static final Logger LOGGER = Logger.getLogger(AdminController.class.getName());
 
     private UserManager userManager;
 
-    private Stage stage;
     @FXML
     private TextField tfSearch;
     @FXML
@@ -60,7 +65,7 @@ public class AdminController {
     @FXML
     private TableColumn<User, String> colEmail;
     @FXML
-    private TableColumn<User, Timestamp> colBirthDate;
+    private TableColumn<User, Date> colBirthDate;
     @FXML
     private TableColumn<User, String> colPhone;
     @FXML
@@ -82,8 +87,7 @@ public class AdminController {
      * @param root
      */
     public void initStage() {
-        //Scene scene = new Scene(root);
-
+        LOGGER.info("Loading admin controller view");
         colFullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         colLogin.setCellValueFactory(new PropertyValueFactory<>("login"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -115,12 +119,6 @@ public class AdminController {
             }
         });
         tblAdmin.setEditable(true);
-        /*users.addListener(new ListChangeListener<Person>() {
-            @Override
-            public void onChanged(Change<? extends Person> change) {
-                System.out.println("Selection changed: " + change.getList());
-            }
-        })*/
         imgCancel.setDisable(true);
         imgCancel.setOpacity(0.25);
         imgCommit.setDisable(true);
@@ -215,11 +213,46 @@ public class AdminController {
             imgCancel.setDisable(true);
             imgCancel.setOpacity(0.25);
         });
+
+        //Make birthdate column editable
+        colBirthDate.setCellFactory(tableCell -> {
+            return new TableCell<User, Date>() {
+                @Override
+                protected void updateItem(Date date, boolean dateIsEmpty) {
+                    SimpleDateFormat sdFormat = new SimpleDateFormat("dd/MM/yyyy");
+                    super.updateItem(date, dateIsEmpty);
+                    if (date == null || dateIsEmpty) {
+                        setText(null);
+                    } else {
+                        setText(sdFormat.format(date));
+                    }
+                }
+            };
+        });
+
+        colBirthDate.setOnEditCommit(
+                (CellEditEvent<User, Date> t) -> {
+                    ((User) t.getTableView().getItems().get(
+                            t.getTablePosition().getRow())).setBirthDate(t.getNewValue());
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
+                    tblAdmin.edit(t.getTablePosition().getRow(), colPhone);
+                    imgCommit.setDisable(false);
+                    imgCommit.setOpacity(1);
+                    imgCancel.setDisable(false);
+                    imgCancel.setOpacity(1);
+                });
+
+        colBirthDate.setOnEditCancel((CellEditEvent<User, Date> t) -> {
+            tblAdmin.refresh();
+            imgCommit.setDisable(true);
+            imgCommit.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
+        });
+
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
+  
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
@@ -227,6 +260,7 @@ public class AdminController {
 
     @FXML
     private void handleTableAdd(MouseEvent event) {
+        LOGGER.info("Adding new empty admin to the table");
         admin.add(new User());
         tblAdmin.getSelectionModel().select(admin.size() - 1);
         tblAdmin.getFocusModel().focus(admin.size() - 1, colFullName);
@@ -243,6 +277,7 @@ public class AdminController {
 
     @FXML
     private void handleTableDelete(MouseEvent event) {
+        LOGGER.info("Deleteing information about user");
         User user = tblAdmin.getSelectionModel().getSelectedItem();
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText("Delete");
@@ -257,6 +292,7 @@ public class AdminController {
                 admin.remove(user);
                 tblAdmin.refresh();
             } catch (BusinessLogicException ex) {
+                LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at handleTableDelete(): {0}", ex.getMessage());
                 Alert excAlert = new Alert(AlertType.INFORMATION);
                 excAlert.setTitle("Error");
                 excAlert.setContentText("There was an error with the deletion of the user: " + ex.getMessage());
@@ -272,16 +308,17 @@ public class AdminController {
         user.setStatus(UserStatus.ENABLED.name());
         int pos = tblAdmin.getSelectionModel().getSelectedIndex();
         //try {
+
         if (pos == admin.size() - 1) {
             user.setLastPasswordChange(new Date());
             //userManager.updateUser(user);   
             //userManager.resetPassword(user.getLogin());
             tblAdmin.refresh();
-            System.out.println("CREATION");
+            LOGGER.info("Creation");
         } else {
             //userManager.createUser(user);
             tblAdmin.refresh();
-            System.out.println("UPDATE");
+            LOGGER.info("update");
 
         }
         /*} catch (BusinessLogicException ex) {
@@ -294,7 +331,51 @@ public class AdminController {
 
     @FXML
     private void handleTableCancel(MouseEvent event) {
+        int pos = tblAdmin.getSelectionModel().getSelectedIndex();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Cancel");
+        alert.setContentText("You are about to stop the edition\nAre you sure?");
+        Optional<ButtonType> result = alert.showAndWait();
+        //try {
+        if (result.get() == ButtonType.OK) {
+            if (tblAdmin.getSelectionModel().getSelectedItem().getId() == null && pos == admin.size() - 1) {
+                //userManager.updateUser(user);   
+                //userManager.resetPassword(user.getLogin());
+                LOGGER.info("Cancel creation");
+                admin.remove(admin.size() - 1);
+            } else {
+                //userManager.createUser(user);
+
+                LOGGER.info("Cancel update");
+            }
+            //tblAdmin.setItems(admin);
+            tblAdmin.refresh();
+        }
+    }
+
+    @FXML
+    private void searchByLogin(ActionEvent event) {
+        try {
+            admin.clear();
+            String text = tfSearch.getText().trim();
+            if (text.isEmpty()) {
+                admin = FXCollections.observableArrayList(userManager.findAllAdmins());
+            } else {
+                admin = FXCollections.observableArrayList(userManager.findAllAdminsByLogin("%" + text + "%"));
+            }
+
+        } catch (BusinessLogicException ex) {
+            LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at searchByLogin(): {0}", ex.getMessage());
+        } finally {
+            tblAdmin.setItems(admin);
+            tblAdmin.refresh();
+
+        }
 
     }
 
+    @FXML
+    private void printReport(MouseEvent event) {
+
+    }
 }

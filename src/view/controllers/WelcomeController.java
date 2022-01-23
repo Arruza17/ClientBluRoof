@@ -21,6 +21,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import model.User;
@@ -32,13 +33,9 @@ import model.User;
  */
 public class WelcomeController {
 
-    private final int MAX_WIDTH = 1920;
-    private final int MAX_HEIGHT = 1024;
-    private final int MIN_WIDTH = 1024;
-    private final int MIN_HEIGHT = 768;
     private User user;
     private Stage stage;
-    private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WelcomeController.class.getName());
 
     private VBox menuNode;
 
@@ -62,12 +59,16 @@ public class WelcomeController {
         //Adding the css
         String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
         scene.getStylesheets().add(css);
-        //Setting up the Max & Mins 
-        stage.setMaxWidth(MAX_WIDTH);
-        stage.setMinWidth(MIN_WIDTH);
-        stage.setMaxHeight(MAX_HEIGHT);
-        stage.setMinHeight(MIN_HEIGHT);
-        stage.setResizable(true);
+        //Setting up the size
+        Screen screen = Screen.getPrimary();
+        javafx.geometry.Rectangle2D bound = screen.getVisualBounds();
+        stage.setX(bound.getMinX());
+        stage.setY(bound.getMinY());
+        stage.setWidth(bound.getWidth());
+        stage.setHeight(bound.getHeight());
+        stage.setResizable(false);
+        stage.setMaximized(true);
+
         stage.setTitle("BluRoof Welcome Page");
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
         stage.setScene(scene);
@@ -80,6 +81,7 @@ public class WelcomeController {
             if (loader != null) {
                 menuNode = loader.load();
                 GenericMenuController menu = loader.getController();
+                menu.setUser(user);
                 menu.setStage(stage);
                 bpMain.setLeft(menuNode);
                 menu.setBorder(getBpMain());
@@ -90,7 +92,7 @@ public class WelcomeController {
                 alert.show();
             }
         } catch (IOException ex) {
-            Logger.getLogger(WelcomeController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
 
     }

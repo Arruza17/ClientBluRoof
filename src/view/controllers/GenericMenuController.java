@@ -8,12 +8,14 @@ package view.controllers;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import model.User;
 /**
  *
  * @author YERAY
  */
 public class GenericMenuController {
 
+    private User user;
     
     private Stage stage;
     
@@ -34,6 +36,17 @@ public class GenericMenuController {
     public Stage getStage() {
         return stage;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+    
+    
+    
     
     
 

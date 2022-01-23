@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import java.util.Date;
 import java.util.List;
-import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -80,7 +79,7 @@ public class User implements Serializable {
     }
 
     public User() {
-         this.id = new SimpleStringProperty();
+         this.id = null;
         this.login =  new SimpleStringProperty();
         this.fullName =  new SimpleStringProperty();
         this.password =  new SimpleStringProperty();

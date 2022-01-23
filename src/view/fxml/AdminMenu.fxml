@@ -8,6 +8,18 @@
 
 <VBox alignment="CENTER" spacing="15.0" styleClass="menuBar" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.AdminMenuController">
    <children>
+      <HBox fx:id="menuProfile" alignment="CENTER" onMouseClicked="#handleProfile" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Your profile" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </HBox>
       <HBox fx:id="menuAdminCrud" alignment="CENTER" onMouseClicked="#handleAdminCrud" VBox.vgrow="ALWAYS">
          <children>
             <Label text="Admin CRUD" textFill="WHITE">
