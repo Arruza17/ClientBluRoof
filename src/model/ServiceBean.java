@@ -70,7 +70,7 @@ public class ServiceBean {
      * @return address of the service.
      */
     public String getAddress() {
-        return this.type.get();
+        return this.address.get();
     }
 
     /**
