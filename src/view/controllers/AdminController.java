@@ -8,16 +8,14 @@ package view.controllers;
 import enumerations.UserPrivilege;
 import enumerations.UserStatus;
 import exceptions.BusinessLogicException;
-import exceptions.FieldsEmptyException;
 import interfaces.UserManager;
-import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleObjectProperty;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -30,6 +28,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
+
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -38,7 +37,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
+
 import model.User;
 
 /**
@@ -103,11 +102,6 @@ public class AdminController {
             alert.showAndWait();
             LOGGER.log(Level.WARNING, "{0} exception thrown at InitStage method", ex.getClass().getSimpleName());
         }
-        colFullName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFullName()));
-        colLogin.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLogin()));
-        colEmail.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
-        colPhone.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPhoneNumber()));
-        //colBirthDate.setCellValueFactory(cellData -> new SimpleObjectProperty<Date>(cellData.getValue().getBirthDate());
 
         tblAdmin.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -127,6 +121,8 @@ public class AdminController {
         imgDel.setOpacity(0.25);
 
         //Make full name column editable
+        colFullName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFullName()));
+        colFullName.setEditable(true);
         colFullName.setCellFactory(TextFieldTableCell.<User>forTableColumn());
         colFullName.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
@@ -149,6 +145,9 @@ public class AdminController {
         });
 
         //Make login column editable
+        colLogin.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLogin()));
+
+        colLogin.setEditable(true);
         colLogin.setCellFactory(TextFieldTableCell.<User>forTableColumn());
         colLogin.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
@@ -171,6 +170,9 @@ public class AdminController {
         });
 
         //Make email column editable
+        colEmail.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
+
+        colEmail.setEditable(true);
         colEmail.setCellFactory(TextFieldTableCell.<User>forTableColumn());
         colEmail.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
@@ -193,6 +195,9 @@ public class AdminController {
         });
 
         //Make phone column editable
+        colPhone.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPhoneNumber()));
+
+        colPhone.setEditable(true);
         colPhone.setCellFactory(TextFieldTableCell.<User>forTableColumn());
         colPhone.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
@@ -214,7 +219,9 @@ public class AdminController {
             imgCancel.setOpacity(0.25);
         });
 
-        //Make birthdate column editable
+        //Make birthdate column editable   
+        colBirthDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBirthDate()));
+        colBirthDate.setEditable(true);
         colBirthDate.setCellFactory(tableCell -> {
             return new TableCell<User, Date>() {
                 @Override
@@ -252,8 +259,6 @@ public class AdminController {
 
     }
 
-  
-
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
     }
@@ -261,7 +266,11 @@ public class AdminController {
     @FXML
     private void handleTableAdd(MouseEvent event) {
         LOGGER.info("Adding new empty admin to the table");
-        admin.add(new User());
+        User newUser = new User();
+        newUser.setPrivilege(UserPrivilege.ADMIN.name());
+        newUser.setStatus(UserStatus.ENABLED.name());
+        newUser.setId(Long.MIN_VALUE);
+        admin.add(newUser);
         tblAdmin.getSelectionModel().select(admin.size() - 1);
         tblAdmin.getFocusModel().focus(admin.size() - 1, colFullName);
         tblAdmin.edit(admin.size() - 1, colFullName);
@@ -299,34 +308,33 @@ public class AdminController {
                 excAlert.show();
             }
         }
+        imgDel.setDisable(true);
+        imgDel.setOpacity(0.25);
     }
 
     @FXML
     private void handleTableCommit(MouseEvent event) {
         User user = tblAdmin.getSelectionModel().getSelectedItem();
-        user.setPrivilege(UserPrivilege.ADMIN.name());
-        user.setStatus(UserStatus.ENABLED.name());
         int pos = tblAdmin.getSelectionModel().getSelectedIndex();
-        //try {
-
-        if (pos == admin.size() - 1) {
-            user.setLastPasswordChange(new Date());
-            //userManager.updateUser(user);   
-            //userManager.resetPassword(user.getLogin());
-            tblAdmin.refresh();
-            LOGGER.info("Creation");
-        } else {
-            //userManager.createUser(user);
-            tblAdmin.refresh();
-            LOGGER.info("update");
-
-        }
-        /*} catch (BusinessLogicException ex) {
+        try {
+            if (pos == admin.size() - 1 && user.getId().equals(Long.MIN_VALUE)) {
+                user.setId(null);
+                userManager.createUser(user);
+                userManager.resetPassword(user.getLogin());
+                tblAdmin.refresh();
+                LOGGER.info("Creation of new admin");
+            } else {
+                userManager.updateUser(user);
+                tblAdmin.refresh();
+                LOGGER.info("Update admin");
+            }
+        } catch (BusinessLogicException ex) {
             Alert excAlert = new Alert(AlertType.INFORMATION);
             excAlert.setTitle("Error");
             excAlert.setContentText("There was an error with the edition of the user: " + ex.getMessage());
             excAlert.show();
-        }*/
+            LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at handleTableCommit(): {0}", ex.getMessage());
+        }
     }
 
     @FXML
@@ -338,18 +346,23 @@ public class AdminController {
         Optional<ButtonType> result = alert.showAndWait();
         //try {
         if (result.get() == ButtonType.OK) {
-            if (tblAdmin.getSelectionModel().getSelectedItem().getId() == null && pos == admin.size() - 1) {
-                //userManager.updateUser(user);   
-                //userManager.resetPassword(user.getLogin());
+            if (pos == admin.size() - 1 && admin.get(pos).getId() == Long.MIN_VALUE) {
                 LOGGER.info("Cancel creation");
                 admin.remove(admin.size() - 1);
             } else {
-                //userManager.createUser(user);
-
                 LOGGER.info("Cancel update");
             }
-            //tblAdmin.setItems(admin);
+            imgCommit.setDisable(true);
+            imgCommit.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
+            imgAdd.setDisable(false);
+            imgAdd.setOpacity(1);
+            imgDel.setDisable(true);
+            imgDel.setOpacity(0.25);
+            tblAdmin.setItems(admin);
             tblAdmin.refresh();
+            tblAdmin.getSelectionModel().clearSelection(tblAdmin.getSelectionModel().getSelectedIndex());
         }
     }
 

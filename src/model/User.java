@@ -23,7 +23,7 @@ public class User implements Serializable {
      * Identification field for user.
      */
 
-    private SimpleStringProperty id;
+    private Long id;
 
     private SimpleStringProperty login;
     /**
@@ -64,7 +64,7 @@ public class User implements Serializable {
 
     private List<LastSignIn> lastSignIns;
 
-    public User(SimpleStringProperty id, SimpleStringProperty login, SimpleStringProperty fullName, SimpleStringProperty password, SimpleStringProperty email, SimpleObjectProperty<Date> birthDate, SimpleStringProperty status, SimpleStringProperty privilege, SimpleObjectProperty<Date> lastPasswordChange, SimpleStringProperty phoneNumber, List<LastSignIn> lastSignIns) {
+    public User(Long id, SimpleStringProperty login, SimpleStringProperty fullName, SimpleStringProperty password, SimpleStringProperty email, SimpleObjectProperty<Date> birthDate, SimpleStringProperty status, SimpleStringProperty privilege, SimpleObjectProperty<Date> lastPasswordChange, SimpleStringProperty phoneNumber, List<LastSignIn> lastSignIns) {
         this.id = id;
         this.login = login;
         this.fullName = fullName;
@@ -107,7 +107,7 @@ public class User implements Serializable {
      * @return id the identification number
      */
     public Long getId() {
-        return Long.parseLong(this.id.get());
+        return this.id;
     }
 
     /**
@@ -116,7 +116,7 @@ public class User implements Serializable {
      * @param id the identification number to be set
      */
     public void setId(Long id) {
-        this.id.set(String.valueOf(id));
+        this.id=id;
     }
 
     /**
