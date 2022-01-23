@@ -72,4 +72,13 @@ public class DwellingManagerImplementation implements DwellingManager {
         }
     }
 
+    @Override
+    public void add(Dwelling dwelling) throws BussinessLogicException {
+        try{
+            dwellingRestfulClient.create(dwelling);
+        }catch(ClientErrorException e){
+            throw new BussinessLogicException(e.getMessage());
+        }
+    }
+
 }

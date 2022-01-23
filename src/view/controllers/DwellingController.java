@@ -1,11 +1,6 @@
 package view.controllers;
 
-import com.sun.istack.internal.logging.Logger;
-import factories.DwellingManagerFactory;
 import interfaces.DwellingManager;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -33,8 +28,7 @@ import model.User;
  * @author Ander Arruza
  */
 public class DwellingController {
-    
-    private static final Logger LOGGER = Logger.getLogger(DwellingController.class);
+   
     
     private DwellingManager dwellingManager;
     
@@ -121,7 +115,6 @@ public class DwellingController {
      * @param root The parent object representing root node of the view graph
      */
     public void initStage(Parent root) {
-        LOGGER.info("Initializing DwellingWindow stage");
         //Creation of a new Scene
         Scene scene = new Scene(root);
         /*
@@ -143,7 +136,6 @@ public class DwellingController {
 
         //Shows the stage
         stage.show();
-        LOGGER.info("DwellingWindow Open");
     }
     
     private void loadDwellingData() {
@@ -193,7 +185,6 @@ public class DwellingController {
     }
     
     private void loadAllComments() {
-        LOGGER.info("GETTING ALL THE COMMENTS FROM THE LOGICAL PART");
         try {
             List<Comment> comments = dwelling.getComments();
             //Set factories for cell values
@@ -204,7 +195,6 @@ public class DwellingController {
             colRating.setCellValueFactory(
                     new PropertyValueFactory<>("rating"));
         } catch (Exception e) {
-            LOGGER.severe("BUSSINESS LOGIC EXCEPTION");
         }
         
     }

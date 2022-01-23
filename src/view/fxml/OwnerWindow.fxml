@@ -106,34 +106,12 @@
                   </Separator>
                   <HBox spacing="5.0">
                      <children>
-                        <ImageView fx:id="imgCreateComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleAddComment" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgCreateComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleNewDwelling" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../resources/img/dwelling/add.png" />
                            </image>
                            <HBox.margin>
                               <Insets top="5.0" />
-                           </HBox.margin>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </ImageView>
-                        <ImageView fx:id="imgConfirmComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleConfirmComment" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../resources/img/dwelling/check.png" />
-                           </image>
-                           <HBox.margin>
-                              <Insets bottom="5.0" top="5.0" />
-                           </HBox.margin>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                        </ImageView>
-                        <ImageView fx:id="imgCancelComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleCancelComment" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../resources/img/dwelling/cancel.png" />
-                           </image>
-                           <HBox.margin>
-                              <Insets bottom="5.0" top="5.0" />
                            </HBox.margin>
                            <cursor>
                               <Cursor fx:constant="HAND" />

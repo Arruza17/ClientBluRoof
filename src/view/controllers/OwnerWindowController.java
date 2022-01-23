@@ -4,6 +4,7 @@ import com.sun.javafx.embed.AbstractEvents;
 import model.DwellingTableBean;
 import exceptions.BussinessLogicException;
 import interfaces.DwellingManager;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -12,11 +13,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -27,11 +35,15 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Dwelling;
 import model.User;
@@ -57,10 +69,6 @@ public class OwnerWindowController {
     @FXML
     private ImageView imgCreateComment;
     @FXML
-    private ImageView imgConfirmComment;
-    @FXML
-    private ImageView imgCancelComment;
-    @FXML
     private ImageView imgDeleteDwelling;
     @FXML
     private ImageView imgPrint;
@@ -81,17 +89,15 @@ public class OwnerWindowController {
 
     private static final Logger LOGGER = Logger.getLogger(DwellingController.class.getSimpleName());
 
-    private Dwelling dwelling;
-
     private User user;
 
     private Stage stage;
 
-    private final String SELECT_ALL_DWELLINGS = "Select all my dwellings";
+    private final String SELECT_ALL_DWELLINGS = "All my dwellings";
 
-    private final String SELECT_BY_MIN_CONSTRUCTION_DATE = "Select from min construction date";
+    private final String SELECT_BY_MIN_CONSTRUCTION_DATE = "Min construction date";
 
-    private final String SELECT_BY_MIN_RATING = "Select from min rating";
+    private final String SELECT_BY_MIN_RATING = "Min rating";
 
     private ObservableList<DwellingTableBean> dwellingsTableBean;
 
@@ -124,11 +130,6 @@ public class OwnerWindowController {
         //Sets the datePicker and spinner to disabled
         dpConstructionDate.setDisable(true);
         spRating.setDisable(true);
-        //Sets the confirm & cancel imgs to not clickable
-        imgConfirmComment.setDisable(true);
-        imgConfirmComment.setOpacity(0.25);
-        imgCancelComment.setDisable(true);
-        imgCancelComment.setOpacity(0.25);
         //Sets the the delete imgs to not clickable
         imgDeleteDwelling.setDisable(true);
         imgDeleteDwelling.setOpacity(0.25);
@@ -147,6 +148,7 @@ public class OwnerWindowController {
         //if logged as an owner
         lblTitle.setText("My Dwellings");
         //Setting the cell value factories
+        /*
         colAddress.setCellValueFactory(
                 new PropertyValueFactory<>("address"));
         colWiFi.setCellValueFactory(
@@ -155,11 +157,38 @@ public class OwnerWindowController {
                 new PropertyValueFactory<>("squareMeters"));
         colConstructionDate.setCellValueFactory(
                 new PropertyValueFactory<>("constructionDate"));
+         */
+
+        //Add the editable table
+        colAddress.setCellValueFactory(cellData
+                -> new SimpleStringProperty(cellData.getValue().getAddress()));
+        colAddress.setCellFactory(TextFieldTableCell.<DwellingTableBean>forTableColumn());
+        colAddress.setOnEditCommit(
+                (CellEditEvent<DwellingTableBean, String> t) -> {
+                    ((DwellingTableBean) t.getTableView().getItems().get(
+                            t.getTablePosition().getRow())).setAddress(t.getNewValue());
+                });
+
+        colWiFi.setCellValueFactory(cellData
+                -> new SimpleBooleanProperty(cellData.getValue().getWifi()));
+        colWiFi.setCellFactory(cellData -> new CheckBoxTableCell<>());
+        colWiFi.setOnEditCommit(
+                (CellEditEvent<DwellingTableBean, Boolean> t) -> {
+                    ((DwellingTableBean) t.getTableView().getItems().get(
+                            t.getTablePosition().getRow())).setWifi(t.getNewValue());
+                });
+
+        //colSquareMeters.setCellValueFactory(cellData
+        //-> new SimpleDoubleProperty(cellData.getValue().getSquareMeters()));
+        //colConstructionDate.setCellValueFactory(cellData
+        //-> new SimpleObjectProperty(cellData.getValue().getConstructionDate()));
         colRating.setCellValueFactory(
                 new PropertyValueFactory<>("rating"));
         colMoreInfo.setCellValueFactory(
                 new PropertyValueFactory<>("moreInfo"));
-        //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
+        //Setting up the editable fields
+
+        //Select the first comboBox item by default
         cbDwellings.getSelectionModel().selectFirst();
         //Load all the dwellings by default
         imgSearch.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, // double x,
@@ -180,6 +209,7 @@ public class OwnerWindowController {
                 false, // boolean stillSincePress,
                 null // PickResult pickResult
         ));
+
         //Shows the stage
         stage.show();
         LOGGER.info("Owner/Guest-Window Open");
@@ -312,15 +342,22 @@ public class OwnerWindowController {
     }
 
     @FXML
-    private void handleAddComment(MouseEvent event) {
-    }
-
-    @FXML
-    private void handleConfirmComment(MouseEvent event) {
-    }
-
-    @FXML
-    private void handleCancelComment(MouseEvent event) {
+    private void handleNewDwelling(MouseEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/NewDwelling.fxml"));
+            Stage stageNewDwelling = new Stage();
+            Parent root = (Parent) loader.load();
+            NewDwellingController controller = ((NewDwellingController) loader.getController());
+            controller.setStage(stageNewDwelling);
+            stageNewDwelling.initModality(Modality.APPLICATION_MODAL);
+            stageNewDwelling.initOwner(
+                    ((Node) event.getSource()).getScene().getWindow());
+            controller.setDwellingManager(dwellingManager);
+            controller.initStage(root);//Initialize stage
+            LOGGER.info("Openning SignIn Window");
+        } catch (IOException ex) {
+            Logger.getLogger(OwnerWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @FXML
@@ -331,7 +368,6 @@ public class OwnerWindowController {
         alert.setHeaderText(null);
         alert.setTitle("Confirmation");
         alert.setContentText("Do you want to delete this dwelling?");
-        alert.showAndWait();
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             try {
@@ -394,9 +430,4 @@ public class OwnerWindowController {
     public void setUser(User user) {
         this.user = user;
     }
-
-    private void loadAllDwellings() {
-
-    }
-
 }
