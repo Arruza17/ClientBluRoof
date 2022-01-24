@@ -79,7 +79,7 @@ public class OwnerWindowController {
     @FXML
     private TableColumn<DwellingTableBean, Boolean> colWiFi;
     @FXML
-    private TableColumn<DwellingTableBean, Double> colSquareMeters;
+    private TableColumn<DwellingTableBean, String> colSquareMeters;
     @FXML
     private TableColumn<DwellingTableBean, Date> colConstructionDate;
     @FXML
@@ -160,14 +160,11 @@ public class OwnerWindowController {
          */
 
         //Add the editable table
+        tableDwelling.setEditable(true);
         colAddress.setCellValueFactory(cellData
                 -> new SimpleStringProperty(cellData.getValue().getAddress()));
         colAddress.setCellFactory(TextFieldTableCell.<DwellingTableBean>forTableColumn());
-        colAddress.setOnEditCommit(
-                (CellEditEvent<DwellingTableBean, String> t) -> {
-                    ((DwellingTableBean) t.getTableView().getItems().get(
-                            t.getTablePosition().getRow())).setAddress(t.getNewValue());
-                });
+        colAddress.setOnEditCommit(this::editAddressTableCell);
 
         colWiFi.setCellValueFactory(cellData
                 -> new SimpleBooleanProperty(cellData.getValue().getWifi()));
@@ -178,10 +175,18 @@ public class OwnerWindowController {
                             t.getTablePosition().getRow())).setWifi(t.getNewValue());
                 });
 
-        //colSquareMeters.setCellValueFactory(cellData
-        //-> new SimpleDoubleProperty(cellData.getValue().getSquareMeters()));
-        //colConstructionDate.setCellValueFactory(cellData
-        //-> new SimpleObjectProperty(cellData.getValue().getConstructionDate()));
+        colSquareMeters.setCellValueFactory(cellData
+                -> new SimpleStringProperty(String.valueOf(cellData.getValue().getSquareMeters())));
+        colSquareMeters.setCellFactory(TextFieldTableCell.<DwellingTableBean>forTableColumn());
+        colSquareMeters.setOnEditCommit(
+                (CellEditEvent<DwellingTableBean, String> t) -> {
+                    ((DwellingTableBean) t.getTableView().getItems().get(
+                            t.getTablePosition().getRow())).setSquareMeters(Double.valueOf(t.getNewValue()));
+                });
+
+        colConstructionDate.setCellValueFactory(cellData
+                -> new SimpleObjectProperty(cellData.getValue().getConstructionDate()));
+
         colRating.setCellValueFactory(
                 new PropertyValueFactory<>("rating"));
         colMoreInfo.setCellValueFactory(
@@ -213,6 +218,16 @@ public class OwnerWindowController {
         //Shows the stage
         stage.show();
         LOGGER.info("Owner/Guest-Window Open");
+    }
+    /**
+     * Method that is thrown when the setOnEditCommit is 
+     * @param event 
+     */
+    private void editAddressTableCell(CellEditEvent<DwellingTableBean, String> event) {
+        //after the call to the logic part
+        ((DwellingTableBean) event.getTableView().getItems().get(
+                event.getTablePosition().getRow())).setAddress(event.getNewValue());
+        
     }
 
     /**
@@ -355,6 +370,16 @@ public class OwnerWindowController {
      */
     @FXML
     private void handleNewDwelling(MouseEvent event) {
+        
+        Dwelling dwelling = new Dwelling();
+        dwellingsTableBean.add(new DwellingTableBean(dwelling));
+        tableDwelling.getSelectionModel().select(dwellingsTableBean.size() - 1);
+        tableDwelling.layout();
+        tableDwelling.getFocusModel().focus(dwellingsTableBean.size() - 1, colAddress);
+        tableDwelling.edit(dwellingsTableBean.size() - 1, colAddress);
+        
+        /*
+        //PLAN B
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/NewDwelling.fxml"));
             Stage stageNewDwelling = new Stage();
@@ -370,6 +395,7 @@ public class OwnerWindowController {
         } catch (IOException ex) {
             Logger.getLogger(OwnerWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
     }
 
     /**

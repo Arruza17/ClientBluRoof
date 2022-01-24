@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
@@ -54,7 +55,7 @@
                            <children>
                               <HBox>
                                  <children>
-                                    <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
@@ -64,7 +65,7 @@
                                     </ImageView>
                                     <Label text="Address">
                                        <font>
-                                          <Font size="18.0" />
+                                          <Font size="20.0" />
                                        </font>
                                        <HBox.margin>
                                           <Insets left="5.0" />
@@ -79,7 +80,7 @@
                               </TextField>
                               <HBox>
                                  <children>
-                                    <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
@@ -101,7 +102,7 @@
                                  <children>
                                     <RadioButton fx:id="rbWiFiYes" mnemonicParsing="false" selected="true" text="Yes">
                                        <font>
-                                          <Font size="14.0" />
+                                          <Font size="16.0" />
                                        </font>
                                        <toggleGroup>
                                           <ToggleGroup fx:id="wiFiGroup" />
@@ -109,7 +110,7 @@
                                     </RadioButton>
                                     <RadioButton fx:id="rbWiFiNo" mnemonicParsing="false" text="No" toggleGroup="$wiFiGroup">
                                        <font>
-                                          <Font size="14.0" />
+                                          <Font size="16.0" />
                                        </font>
                                     </RadioButton>
                                  </children>
@@ -131,7 +132,7 @@
                            <children>
                               <HBox>
                                  <children>
-                                    <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
@@ -156,7 +157,7 @@
                               </DatePicker>
                               <HBox>
                                  <children>
-                                    <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
@@ -201,16 +202,22 @@
                <image>
                   <Image url="@../resources/img/dwelling/cancel.png" />
                </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
             <ImageView fx:id="imgAdd" fitHeight="35.0" fitWidth="35.0" onDragDetected="#handleAddNewDwelling" onMouseClicked="#handleAddNewDwelling" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../resources/img/dwelling/check.png" />
                </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </ImageView>
          </children>
       </HBox>
    </bottom>
    <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>
 </BorderPane>

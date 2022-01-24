@@ -7,6 +7,7 @@ import exceptions.NotValidSquareMetersValueException;
 import interfaces.DwellingManager;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -27,11 +28,13 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import model.Comment;
 import model.Dwelling;
 import model.User;
 
 /**
  * Controller for the newDwelling.fxml
+ *
  * @author Ander Arruza
  */
 public class NewDwellingController {
@@ -71,7 +74,8 @@ public class NewDwellingController {
     private final String regex = "^((\\d+\\.)?\\d+)$";
 
     /**
-     * Method for initializing NewDwellingController Stage. 
+     * Method for initializing NewDwellingController Stage.
+     *
      * @param root The Parent object representing root node of view graph.
      */
     public void initStage(Parent root) {
@@ -95,8 +99,10 @@ public class NewDwellingController {
     }
 
     /**
+     * Method that is executed when the add imageView is clicked
      *
-     * @param event
+     * @param event An event which indicates that a mouse action occurred in a
+     * component.
      */
     @FXML
     void handleAddNewDwelling(MouseEvent event) {
@@ -113,19 +119,33 @@ public class NewDwellingController {
                     boolean hasWifi = (toogleGroupValue.equals("Yes"));
                     Date date = Date.from(dpConstructionDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    /*
+
+                    /*SimpleLongProperty id,
+                    SimpleStringProperty address,
+                    SimpleBooleanProperty hasWiFi,
+                    SimpleDoubleProperty squareMeters,
+                    SimpleObjectProperty<Neighbourhood> neighbourhood,
+                    SimpleObjectProperty<Date> constructionDate,
+                    SimpleObjectProperty<Owner> host,
+                    SimpleFloatProperty rating,
+                    List<Comment> comments
+                    
+                    
+                     */
+ /*
                     Dwelling newDwelling = new Dwelling(
                             null, //id
                             new SimpleStringProperty(tfAddress.getText().trim()), //address
                             new SimpleBooleanProperty(hasWifi), //wifi
                             new SimpleDoubleProperty(Double.valueOf(tfSquareMeters.getText().trim())), //squareMeters
-                            null,
+                            null,//neighbourhood
                             new SimpleObjectProperty<Date>(date)),
                             null,
                             this.user, //owner
-                            null);
+                            new ArrayList<Comment> //comments);
                      */
                     dwellingManager.add(null);
+
                 }
             }
         } catch (FieldsEmptyException ex) {
@@ -154,6 +174,7 @@ public class NewDwellingController {
     }
 
     /**
+     * Method that is executed when the cancel imageview is clicked
      *
      * @param event
      */
@@ -205,24 +226,24 @@ public class NewDwellingController {
     }
 
     /**
-     *
-     * @param stage
+     * Sets the stage
+     * @param stage the stage to set
      */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
     /**
-     *
-     * @param dwellingManager
+     * Sets the DwellingManager interface
+     * @param dwellingManager the DwellingManager to set
      */
     public void setDwellingManager(DwellingManager dwellingManager) {
         this.dwellingManager = dwellingManager;
     }
 
     /**
-     *
-     * @param user
+     * Sets the user
+     * @param user the user to be set
      */
     public void setUser(User user) {
         this.user = user;
