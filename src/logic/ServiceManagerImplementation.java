@@ -22,7 +22,7 @@ import restful.ServiceRestfulClient;
 public class ServiceManagerImplementation implements ServicesManager{
 
     private final ServiceRestfulClient serviceRestfulClient;
-    private Logger LOGGER;
+    private Logger LOGGER=Logger.getLogger("ServiceManagerIMple");
     
       public ServiceManagerImplementation() {
         serviceRestfulClient = new ServiceRestfulClient();

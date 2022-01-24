@@ -5,17 +5,26 @@
  */
 package view.controllers;
 
+import enumerations.ServiceType;
 import exceptions.BusinessLogicException;
 import interfaces.ServicesManager;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -27,8 +36,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
@@ -60,6 +71,8 @@ public class ServicesController {
 
     private final String SELECT_BY_TYPE = "Select from type";
 
+    private ServiceType serviceType;
+
     @FXML
     private ComboBox<String> cbService;
     @FXML
@@ -90,6 +103,10 @@ public class ServicesController {
     private TableColumn<ServiceBean, String> tcType;
     @FXML
     private ImageView imgPrint;
+    private ObservableList<ServiceBean> services;
+    private ObservableList<String> types;
+
+    private ComboBox type;
 
     public void initStage(Parent root) {
         LOGGER.info("Initializing DwellingWindow stage");
@@ -108,9 +125,6 @@ public class ServicesController {
         stage.setTitle("DwellingWindow");
         //Sets the window not resizable
         stage.setResizable(false);
-        //Load the Dwelling data depending if its a Flat or a Room with the loadDwellingData() method
-        loadAllServices();
-
         //Shows the stage
         stage.show();
         LOGGER.info("DwellingWindow Open");
@@ -142,39 +156,47 @@ public class ServicesController {
                 new PropertyValueFactory<>("address"));
         tcName.setCellValueFactory(
                 new PropertyValueFactory<>("name"));
+
+        type = new ComboBox();
+
+        types = FXCollections.observableArrayList();
+
+        for (ServiceType st : serviceType.values()) {
+            types.add(st.toString());
+        }
+
+        type.setItems((ObservableList) types);
+
         tcType.setCellValueFactory(
                 new PropertyValueFactory<>("type"));
 
         tbvService.setEditable(true);
         tbvService.setMinWidth(500);
 
-           //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
+        //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
         cbService.getSelectionModel().selectFirst();
         tcAddress.setMaxWidth(100);
-        
+
         //Making table columns editable. 
         setEditableColumns();
 
-        loadAllServices();
-        
         stage.show();
 
-        
-        
     }
 
-    private void loadAllServices() {
-        List<ServiceBean> services = new ArrayList<>();
-
+    private ObservableList loadAllServices() {
+        List<ServiceBean> listServices = new ArrayList<>();
+        ObservableList<ServiceBean> servicesTableBean = null;
         try {
 
             List<Service> allServices = serviceManager.findAll();
             if (allServices.size() > 0) {
                 for (Service s : allServices) {
                     //String type = (d instanceof Flat) ? "Flat" : "Room";
-                    services.add(new ServiceBean(s));
+                    listServices.add(new ServiceBean(s));
+
                 }
-                ObservableList<ServiceBean> servicesTableBean = FXCollections.observableArrayList(services);
+                servicesTableBean = FXCollections.observableArrayList(listServices);
                 tbvService.setItems(servicesTableBean);
             } else {
                 //The imgPrint will be disabled if there are not dwellings
@@ -191,7 +213,8 @@ public class ServicesController {
         }
 
         tbvService.refresh();
-        
+        return servicesTableBean;
+
     }
 
     public void setStage(Stage primaryStage) {
@@ -202,38 +225,14 @@ public class ServicesController {
         this.serviceManager = serviceManager;
     }
 
-    private void handleChangeComponents(ActionEvent event) {
-        switch (cbService.getValue()) {
-            case SELECT_ALL_SERVICES:
-                spinnerService.setDisable(true);
-                tfServices.setDisable(true);
-                break;
-            case SELECT_BY_ADDRESS:
-                spinnerService.setDisable(true);
-                tfServices.setDisable(false);
-                break;
-            case SELECT_BY_NAME:
-                spinnerService.setDisable(true);
-                tfServices.setDisable(false);
-                break;
-
-            case SELECT_BY_TYPE:
-
-                spinnerService.setDisable(true);
-                tfServices.setDisable(false);
-                break;
-        }
-
-    }
-
     private void handleTableSelectionChanged(ObservableValue observableValue, Object oldValue, Object newValue) {
 
         if (newValue != null) {
-            imgDelete.setDisable(true);
+            imgDelete.setDisable(false);
             imgDelete.setOpacity(1);
 
         } else {
-            imgDelete.setDisable(false);
+            imgDelete.setDisable(true);
             imgDelete.setOpacity(0.25);
         }
     }
@@ -241,12 +240,32 @@ public class ServicesController {
     @FXML
     private void handleServiceCreation(MouseEvent event) {
 
+        LOGGER.info("Adding new empty admin to the table");
+
+        Service s = new Service();
+
+        services.add(new ServiceBean(s));
+
+        TablePosition pos = new TablePosition(tbvService, services.size(), tcAddress);
+
+        tbvService.getFocusModel().focus(pos);
+        
+        tbvService.requestFocus();
+        
+        imgCommit.setDisable(false);
+        imgCommit.setOpacity(1);
+        imgCancel.setDisable(false);
+        imgCancel.setOpacity(1);
+        imgAdd.setDisable(true);
+        imgAdd.setOpacity(0.25);
+        imgDelete.setDisable(true);
+        imgDelete.setOpacity(0.25);
+
     }
 
     private void setEditableColumns() {
-      
-  //Making name Services table column editable
 
+        //Making name Services table column editable
         tcName.setCellFactory(TextFieldTableCell.<ServiceBean>forTableColumn());
         tcName.setOnEditCommit(
                 (CellEditEvent<ServiceBean, String> t) -> {
@@ -281,8 +300,8 @@ public class ServicesController {
                     imgCancel.setDisable(false);
                     imgCancel.setOpacity(1);
                 });
-        
-          tcAddress.setOnEditCancel((CellEditEvent<ServiceBean, String> t) -> {
+
+        tcAddress.setOnEditCancel((CellEditEvent<ServiceBean, String> t) -> {
             tbvService.refresh();
             imgCommit.setDisable(true);
             imgCommit.setOpacity(0.25);
@@ -290,9 +309,8 @@ public class ServicesController {
             imgCancel.setOpacity(0.25);
         });
 
-     
-           //Making type Services table column editable
-        tcType.setCellFactory(TextFieldTableCell.<ServiceBean>forTableColumn());
+        //Making Type Services table cell editable
+        tcType.setCellFactory(ComboBoxTableCell.forTableColumn(types));
         tcType.setOnEditCommit(
                 (CellEditEvent<ServiceBean, String> t) -> {
                     ((ServiceBean) t.getTableView().getItems().get(
@@ -303,9 +321,10 @@ public class ServicesController {
                     imgCommit.setOpacity(1);
                     imgCancel.setDisable(false);
                     imgCancel.setOpacity(1);
+
                 });
-        
-          tcType.setOnEditCancel((CellEditEvent<ServiceBean, String> t) -> {
+
+        tcType.setOnEditCancel((CellEditEvent<ServiceBean, String> t) -> {
             tbvService.refresh();
             imgCommit.setDisable(true);
             imgCommit.setOpacity(0.25);
@@ -313,6 +332,50 @@ public class ServicesController {
             imgCancel.setOpacity(0.25);
         });
 
+    }
+
+    @FXML
+    private void handleChangeComponents(ActionEvent event) {
+
+        switch (cbService.getValue()) {
+            case SELECT_ALL_SERVICES:
+                spinnerService.setDisable(true);
+                tfServices.setDisable(true);
+                //Load the Service data loadAllServices() method
+
+                if (services != null) {
+                    tbvService.refresh();
+                    tbvService.getItems().removeAll(services);
+                }
+
+                services = loadAllServices();
+
+                break;
+            case SELECT_BY_ADDRESS:
+                spinnerService.setDisable(true);
+                tfServices.setDisable(false);
+                if (services != null) {
+                    tbvService.refresh();
+                    tbvService.getItems().removeAll(services);
+                }
+                break;
+            case SELECT_BY_NAME:
+                spinnerService.setDisable(true);
+                if (services != null) {
+                    tbvService.refresh();
+                    tbvService.getItems().removeAll(services);
+                }
+                break;
+
+            case SELECT_BY_TYPE:
+
+                spinnerService.setDisable(true);
+                if (services != null) {
+                    tbvService.refresh();
+                    tbvService.getItems().removeAll(services);
+                }
+                break;
+        }
     }
 
 }

@@ -24,7 +24,7 @@
                   <Insets left="15.0" top="30.0" />
                </HBox.margin>
             </Label>
-            <ComboBox fx:id="cbService" prefWidth="150.0">
+            <ComboBox fx:id="cbService" onAction="#handleChangeComponents" prefWidth="150.0">
                <HBox.margin>
                   <Insets top="25.0" />
                </HBox.margin>
@@ -52,7 +52,7 @@
          <children>
             <HBox prefHeight="0.0" prefWidth="600.0" spacing="25.0">
                <children>
-                  <ImageView fx:id="imgAdd" fitHeight="23.0" fitWidth="22.0" onMouseClicked="#handleServiceCreation" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgAdd" fitHeight="23.0" fitWidth="22.0" onMousePressed="#handleServiceCreation" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../resources/img/add.png" />
                      </image>

@@ -27,11 +27,18 @@ public class ServiceRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:8080/ServerBluRoof/webresources";
+    private static final String BASE_URI = "http://localhost:37501/ServerBluRoof/webresources";
 
     public ServiceRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("entities.service");
+    }
+    
+    
+     public <T> T findServiceById(GenericType<T> responseType, Long id ) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("id/{0}", new Object[]{id}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
     public <T> T findServiceByType(GenericType<T> responseType, String serviceType) throws ClientErrorException {
