@@ -261,6 +261,14 @@ public class FacilitiesController {
 
     @FXML
     void clickAdd(MouseEvent event) {
+        iv_add.setDisable(true);
+        iv_add.setOpacity(0.25);
+        iv_minus.setDisable(true);
+        iv_minus.setOpacity(0.25);
+        iv_check.setDisable(false);
+        iv_check.setOpacity(1);
+        iv_cancel.setDisable(false);
+        iv_cancel.setOpacity(1);
         
     }
 
