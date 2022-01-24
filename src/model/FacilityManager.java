@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface FacilityManager {
     public List<Facility> selectAll() throws BusinessLogicException;
-    public List<Facility> selectByDate(Date date) throws BusinessLogicException;
+    public List<Facility> selectByDate(String date) throws BusinessLogicException;
     public List<Facility> selectByType(String type) throws BusinessLogicException;
     public Facility selectById(Long id) throws BusinessLogicException;
 }

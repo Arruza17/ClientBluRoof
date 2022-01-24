@@ -8,6 +8,7 @@ package view.fxml;
 import exceptions.BusinessLogicException;
 import javafx.scene.input.MouseEvent;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -172,12 +173,21 @@ public class FacilitiesController {
     @FXML
     void searchAction(ActionEvent action) {
         switch (cb_Facilities.getValue()) {
-            case date:/*
+            case date:
                 if (dp_Facilities.getValue() != null) {
                     try {
                         Date date = Date.from(dp_Facilities.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-                        List<Facility> fs = facMan.selectByDate(date);
-                        System.out.println(fs.size());
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        List<FacilityTableBean> facilities = new ArrayList<>();
+                        List<Facility> fs = facMan.selectByDate(simpleDateFormat.format(date).toString());
+                         if (fs.size() > 0) {
+                            for (Facility f : fs) {
+                                facilities.add(new FacilityTableBean(f));
+                            }
+                            ObservableList<FacilityTableBean> facilityTableBean
+                                    = FXCollections.observableArrayList(facilities);
+                            tbl_facilities.setItems(facilityTableBean);
+                        }
                     } catch (BusinessLogicException ex) {
                         Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -188,7 +198,7 @@ public class FacilitiesController {
                     alert.setHeaderText("The construction date is null");
                     alert.setContentText("Try again");
                     alert.showAndWait();
-                }*/
+                }
                 break;
             case type:
                 if (!tf_Facilities.getText().trim().equalsIgnoreCase("")) {
