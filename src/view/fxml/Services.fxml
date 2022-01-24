@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.ServicesController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.ServicesController">
    <top>
       <HBox prefHeight="63.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -39,7 +39,7 @@
                   <Insets left="25.0" top="25.0" />
                </HBox.margin>
             </TextField>
-            <Button fx:id="btnSearchService" mnemonicParsing="false" prefHeight="31.0" prefWidth="81.0" text="Search">
+            <Button fx:id="btnSearchService" mnemonicParsing="false" onAction="#handleButtonSearch" prefHeight="31.0" prefWidth="81.0" text="Search">
                <HBox.margin>
                   <Insets left="25.0" right="26.0" top="25.0" />
                </HBox.margin>
