@@ -279,7 +279,7 @@ public class FacilitiesController {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setHeaderText(null);
         alert.setTitle("Confirmation");
-        alert.setContentText("Are you sure you want to delete this facility?");
+        alert.setContentText("Are you sure you want to delete\n this facility with the following ID:"+facTBean.getId()+"?");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             try {
@@ -295,9 +295,9 @@ public class FacilitiesController {
             }
         } else {
             Alert alert3 = new Alert(AlertType.INFORMATION);
-            alert3.setTitle("Dwelling not deleted");
+            alert3.setTitle("Facility not deleted");
             alert3.setHeaderText(null);
-            alert3.setContentText(null);
+            alert3.setContentText("Content not deleted");
             alert3.showAndWait();
         }
     }
