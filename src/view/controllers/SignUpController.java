@@ -10,11 +10,18 @@ import exceptions.LoginFoundException;
 import exceptions.MaxCharactersException;
 import exceptions.PasswordFormatException;
 import exceptions.PassNotEqualException;
-import factories.UserChildFactory;
-import interfaces.UserChild;
+import factories.GuestManagerFactory;
+import factories.OwnerManagerFactory;
+import interfaces.GuestManager;
+import interfaces.OwnerManager;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,6 +50,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javax.naming.OperationNotSupportedException;
 import model.Guest;
 import model.Owner;
 import model.User;
@@ -53,12 +61,12 @@ import model.User;
  * @author Ander Arruza and Adrián Pérez
  */
 public class SignUpController {
-
+    
     private final int MAX_WIDTH = 1920;
     private final int MAX_HEIGHT = 1024;
     private final int MIN_WIDTH = 1024;
     private final int MIN_HEIGHT = 768;
-
+    
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
 
     /**
@@ -128,16 +136,20 @@ public class SignUpController {
                     vbox = new VBox(label, cb);
                 } else {
                     label = new Label("What is your actual situation? ");
-                    ObservableList<ActualState> list = FXCollections.observableArrayList(Arrays.asList(ActualState.values()));
-                    ComboBox cb = new ComboBox(list);
+                    ArrayList<String> values = new ArrayList<>();
+                    for (int i = 0; i < ActualState.values().length; i++) {
+                        values.add(ActualState.values()[i].name());
+                    }
+                    ObservableList<String> list = FXCollections.observableArrayList(values);
+                    ComboBox<String> cb = new ComboBox(list);
                     cb.getSelectionModel().selectFirst();
                     vbox = new VBox(label, cb);
-
+                    
                 }
                 hbChange.getChildren().add(vbox);
             }
         });
-
+        
         stage.show();
         LOGGER.info("SignUp Open Window");
     }
@@ -188,7 +200,7 @@ public class SignUpController {
             //throw validation Error
             LOGGER.warning("The field passField and rptPassword are not the same");
             throw new PassNotEqualException();
-
+            
         }
         //Checks if the password field has an space within
         if (passField.getText().trim().contains(" ")) {
@@ -227,7 +239,6 @@ public class SignUpController {
      */
     @FXML
     private void handleSignUpAction(javafx.event.ActionEvent event) {
-        User newUser;
         try {
             if (checkFields()) {
                 LOGGER.info("All the fields are OK");
@@ -239,7 +250,7 @@ public class SignUpController {
                 //Create's an user with the params
                 RadioButton selectedRadioButton = (RadioButton) userType.getSelectedToggle();
                 User user;
-
+                
                 if (selectedRadioButton.getText().equals("Owner")) {
                     user = new Owner();
                     ObservableList<Node> obs = hbChange.getChildren();
@@ -247,58 +258,65 @@ public class SignUpController {
                     ObservableList<Node> children = vb.getChildren();
                     CheckBox cb = (CheckBox) children.get(children.size() - 1);
                     ((Owner) user).setIsResident(cb.isSelected());
-
+                    
                 } else {
                     user = new Guest();
                     ObservableList<Node> obs = hbChange.getChildren();
                     VBox vb = (VBox) obs.get(0);
                     ObservableList<Node> children = vb.getChildren();
-                    ComboBox cb = (ComboBox) children.get(children.size() - 1);
-                    ((Guest) user).setActualState(ActualState.valueOf(cb.getSelectionModel().getSelectedItem().toString()));
-
+                    ComboBox<String> cb = (ComboBox) children.get(children.size() - 1);
+                    ((Guest) user).setActualState(cb.getSelectionModel().getSelectedItem());
+                    
                 }
-                user.setLogin(tfUser.getText().toString().trim());
-                user.setFullName(tfFullName.getText().toString().trim());
-                user.setPassword(passField.getText().toString().trim());
-                user.setEmail(tfEmail.getText().toString().trim());
+                user.setLogin(tfUser.getText().trim());
+                user.setFullName(tfFullName.getText().trim());
+                user.setPassword(passField.getText().trim());
+                user.setEmail(tfEmail.getText().trim());
                 user.setPrivilege(selectedRadioButton.getText());
                 user.setStatus(UserStatus.ENABLED.name());
+                user.setLastPasswordChange(new Date());
+                user.setBirthDate(Date.from(dpBdate.getValue().atStartOfDay().toInstant(OffsetDateTime.now().getOffset())));
+            
                 String content = "UserName = " + user.getLogin()
                         + "\nFullName = " + user.getFullName()
                         + "\nEmail = " + user.getEmail();
-                String extra = (user instanceof Owner ? "\nIsResident: " + ((Owner) user).getIsResident() : "\nActualState: " + ((Guest) user).getActualState().name());
+                String extra = (user instanceof Owner ? "\nIsResident: " + ((Owner) user).getIsResident() : "\nActualState: " + ((Guest) user).getActualState());
                 alert.setContentText(content + extra);
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     //ADDING THE USER TO THE DATABASE
-                    UserChild uc = UserChildFactory.createUserChild(UserChildFactory.REST_WEB_CLIENT_TYPE);
-                    uc.register(user);
+                    if (user instanceof Guest) {
+                        GuestManager gm = GuestManagerFactory.createGuestManager(GuestManagerFactory.REST_WEB_CLIENT_TYPE);
+                        gm.register((Guest) user);
+                    } else if (user instanceof Guest) {
+                        OwnerManager om = OwnerManagerFactory.createOwnerManager(GuestManagerFactory.REST_WEB_CLIENT_TYPE);
+                        om.register((Owner) user);
+                    }
+
                     //TELLING THE USER THAT EVERYTHING HAD WORK
                     LOGGER.info("New User succesfully added");
-                    //Alert alert1 = new Alert(AlertType.INFORMATION);
-                    //alert1.setTitle("New User");
-                    //alert1.setHeaderText(null);
-                    //alert1.setContentText("User corretly added");
-                    //alert1.showAndWait();
-                    //LOGGER.info("Closing SignUp Window");
-                    //Stage stage = (Stage) btnCancel.getScene().getWindow();
-                    // Close current window 
-                    stage.close();
-
                 }
+                Alert alert1 = new Alert(AlertType.INFORMATION);
+                alert1.setTitle("New User");
+                alert1.setContentText("User corretly added");
+                alert1.showAndWait();
+                //LOGGER.info("Closing SignUp Window");
+                //Stage stage = (Stage) btnCancel.getScene().getWindow();
+                // Close current window 
+                stage.close();
+                
             }
+        } catch (OperationNotSupportedException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText(null);
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at signUp method");
-            if (ex.getMessage().equals(new LoginFoundException().getMessage())) {
-                tfUser.requestFocus();
-            } else if (ex.getMessage().equals(new PassNotEqualException().getMessage())) {
-                passField.requestFocus();
-            }
+            
         }
+        
     }
 
     /**
@@ -345,5 +363,5 @@ public class SignUpController {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-
+    
 }

@@ -20,12 +20,11 @@ public class Guest extends User implements Serializable {
      * Guest's state WORKER/STUDENT/BOTH/UNEMPLOYED.
      */
 
-    private ActualState actualState;
+    private String actualState;
 
     /**
      * Relational field that contains the comments made
      */
- 
     private List<Comment> comments;
 
     @XmlTransient
@@ -42,7 +41,7 @@ public class Guest extends User implements Serializable {
      *
      * @return actualState the current state
      */
-    public ActualState getActualState() {
+    public String getActualState() {
         return actualState;
     }
 
@@ -51,7 +50,7 @@ public class Guest extends User implements Serializable {
      *
      * @param actualState the actual state to be set
      */
-    public void setActualState(ActualState actualState) {
+    public void setActualState(String actualState) {
         this.actualState = actualState;
     }
 

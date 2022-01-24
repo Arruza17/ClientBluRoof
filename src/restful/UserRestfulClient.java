@@ -23,13 +23,13 @@ import javax.ws.rs.core.GenericType;
  *
  * @author YERAYa
  */
-public class UserRESTClient {
+public class UserRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
     private static final String BASE_URI = "http://localhost:8080/ServerBluRoof/webresources";
 
-    public UserRESTClient() {
+    public UserRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("entities.user");
     }

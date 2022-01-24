@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.GenericType;
 import model.User;
-import restful.UserRESTClient;
+import restful.UserRestfulClient;
 
 /**
  *
@@ -22,11 +22,11 @@ import restful.UserRESTClient;
  */
 public class UserManagerImplementation implements UserManager {
 
-    private final UserRESTClient webClient;
+    private final UserRestfulClient webClient;
     private static final Logger LOGGER = Logger.getLogger("UserManagerImplementation");
 
     public UserManagerImplementation() {
-        webClient = new UserRESTClient();
+        webClient = new UserRestfulClient();
     }
 
     @Override

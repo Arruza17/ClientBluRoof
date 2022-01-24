@@ -5,34 +5,33 @@
  */
 package factories;
 
-import interfaces.UserChild;
-import interfaces.UserManager;
+import interfaces.OwnerManager;
+
 import javax.naming.OperationNotSupportedException;
-import logic.UserChildImplementation;
-import logic.UserManagerImplementation;
+import logic.OwnerManagerImplementation;
 
 /**
  *
  * @author YERAY
  */
-public class UserChildFactory {
+public class OwnerManagerFactory {
 
     public static final String REST_WEB_CLIENT_TYPE = "REST_WEB_CLIENT";
 
-    public static UserChild createUserChild(String type)
+    public static OwnerManager createOwnerManager(String type)
             throws OperationNotSupportedException {
         //The object to be returned.
-        UserChild userChild = null;
+        OwnerManager ownerManager = null;
         //Evaluate type parameter.
         switch (type) {
             case REST_WEB_CLIENT_TYPE:
                 //If rest web client type is asked for, use UsersManagerImplementation.
-                userChild = new UserChildImplementation();
+                ownerManager = new OwnerManagerImplementation();
                 break;
             default:
                 //If type is not one of the types accepted.
                 throw new OperationNotSupportedException("Users manager type not supported.");
         }
-        return userChild;
+        return ownerManager;
     }
 }

@@ -8,6 +8,9 @@ package view.controllers;
 import enumerations.UserPrivilege;
 import enumerations.UserStatus;
 import exceptions.BusinessLogicException;
+import exceptions.EmailFormatException;
+import exceptions.FieldsEmptyException;
+import exceptions.FullNameFormatException;
 import interfaces.UserManager;
 import java.text.SimpleDateFormat;
 
@@ -15,12 +18,15 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.beans.property.SimpleObjectProperty;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -39,6 +45,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 
 import model.User;
+import static view.controllers.SignUpController.VALID_EMAIL_ADDRESS;
 
 /**
  * FXML Controller class
@@ -100,7 +107,8 @@ public class AdminController {
             alert.setHeaderText("Error");
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
-            LOGGER.log(Level.WARNING, "{0} exception thrown at InitStage method", ex.getClass().getSimpleName());
+            LOGGER.log(Level.WARNING, "{0} exception thrown at FullNameColumn edit", ex.getClass().getSimpleName());
+
         }
 
         tblAdmin.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -124,8 +132,16 @@ public class AdminController {
         colFullName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFullName()));
         colFullName.setEditable(true);
         colFullName.setCellFactory(TextFieldTableCell.<User>forTableColumn());
-        colFullName.setOnEditCommit(
-                (CellEditEvent<User, String> t) -> {
+        colFullName.setOnEditCommit(new EventHandler<CellEditEvent<User, String>>() {
+            @Override
+            public void handle(CellEditEvent<User, String> t) {
+                try {
+                    if (t.getNewValue().isEmpty()) {
+                        throw new FieldsEmptyException();
+                    }
+                    if (!t.getNewValue().contains(" ") || t.getNewValue().length() < 3) {
+                        throw new FullNameFormatException();
+                    }
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setFullName(t.getNewValue());
                     tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colFullName);
@@ -134,7 +150,25 @@ public class AdminController {
                     imgCommit.setOpacity(1);
                     imgCancel.setDisable(false);
                     imgCancel.setOpacity(1);
-                });
+                } catch (FullNameFormatException e) {
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colFullName);
+                    tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colFullName);
+                    tblAdmin.edit(t.getTablePosition().getRow(), colFullName);
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Wrong format");
+                    alert.setContentText(e.getMessage());
+                    alert.show();
+                } catch (FieldsEmptyException e) {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Field empty");
+                    alert.setContentText(e.getMessage());
+                    //alert.showAndWait();
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colEmail);
+                    tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colEmail);
+                    tblAdmin.edit(t.getTablePosition().getRow(), colEmail);
+                }
+            }
+        });
 
         colFullName.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
@@ -151,14 +185,27 @@ public class AdminController {
         colLogin.setCellFactory(TextFieldTableCell.<User>forTableColumn());
         colLogin.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
-                    ((User) t.getTableView().getItems().get(
-                            t.getTablePosition().getRow())).setLogin(t.getNewValue());
-                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colLogin);
-                    tblAdmin.edit(t.getTablePosition().getRow(), colLogin);
-                    imgCommit.setDisable(false);
-                    imgCommit.setOpacity(1);
-                    imgCancel.setDisable(false);
-                    imgCancel.setOpacity(1);
+                    try {
+                        if (t.getNewValue().isEmpty()) {
+                            throw new FieldsEmptyException();
+                        }
+                        ((User) t.getTableView().getItems().get(
+                                t.getTablePosition().getRow())).setLogin(t.getNewValue());
+                        tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colLogin);
+                        tblAdmin.edit(t.getTablePosition().getRow(), colLogin);
+                        imgCommit.setDisable(false);
+                        imgCommit.setOpacity(1);
+                        imgCancel.setDisable(false);
+                        imgCancel.setOpacity(1);
+                    } catch (FieldsEmptyException e) {
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Fields empty");
+                        alert.setContentText(e.getMessage());
+                        alert.show();
+                        tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colLogin);
+                        tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colLogin);
+                        tblAdmin.edit(t.getTablePosition().getRow(), colLogin);
+                    }
                 });
 
         colLogin.setOnEditCancel((CellEditEvent<User, String> t) -> {
@@ -171,11 +218,20 @@ public class AdminController {
 
         //Make email column editable
         colEmail.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
-
         colEmail.setEditable(true);
         colEmail.setCellFactory(TextFieldTableCell.<User>forTableColumn());
-        colEmail.setOnEditCommit(
-                (CellEditEvent<User, String> t) -> {
+        colEmail.setOnEditCommit(new EventHandler<CellEditEvent<User, String>>() {
+            @Override
+            public void handle(CellEditEvent<User, String> t) {
+                try {
+                    Pattern valid_email = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+                    Matcher matcher = valid_email.matcher(t.getNewValue());
+                    if (!matcher.find()) {
+                        throw new EmailFormatException();
+                    }
+                    if (t.getNewValue().isEmpty()) {
+                        throw new FieldsEmptyException();
+                    }
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setEmail(t.getNewValue());
                     tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colEmail);
@@ -184,7 +240,26 @@ public class AdminController {
                     imgCommit.setOpacity(1);
                     imgCancel.setDisable(false);
                     imgCancel.setOpacity(1);
-                });
+                } catch (EmailFormatException e) {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Wrong format");
+                    alert.setContentText(e.getMessage());
+                    alert.show();
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colEmail);
+                    tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colEmail);
+                    tblAdmin.edit(t.getTablePosition().getRow(), colEmail);
+                } catch (FieldsEmptyException e) {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Field empty");
+                    alert.setContentText(e.getMessage());
+                    alert.show();
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colEmail);
+                    tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colEmail);
+                    tblAdmin.edit(t.getTablePosition().getRow(), colEmail);
+                }
+
+            }
+        });
 
         colEmail.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
@@ -201,14 +276,27 @@ public class AdminController {
         colPhone.setCellFactory(TextFieldTableCell.<User>forTableColumn());
         colPhone.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
-                    ((User) t.getTableView().getItems().get(
-                            t.getTablePosition().getRow())).setPhoneNumber(t.getNewValue());
-                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
-                    tblAdmin.edit(t.getTablePosition().getRow(), colPhone);
-                    imgCommit.setDisable(false);
-                    imgCommit.setOpacity(1);
-                    imgCancel.setDisable(false);
-                    imgCancel.setOpacity(1);
+                    try {
+                        if (t.getNewValue().isEmpty()) {
+                            throw new FieldsEmptyException();
+                        }
+                        ((User) t.getTableView().getItems().get(
+                                t.getTablePosition().getRow())).setPhoneNumber(t.getNewValue());
+                        tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
+                        tblAdmin.edit(t.getTablePosition().getRow(), colPhone);
+                        imgCommit.setDisable(false);
+                        imgCommit.setOpacity(1);
+                        imgCancel.setDisable(false);
+                        imgCancel.setOpacity(1);
+                    } catch (FieldsEmptyException e) {
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Wrong format");
+                        alert.setContentText(e.getMessage());
+                        alert.show();
+                        tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
+                        tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colPhone);
+                        tblAdmin.edit(t.getTablePosition().getRow(), colPhone);
+                    }
                 });
 
         colPhone.setOnEditCancel((CellEditEvent<User, String> t) -> {
@@ -222,7 +310,7 @@ public class AdminController {
         //Make birthdate column editable   
         colBirthDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBirthDate()));
         colBirthDate.setEditable(true);
-        colBirthDate.setCellFactory(tableCell -> {
+        colBirthDate.setCellFactory((TableColumn<User, Date> t) -> {
             return new TableCell<User, Date>() {
                 @Override
                 protected void updateItem(Date date, boolean dateIsEmpty) {
@@ -272,6 +360,7 @@ public class AdminController {
         newUser.setId(Long.MIN_VALUE);
         admin.add(newUser);
         tblAdmin.getSelectionModel().select(admin.size() - 1);
+        tblAdmin.layout();
         tblAdmin.getFocusModel().focus(admin.size() - 1, colFullName);
         tblAdmin.edit(admin.size() - 1, colFullName);
         imgCommit.setDisable(false);
@@ -288,6 +377,7 @@ public class AdminController {
     private void handleTableDelete(MouseEvent event) {
         LOGGER.info("Deleteing information about user");
         User user = tblAdmin.getSelectionModel().getSelectedItem();
+        int pos = tblAdmin.getSelectionModel().getSelectedIndex();
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText("Delete");
         alert.setContentText("You are about to delete the information about " + user.getFullName() + ". Are you sure?");
@@ -297,7 +387,9 @@ public class AdminController {
         } else {
             LOGGER.info("User deleted");
             try {
-                userManager.deleteUser(String.valueOf(user.getId()));
+                if (!(pos == admin.size() - 1 && user.getId().equals(Long.MIN_VALUE))) {
+                    userManager.deleteUser(String.valueOf(user.getId()));
+                }
                 admin.remove(user);
                 tblAdmin.refresh();
             } catch (BusinessLogicException ex) {
@@ -310,6 +402,8 @@ public class AdminController {
         }
         imgDel.setDisable(true);
         imgDel.setOpacity(0.25);
+        imgAdd.setDisable(false);
+        imgAdd.setOpacity(1);
     }
 
     @FXML

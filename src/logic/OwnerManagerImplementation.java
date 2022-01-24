@@ -1,0 +1,61 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package logic;
+
+import exceptions.BusinessLogicException;
+import interfaces.OwnerManager;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.core.GenericType;
+import model.Owner;
+import restful.OwnerRestfulClient;
+
+/**
+ *
+ * @author YERAY
+ */
+public class OwnerManagerImplementation implements OwnerManager {
+
+    private final OwnerRestfulClient webClient;
+    private static final Logger LOGGER = Logger.getLogger("UserManagerImplementation");
+
+    public OwnerManagerImplementation() {
+        webClient = new OwnerRestfulClient();
+    }
+
+    @Override
+    public void register(Owner owner) throws BusinessLogicException {
+        try {
+            LOGGER.log(Level.INFO, "OwnersManager: Creating owner {0}.", owner.getLogin());
+            //Send user data to web client for creation. 
+            webClient.create(owner);
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE,
+                    "UsersManager: Exception creating owner, {0}",
+                    ex.getMessage());
+            throw new BusinessLogicException("Error creating owner:\n" + ex.getMessage());
+        }
+    }
+
+    @Override
+    public Owner findById(String id) throws BusinessLogicException {
+        Owner owner = null;
+        try {
+            LOGGER.log(Level.INFO, "OwnerManager: Finding owner whose id is {0} from REST service (XML).", id);
+            //Ask webClient for all admins' data.
+            owner = webClient.find(new GenericType<Owner>() {
+            }, id);
+        } catch (ClientErrorException ex) {
+            LOGGER.log(Level.SEVERE,
+                    "OwnerManager: Exception finding owner with id, {0}",
+                    ex.getMessage());
+            throw new BusinessLogicException("Error finding owner with that id:\n" + ex.getMessage());
+        }
+        return owner;
+    }
+
+}

@@ -6,13 +6,15 @@
 package interfaces;
 
 import exceptions.BusinessLogicException;
-import model.User;
+import model.Guest;
 
 /**
  *
  * @author YERAY
  */
-public interface UserChild {
+public interface GuestManager {
     
-       public void register(User user) throws BusinessLogicException;
+    public void register(Guest guest) throws BusinessLogicException;
+    
+    public Guest findById(String id)  throws BusinessLogicException;
 }
