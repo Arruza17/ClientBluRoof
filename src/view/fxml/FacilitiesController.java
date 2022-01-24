@@ -12,7 +12,9 @@ import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Spinner;
@@ -37,9 +40,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import model.BussinessLogicException;
 import model.Facility;
 import model.FacilityManager;
 import model.FacilityTableBean;
+import model.FacilityType;
 
 /**
  * FXML Controller class
@@ -53,12 +58,13 @@ public class FacilitiesController {
     private ComboBox<String> cb_Facilities;
     @FXML
     private DatePicker dp_Facilities;
-    @FXML
-    private TextField tf_Facilities;
+    
     @FXML
     private Spinner<Integer> sp_Facilities;
     @FXML
     private Button srch_Btn;
+    @FXML
+    private ComboBox<String> cb_Type;
     @FXML
     private TableView<FacilityTableBean> tbl_facilities;
     @FXML
@@ -91,7 +97,7 @@ public class FacilitiesController {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Facilities Window");
-        tf_Facilities.setDisable(true);
+        cb_Type.setDisable(true);
         dp_Facilities.setDisable(true);
         tbl_facilities.setEditable(true);
         iv_check.setDisable(true);
@@ -140,6 +146,16 @@ public class FacilitiesController {
                 new PropertyValueFactory<>("moreInfo"));
         sp_Facilities.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
+        sp_Facilities.setEditable(true);
+        EnumSet<FacilityType> ft = EnumSet.allOf(FacilityType.class);
+        ArrayList<String> facilTypeList=new ArrayList<>();
+       
+        for(FacilityType f: ft){
+        facilTypeList.add(f.toString());
+        }
+         ObservableList<String> optionsType= FXCollections.observableArrayList(facilTypeList);
+        cb_Type.setItems(optionsType);
+        
         stage.show();
     }
 
@@ -151,17 +167,17 @@ public class FacilitiesController {
     void handleCbChange(ActionEvent action) {
         switch (cb_Facilities.getValue()) {
             case id:
-                tf_Facilities.setDisable(true);
+                cb_Type.setDisable(true);
                 dp_Facilities.setDisable(true);
                 sp_Facilities.setDisable(false);
                 break;
             case type:
-                tf_Facilities.setDisable(false);
+                cb_Type.setDisable(false);
                 dp_Facilities.setDisable(true);
                 sp_Facilities.setDisable(true);
                 break;
             case date:
-                tf_Facilities.setDisable(true);
+                cb_Type.setDisable(true);
                 dp_Facilities.setDisable(false);
                 sp_Facilities.setDisable(true);
                 break;
@@ -201,11 +217,11 @@ public class FacilitiesController {
                 }
                 break;
             case type:
-                if (!tf_Facilities.getText().trim().equalsIgnoreCase("")) {
+                if (cb_Type.getValue()!=null) {
                     try {
 
                         List<FacilityTableBean> facilities = new ArrayList<>();
-                        List<Facility> fs = facMan.selectByType(tf_Facilities.getText());
+                        List<Facility> fs = facMan.selectByType(cb_Type.getValue());
                         if (fs.size() > 0) {
                             for (Facility f : fs) {
                                 facilities.add(new FacilityTableBean(f));
@@ -244,10 +260,8 @@ public class FacilitiesController {
     }
 
     @FXML
-    private void clickAdd(MouseEvent event) {
-        Facility f = null;
-        FacilityTableBean tb = new FacilityTableBean(f);
-        tbl_facilities.getItems().add(tb);
+    void clickAdd(MouseEvent event) {
+        
     }
 
     @FXML
@@ -261,7 +275,31 @@ public class FacilitiesController {
 
     @FXML
     void clickMinus(MouseEvent action) {
-
+        FacilityTableBean facTBean=tbl_facilities.getSelectionModel().getSelectedItem();
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setHeaderText(null);
+        alert.setTitle("Confirmation");
+        alert.setContentText("Are you sure you want to delete this facility?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            try {
+                facMan.remove(facTBean.getId());
+               //TODO .remove(facTBean);
+                tbl_facilities.refresh();
+            } catch (BussinessLogicException ex) {
+                Alert alert1 = new Alert(AlertType.ERROR);
+                alert1.setTitle("AYUDA");
+                alert1.setHeaderText("Error");
+                alert1.setContentText(ex.getMessage());
+                alert1.showAndWait();
+            }
+        } else {
+            Alert alert3 = new Alert(AlertType.INFORMATION);
+            alert3.setTitle("Dwelling not deleted");
+            alert3.setHeaderText(null);
+            alert3.setContentText(null);
+            alert3.showAndWait();
+        }
     }
 
     @FXML

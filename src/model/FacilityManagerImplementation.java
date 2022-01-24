@@ -76,5 +76,12 @@ public class FacilityManagerImplementation implements FacilityManager {
         }
         return fac;
     }
-
+    @Override
+    public void remove(Long id) throws BussinessLogicException {
+        try {
+            frc.remove(String.valueOf(id));
+        } catch (ClientErrorException e) {
+            throw new BussinessLogicException(e.getMessage());
+        }
+    }
 }
