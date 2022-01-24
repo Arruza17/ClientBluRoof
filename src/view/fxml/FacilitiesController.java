@@ -6,7 +6,7 @@
 package view.fxml;
 
 import exceptions.BusinessLogicException;
-import java.awt.event.MouseEvent;
+import javafx.scene.input.MouseEvent;
 import java.net.URL;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -29,6 +29,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -54,7 +55,7 @@ public class FacilitiesController {
     @FXML
     private TextField tf_Facilities;
     @FXML
-    private Spinner<Long> sp_Facilities;
+    private Spinner<Integer> sp_Facilities;
     @FXML
     private Button srch_Btn;
     @FXML
@@ -81,7 +82,7 @@ public class FacilitiesController {
     private final String date = "Date";
     private final String type = "Type";
     private final String id = "Id";
-    private Long spValue=Long.MIN_VALUE;
+
     /**
      * Initializes the controller class.
      */
@@ -136,7 +137,8 @@ public class FacilitiesController {
 
         more_Info_Column.setCellValueFactory(
                 new PropertyValueFactory<>("moreInfo"));
-        sp_Facilities.getValueFactory().setValue(spValue);
+        sp_Facilities.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
         stage.show();
     }
 
@@ -170,7 +172,7 @@ public class FacilitiesController {
     @FXML
     void searchAction(ActionEvent action) {
         switch (cb_Facilities.getValue()) {
-            case date:
+            case date:/*
                 if (dp_Facilities.getValue() != null) {
                     try {
                         Date date = Date.from(dp_Facilities.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -186,13 +188,12 @@ public class FacilitiesController {
                     alert.setHeaderText("The construction date is null");
                     alert.setContentText("Try again");
                     alert.showAndWait();
-                }
+                }*/
                 break;
             case type:
-                if (tf_Facilities.getText().trim() != null) {
+                if (!tf_Facilities.getText().trim().equalsIgnoreCase("")) {
                     try {
 
-                     
                         List<FacilityTableBean> facilities = new ArrayList<>();
                         List<Facility> fs = facMan.selectByType(tf_Facilities.getText());
                         if (fs.size() > 0) {
@@ -205,28 +206,38 @@ public class FacilitiesController {
                         }
                     } catch (BusinessLogicException ex) {
                     }
+                } else {
+
                 }
                 break;
             case id:
-                if(sp_Facilities.getValue()!=null){
-            try {
-                List<FacilityTableBean> facilities=new ArrayList<>();
-                List<Facility> fs=facMan.selectById(sp_Facilities.getValue());
-                if (fs.size() > 0) {
-                            for (Facility f : fs) {
-                                facilities.add(new FacilityTableBean(f));
-                            }
+                if (sp_Facilities != null) {
+                    Long aux = Long.valueOf(sp_Facilities.getValue().toString());
+                    try {
+                        List<FacilityTableBean> facilities = new ArrayList<>();
+                        Facility fs = facMan.selectById(aux);
+                        if (fs != null) {
+
+                            facilities.add(new FacilityTableBean(fs));
                             ObservableList<FacilityTableBean> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
                             tbl_facilities.setItems(facilityTableBean);
                         }
-            } catch (BusinessLogicException ex) {
-                Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-                
+
+                    } catch (BusinessLogicException ex) {
+                        Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
                 }
                 break;
         }
+    }
+
+    @FXML
+    private void clickAdd(MouseEvent event) {
+        Facility f = null;
+        FacilityTableBean tb = new FacilityTableBean(f);
+        tbl_facilities.getItems().add(tb);
     }
 
     @FXML
@@ -239,11 +250,8 @@ public class FacilitiesController {
     }
 
     @FXML
-    void clickAdd(MouseEvent action) {
-    }
-
-    @FXML
     void clickMinus(MouseEvent action) {
+
     }
 
     @FXML

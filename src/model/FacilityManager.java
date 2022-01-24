@@ -18,5 +18,5 @@ public interface FacilityManager {
     public List<Facility> selectAll() throws BusinessLogicException;
     public List<Facility> selectByDate(Date date) throws BusinessLogicException;
     public List<Facility> selectByType(String type) throws BusinessLogicException;
-    public List<Facility> selectById(Long id) throws BusinessLogicException;
+    public Facility selectById(Long id) throws BusinessLogicException;
 }
