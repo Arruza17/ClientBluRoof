@@ -147,10 +147,13 @@ public class ServicesController {
         imgDelete.setDisable(true);
         imgDelete.setOpacity(0.25);
 
-        spinnerService.setValueFactory(
+        
+        if(!spinnerService.isDisabled()){
+             spinnerService.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
-        spinnerService.setEditable(true);
-
+        spinnerService.setEditable(true); 
+        }
+     
         //Add the combobox values
         ObservableList<String> optionsForCombo;
         optionsForCombo = FXCollections.observableArrayList(
@@ -439,10 +442,9 @@ public class ServicesController {
 
     @FXML
     private void handleButtonSearch(ActionEvent event) {
-
-        tfServices.setText("");
-
+       
         updateServicesTable();
+        
 
     }
 
@@ -645,7 +647,7 @@ public class ServicesController {
 
         //Updates the table data depending on the query selected on the cbService comboBox.
         //updates for delete and queries
-        if (!addingService && committing || deleting && services != null) {
+        if (!addingService || committing || deleting && services != null) {
 
             switch (cbService.getValue()) {
                 case SELECT_ALL_SERVICES:
