@@ -32,6 +32,6 @@ public interface ServicesManager {
 
     public void createService(Service service) throws BusinessLogicException;
     
-    public void deleteService(String id) throws BusinessLogicException;
+    public void deleteService(Long id) throws BusinessLogicException;
 
 }

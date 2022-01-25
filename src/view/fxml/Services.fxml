@@ -65,7 +65,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ImageView>
-                  <ImageView fx:id="imgDelete" fitHeight="22.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgDelete" fitHeight="22.0" fitWidth="25.0" onMousePressed="#handleDeleteRow" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../resources/img/minus.png" />
                      </image>

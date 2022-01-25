@@ -119,7 +119,13 @@ public class ServiceManagerImplementation implements ServicesManager{
     }
 
     @Override
-    public void deleteService(String id) throws BusinessLogicException {
+    public void deleteService(Long id) throws BusinessLogicException {
+     
+         try {
+            serviceRestfulClient.remove(String.valueOf(id));
+        } catch (ClientErrorException e) {
+            throw new BusinessLogicException(e.getMessage());
+        }
         
     }
 

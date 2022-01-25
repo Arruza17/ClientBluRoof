@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +33,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TableColumn;
@@ -584,6 +586,35 @@ public class ServicesController {
         tbvService.refresh();
         return servicesTableBean;
 
+    }
+
+    @FXML
+    private void handleDeleteRow(MouseEvent event) {
+        Service service=tbvService.getSelectionModel().getSelectedItem();
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setHeaderText(null);
+        alert.setTitle("Confirmation");
+        alert.setContentText("Are you sure you want to delete\n this facility with the following ID:"+service.getId()+"?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            try {
+                serviceManager.deleteService(service.getId());
+               //TODO .remove(facTBean);
+                tbvService.refresh();
+            } catch (BusinessLogicException ex) {
+                Alert alert1 = new Alert(AlertType.ERROR);
+                alert1.setTitle("AYUDA");
+                alert1.setHeaderText("Error");
+                alert1.setContentText(ex.getMessage());
+                alert1.showAndWait();
+            }
+        } else {
+            Alert alert3 = new Alert(AlertType.INFORMATION);
+            alert3.setTitle("Facility not deleted");
+            alert3.setHeaderText(null);
+            alert3.setContentText("Content not deleted");
+            alert3.showAndWait();
+        }
     }
 
 }
