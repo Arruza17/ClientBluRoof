@@ -5,17 +5,14 @@
  */
 package factories;
 
-/**
- *
- * @author 2dam
- */
+
 import logic.ServiceManagerImplementation;
 import interfaces.ServicesManager;
 import javax.naming.OperationNotSupportedException;
 
 /**
  *
- * @author ander
+ * @author Adrián
  */
 public class ServiceManagerFactory {
 
@@ -23,19 +20,19 @@ public class ServiceManagerFactory {
 
     public static ServicesManager createServiceManager(String type) throws OperationNotSupportedException {
         //The object to be returned
-        ServicesManager dwellingManager = null;
+        ServicesManager serviceManager = null;
         //Evaluate type parameter
         switch (type) {
-            //If rest web client type is asked for, use DwellingManagerImplementation.
+            //If rest web client type is asked for, use ServiceManagerImplementation.
             case REST_WEB_CLIENT_TYPE:
-                //If rest web client type is asked for, use DwellingManagerImplementation
-                dwellingManager = new ServiceManagerImplementation();
+               
+                serviceManager = new ServiceManagerImplementation();
                 break;
             default:
                 throw new OperationNotSupportedException("Users manager type not supported.");
         }
 
-        return dwellingManager;
+        return serviceManager;
     }
 
 }

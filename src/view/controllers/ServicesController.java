@@ -36,6 +36,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TablePosition;
@@ -53,15 +54,13 @@ import model.ServiceBean;
 /**
  * FXML Controller class
  *
- * @author 2dam
+ * @author Adrián Pérez
  */
 public class ServicesController {
 
     private static final Logger LOGGER = Logger.getLogger(ServicesController.class.getName());
 
     private ServicesManager serviceManager;
-
-    private Service service;
 
     private Stage stage;
 
@@ -112,6 +111,12 @@ public class ServicesController {
     @FXML
     private ComboBox<?> cbServiceType;
 
+    private boolean addingService;
+
+    private boolean committing;
+
+    private boolean deleting;
+
     public void initStage(Parent root) {
         LOGGER.info("Initializing DwellingWindow stage");
         //Creation of a new Scene
@@ -141,6 +146,11 @@ public class ServicesController {
         //Sets the the delete imgs to not clickable
         imgDelete.setDisable(true);
         imgDelete.setOpacity(0.25);
+
+        spinnerService.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
+        spinnerService.setEditable(true);
+
         //Add the combobox values
         ObservableList<String> optionsForCombo;
         optionsForCombo = FXCollections.observableArrayList(
@@ -252,7 +262,7 @@ public class ServicesController {
         Service s = new Service();
         s.setId(Long.MIN_VALUE);
         services.add(s);
-        
+
         tbvService.getSelectionModel().select(services.size() - 1);
         tbvService.layout();
         tbvService.getFocusModel().focus(services.size() - 1, tcAddress);
@@ -266,6 +276,16 @@ public class ServicesController {
         imgAdd.setOpacity(0.25);
         imgDelete.setDisable(true);
         imgDelete.setOpacity(0.25);
+
+        cbService.setDisable(true);
+
+        spinnerService.setDisable(true);
+        tfServices.setDisable(true);
+
+        addingService = true;
+
+        //Checks if you are editing or creating, and disables all the components of the ui
+        createAndEditMode();
 
     }
 
@@ -311,6 +331,7 @@ public class ServicesController {
                     imgCommit.setOpacity(1);
                     imgCancel.setDisable(false);
                     imgCancel.setOpacity(1);
+
                 });
 
         tcAddress.setOnEditCancel((CellEditEvent<Service, String> t) -> {
@@ -419,29 +440,9 @@ public class ServicesController {
     @FXML
     private void handleButtonSearch(ActionEvent event) {
 
-        switch (cbService.getValue()) {
-            case SELECT_ALL_SERVICES:
-                clearServicesTable();
-                services = loadAllServices();
-                break;
-            case SELECT_BY_ADDRESS:
-                clearServicesTable();
-                services = loadServicesByAddress();
+        tfServices.setText("");
 
-                break;
-            case SELECT_BY_NAME:
-                clearServicesTable();
-                services = loadServicesByName();
-
-                break;
-
-            case SELECT_BY_TYPE:
-
-                clearServicesTable();
-                services = loadServicesByType();
-
-                break;
-        }
+        updateServicesTable();
 
     }
 
@@ -494,7 +495,7 @@ public class ServicesController {
         } else {
             imgPrint.setDisable(true);
             imgPrint.setOpacity(0.25);
-            System.out.println("no services");
+
         }
     }
 
@@ -531,11 +532,12 @@ public class ServicesController {
 
     @FXML
     private void handleServiceCommit(MouseEvent event) {
+
         Service service = tbvService.getSelectionModel().getSelectedItem();
         int pos = tbvService.getSelectionModel().getSelectedIndex();
         try {
             if (pos == services.size() - 1 && service.getId().equals(Long.MIN_VALUE)) {
-               
+
                 serviceManager.createService(service);
                 tbvService.refresh();
                 LOGGER.info("Creation of new service");
@@ -543,6 +545,7 @@ public class ServicesController {
                 serviceManager.updateService(service);
                 tbvService.refresh();
                 LOGGER.info("Update service");
+
             }
         } catch (BusinessLogicException ex) {
             Alert excAlert = new Alert(AlertType.INFORMATION);
@@ -554,6 +557,20 @@ public class ServicesController {
 
         imgAdd.setDisable(false);
         imgAdd.setOpacity(1);
+        imgCommit.setDisable(true);
+        imgCommit.setOpacity(0.25);
+        imgCancel.setDisable(true);
+        imgCancel.setOpacity(0.25);
+
+        cbService.setDisable(false);
+
+        tfServices.setDisable(false);
+        tbvService.setDisable(false);
+
+        committing = true;
+
+        updateServicesTable();
+
     }
 
     private ObservableList<Service> loadServicesByType() {
@@ -561,19 +578,24 @@ public class ServicesController {
         ObservableList<Service> servicesTableBean = null;
         try {
 
-            List<Service> allServices = serviceManager.findServiceByType(cbServiceType.getSelectionModel().getSelectedItem().toString());
-            servicesTableBean = FXCollections.observableArrayList(allServices);
-            tbvService.setItems(servicesTableBean);
+            if (cbServiceType.getValue() != null) {
 
-            if (allServices.size() < 1) {
-                imgPrint.setDisable(true);
-                imgPrint.setOpacity(0.25);
-            } else {
-                imgPrint.setDisable(false);
-                imgPrint.setOpacity(1);
+                List<Service> allServices = serviceManager.findServiceByType(cbServiceType.getSelectionModel().getSelectedItem().toString());
 
+                if (allServices.size() < 1) {
+                    imgPrint.setDisable(true);
+                    imgPrint.setOpacity(0.25);
+
+                } else {
+                    servicesTableBean = FXCollections.observableArrayList(allServices);
+
+                    tbvService.setItems(servicesTableBean);
+
+                    imgPrint.setDisable(false);
+                    imgPrint.setOpacity(1);
+
+                }
             }
-
         } catch (BusinessLogicException e) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("AYUDA");
@@ -590,16 +612,16 @@ public class ServicesController {
 
     @FXML
     private void handleDeleteRow(MouseEvent event) {
-        Service service=tbvService.getSelectionModel().getSelectedItem();
+        Service service = tbvService.getSelectionModel().getSelectedItem();
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setHeaderText(null);
         alert.setTitle("Confirmation");
-        alert.setContentText("Are you sure you want to delete\n this facility with the following ID:"+service.getId()+"?");
+        alert.setContentText("Are you sure you want to delete\n this Service with the following ID:" + service.getId() + "?");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             try {
                 serviceManager.deleteService(service.getId());
-               //TODO .remove(facTBean);
+                updateServicesTable();
                 tbvService.refresh();
             } catch (BusinessLogicException ex) {
                 Alert alert1 = new Alert(AlertType.ERROR);
@@ -608,13 +630,68 @@ public class ServicesController {
                 alert1.setContentText(ex.getMessage());
                 alert1.showAndWait();
             }
+
+            deleting = true;
         } else {
             Alert alert3 = new Alert(AlertType.INFORMATION);
-            alert3.setTitle("Facility not deleted");
+            alert3.setTitle("Service not deleted");
             alert3.setHeaderText(null);
             alert3.setContentText("Content not deleted");
             alert3.showAndWait();
         }
+    }
+
+    private void updateServicesTable() {
+
+        //Updates the table data depending on the query selected on the cbService comboBox.
+        //updates for delete and queries
+        if (!addingService && committing || deleting && services != null) {
+
+            switch (cbService.getValue()) {
+                case SELECT_ALL_SERVICES:
+                    clearServicesTable();
+                    services = loadAllServices();
+                    break;
+                case SELECT_BY_ADDRESS:
+
+                    clearServicesTable();
+                    services = loadServicesByAddress();
+
+                    break;
+                case SELECT_BY_NAME:
+                    clearServicesTable();
+                    services = loadServicesByName();
+
+                    break;
+
+                case SELECT_BY_TYPE:
+
+                    clearServicesTable();
+                    services = loadServicesByType();
+
+                    break;
+            }
+
+            //updates when a row is added
+        } else if (addingService && committing) {
+
+            cbService.getSelectionModel().select(0);
+            clearServicesTable();
+            services = loadAllServices();
+
+            addingService = false;
+            committing = false;
+
+        }
+
+    }
+
+    private void createAndEditMode() {
+
+        if (!committing) {
+
+        }
+
     }
 
 }

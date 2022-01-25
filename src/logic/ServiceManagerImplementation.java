@@ -17,7 +17,7 @@ import restful.ServiceRestfulClient;
 
 /**
  *
- * @author 2dam
+ * @author Adrián Pérez
  */
 public class ServiceManagerImplementation implements ServicesManager{
 
