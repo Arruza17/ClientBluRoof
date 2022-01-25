@@ -107,6 +107,8 @@ public class ServicesController {
     private ObservableList<String> types;
 
     private ComboBox type;
+    @FXML
+    private ComboBox<?> cbServiceType;
 
     public void initStage(Parent root) {
         LOGGER.info("Initializing DwellingWindow stage");
@@ -183,17 +185,6 @@ public class ServicesController {
         //Loads all the services in the table
         services = loadAllServices();
 
-        //Checks if there are services to print. enables  print imageview when there are and disables it when there not
-        if (services != null) {
-
-            imgPrint.setDisable(false);
-            imgPrint.setOpacity(1);
-        } else {
-            imgPrint.setDisable(true);
-            imgPrint.setOpacity(0.25);
-
-        }
-
         stage.show();
 
     }
@@ -207,6 +198,16 @@ public class ServicesController {
 
             servicesTableBean = FXCollections.observableArrayList(allServices);
             tbvService.setItems(servicesTableBean);
+
+            if (allServices == null) {
+                imgPrint.setDisable(true);
+                imgPrint.setOpacity(0.25);
+                System.out.println("view.controllers.ServicesController.loadAllServices()");
+            } else {
+                imgPrint.setDisable(false);
+                imgPrint.setOpacity(1);
+
+            }
 
         } catch (BusinessLogicException e) {
             Alert alert = new Alert(AlertType.INFORMATION);
@@ -247,14 +248,13 @@ public class ServicesController {
         LOGGER.info("Adding new empty admin to the table");
 
         Service s = new Service();
-
-        services.add(new Service());
-
-        TablePosition pos = new TablePosition(tbvService, services.size(), tcAddress);
-
-        tbvService.getFocusModel().focus(pos);
-
-        tbvService.requestFocus();
+        s.setId(Long.MIN_VALUE);
+        services.add(s);
+        
+        tbvService.getSelectionModel().select(services.size() - 1);
+        tbvService.layout();
+        tbvService.getFocusModel().focus(services.size() - 1, tcAddress);
+        tbvService.edit(services.size() - 1, tcAddress);
 
         imgCommit.setDisable(false);
         imgCommit.setOpacity(1);
@@ -281,6 +281,12 @@ public class ServicesController {
                     imgCommit.setOpacity(1);
                     imgCancel.setDisable(false);
                     imgCancel.setOpacity(1);
+
+                    tbvService.getSelectionModel().select(services.size() - 1);
+                    tbvService.layout();
+                    tbvService.getFocusModel().focus(services.size() - 1, tcName);
+                    tbvService.edit(services.size() - 1, tcName);
+
                 });
 
         tcName.setOnEditCancel((CellEditEvent<Service, String> t) -> {
@@ -326,6 +332,11 @@ public class ServicesController {
                     imgCancel.setDisable(false);
                     imgCancel.setOpacity(1);
 
+                    tbvService.getSelectionModel().select(services.size() - 1);
+                    tbvService.layout();
+                    tbvService.getFocusModel().focus(services.size() - 1, tcType);
+                    tbvService.edit(services.size() - 1, tcType);
+
                 });
 
         tcType.setOnEditCancel((CellEditEvent<Service, String> t) -> {
@@ -344,33 +355,60 @@ public class ServicesController {
         switch (cbService.getValue()) {
             case SELECT_ALL_SERVICES:
 
+                cbServiceType.setPrefWidth(0);
+                cbServiceType.setPrefHeight(0);
+                cbServiceType.setVisible(false);
+                cbServiceType.setDisable(true);
+
                 spinnerService.setDisable(true);
                 tfServices.setDisable(true);
-                //Load the Service data loadAllServices() method
-
-                clearServicesTable();
+                tfServices.setVisible(true);
+                tfServices.setPrefWidth(157);
+                tfServices.setPrefHeight(37);
 
                 break;
             case SELECT_BY_ADDRESS:
+
+                cbServiceType.setPrefWidth(0);
+                cbServiceType.setPrefHeight(0);
+                cbServiceType.setVisible(false);
+                cbServiceType.setDisable(true);
+
                 spinnerService.setDisable(true);
                 tfServices.setDisable(false);
-
-                clearServicesTable();
+                tfServices.setVisible(true);
+                tfServices.setPrefWidth(157);
+                tfServices.setPrefHeight(37);
 
                 break;
             case SELECT_BY_NAME:
+
+                cbServiceType.setPrefWidth(0);
+                cbServiceType.setPrefHeight(0);
+                cbServiceType.setVisible(false);
+                cbServiceType.setDisable(true);
+
                 tfServices.setDisable(false);
                 spinnerService.setDisable(true);
-
-                clearServicesTable();
+                tfServices.setVisible(true);
+                tfServices.setPrefWidth(157);
+                tfServices.setPrefHeight(37);
 
                 break;
 
             case SELECT_BY_TYPE:
 
                 spinnerService.setDisable(true);
+                cbServiceType.setVisible(true);
+                cbServiceType.setDisable(false);
+                cbServiceType.setPrefWidth(157);
+                cbServiceType.setPrefHeight(37);
+                cbServiceType.setItems((ObservableList) types);
 
-                clearServicesTable();
+                tfServices.setPrefWidth(0);
+                tfServices.setPrefHeight(0);
+                tfServices.setVisible(false);
+                tfServices.setDisable(true);
 
                 break;
         }
@@ -383,41 +421,22 @@ public class ServicesController {
             case SELECT_ALL_SERVICES:
                 clearServicesTable();
                 services = loadAllServices();
-                if (services != null) {
-                    imgPrint.setDisable(false);
-                    imgPrint.setOpacity(1);
-                }
-
                 break;
             case SELECT_BY_ADDRESS:
                 clearServicesTable();
                 services = loadServicesByAddress();
 
-                if (services != null) {
-                    imgPrint.setDisable(false);
-                    imgPrint.setOpacity(1);
-
-                }
                 break;
             case SELECT_BY_NAME:
-
                 clearServicesTable();
-                if (services != null) {
-                    imgPrint.setDisable(false);
-                    imgPrint.setOpacity(1);
-
-                }
+                services = loadServicesByName();
 
                 break;
 
             case SELECT_BY_TYPE:
 
                 clearServicesTable();
-                if (services != null) {
-                    imgPrint.setDisable(false);
-                    imgPrint.setOpacity(1);
-
-                }
+                services = loadServicesByType();
 
                 break;
         }
@@ -427,9 +446,20 @@ public class ServicesController {
     private ObservableList<Service> loadServicesByAddress() {
 
         ObservableList<Service> servicesTableBean = null;
-        try {
 
+        try {
             List<Service> allServices = serviceManager.findServiceByAddress(tfServices.getText());
+
+            if (allServices.size() < 1) {
+                imgPrint.setDisable(true);
+                imgPrint.setOpacity(0.25);
+
+            } else {
+                imgPrint.setDisable(false);
+                imgPrint.setOpacity(1);
+
+            }
+
             servicesTableBean = FXCollections.observableArrayList(allServices);
             tbvService.setItems(servicesTableBean);
 
@@ -453,8 +483,8 @@ public class ServicesController {
             tbvService.refresh();
 
             for (Service s : services) {
-                services.remove(s);
                 System.out.println(s.toString());
+                services.remove(s);
             }
 
             imgPrint.setDisable(true);
@@ -464,6 +494,96 @@ public class ServicesController {
             imgPrint.setOpacity(0.25);
             System.out.println("no services");
         }
+    }
+
+    private ObservableList<Service> loadServicesByName() {
+
+        ObservableList<Service> servicesTableBean = null;
+        try {
+
+            List<Service> allServices = serviceManager.findServiceByName(tfServices.getText());
+            servicesTableBean = FXCollections.observableArrayList(allServices);
+            tbvService.setItems(servicesTableBean);
+
+            if (allServices.size() < 1) {
+                imgPrint.setDisable(true);
+                imgPrint.setOpacity(0.25);
+            } else {
+                imgPrint.setDisable(false);
+                imgPrint.setOpacity(1);
+
+            }
+
+        } catch (BusinessLogicException e) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("AYUDA");
+            alert.setHeaderText("Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+
+        }
+
+        tbvService.refresh();
+        return servicesTableBean;
+    }
+
+    @FXML
+    private void handleServiceCommit(MouseEvent event) {
+        Service service = tbvService.getSelectionModel().getSelectedItem();
+        int pos = tbvService.getSelectionModel().getSelectedIndex();
+        try {
+            if (pos == services.size() - 1 && service.getId().equals(Long.MIN_VALUE)) {
+               
+                serviceManager.createService(service);
+                tbvService.refresh();
+                LOGGER.info("Creation of new service");
+            } else {
+                serviceManager.updateService(service);
+                tbvService.refresh();
+                LOGGER.info("Update service");
+            }
+        } catch (BusinessLogicException ex) {
+            Alert excAlert = new Alert(AlertType.INFORMATION);
+            excAlert.setTitle("Error");
+            excAlert.setContentText("There was an error with the edition of the service: " + ex.getMessage());
+            excAlert.show();
+            LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at handleTableCommit(): {0}", ex.getMessage());
+        }
+
+        imgAdd.setDisable(false);
+        imgAdd.setOpacity(1);
+    }
+
+    private ObservableList<Service> loadServicesByType() {
+
+        ObservableList<Service> servicesTableBean = null;
+        try {
+
+            List<Service> allServices = serviceManager.findServiceByType(cbServiceType.getSelectionModel().getSelectedItem().toString());
+            servicesTableBean = FXCollections.observableArrayList(allServices);
+            tbvService.setItems(servicesTableBean);
+
+            if (allServices.size() < 1) {
+                imgPrint.setDisable(true);
+                imgPrint.setOpacity(0.25);
+            } else {
+                imgPrint.setDisable(false);
+                imgPrint.setOpacity(1);
+
+            }
+
+        } catch (BusinessLogicException e) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("AYUDA");
+            alert.setHeaderText("Error");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+
+        }
+
+        tbvService.refresh();
+        return servicesTableBean;
+
     }
 
 }

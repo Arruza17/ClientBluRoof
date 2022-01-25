@@ -91,6 +91,15 @@ public class ServiceManagerImplementation implements ServicesManager{
     @Override
     public void updateService(Service service) throws BusinessLogicException {
         
+         try {
+            LOGGER.log(Level.INFO, "UsersManager: Updating user {0}.", service.getName());
+            serviceRestfulClient.edit(service, String.valueOf(service.getId()));
+        } catch (ClientErrorException ex) {
+            LOGGER.log(Level.SEVERE,
+                    "UsersManager: Exception updating user, {0}",
+                    ex.getMessage());
+            throw new BusinessLogicException("Error updating user:\n" + ex.getMessage());
+        }
     }
 
     @Override
