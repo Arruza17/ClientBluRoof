@@ -29,7 +29,7 @@ public class DwellingRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:22083/ServerBluRoof/webresources";
+    private static final String BASE_URI = "http://localhost:37302/ServerBluRoof/webresources";
     private static final Logger LOGGER = Logger.getLogger("DwellingRestfulClient");
 
     /**

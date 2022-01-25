@@ -106,7 +106,7 @@
                   </Separator>
                   <HBox spacing="5.0">
                      <children>
-                        <ImageView fx:id="imgCreateComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleNewDwelling" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgCreateNewDwelling" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleNewDwelling" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../resources/img/dwelling/add.png" />
                            </image>
@@ -117,12 +117,34 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                         </ImageView>
+                        <ImageView fx:id="imgConfirmNewDwelling" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleConfirmNewDwelling" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/check.png" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <HBox.margin>
+                              <Insets left="5.0" top="5.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <ImageView fx:id="imgCancelNewDwelling" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleCancelNewDwelling" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/cancel.png" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <HBox.margin>
+                              <Insets left="5.0" top="5.0" />
+                           </HBox.margin>
+                        </ImageView>
                         <ImageView fx:id="imgDeleteDwelling" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleDeleteDwelling" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../resources/img/dwelling/minus.png" />
                            </image>
                            <HBox.margin>
-                              <Insets bottom="5.0" top="5.0" />
+                              <Insets left="5.0" top="5.0" />
                            </HBox.margin>
                            <cursor>
                               <Cursor fx:constant="HAND" />

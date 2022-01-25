@@ -5,6 +5,7 @@
  */
 package model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -31,7 +32,7 @@ public class DwellingTableBean {
 
     private SimpleDoubleProperty squareMeters;
 
-    private SimpleObjectProperty<Date> constructionDate;
+    private SimpleStringProperty constructionDate;
 
     private SimpleFloatProperty rating;
 
@@ -42,7 +43,10 @@ public class DwellingTableBean {
         this.address = new SimpleStringProperty(d.getAddress());
         this.wifi = new SimpleBooleanProperty(d.getHasWiFi());
         this.squareMeters = new SimpleDoubleProperty(d.getSquareMeters());
-        this.constructionDate = new SimpleObjectProperty<>(d.getConstructionDate());
+        //PASAR DE Tue Dec 14 00:00:00 CET 2021 A 14/12/2021
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        String dateBueno = format.format(d.getConstructionDate());
+        this.constructionDate = new SimpleStringProperty(dateBueno);
         this.rating = new SimpleFloatProperty(d.getRating());
         Hyperlink hl = new Hyperlink("More info");
         hl.setOnAction(new EventHandler<ActionEvent>() {
@@ -93,11 +97,11 @@ public class DwellingTableBean {
         this.squareMeters.set(squareMeters);
     }
 
-    public Date getConstructionDate() {
+    public String getConstructionDate() {
         return constructionDate.get();
     }
 
-    public void setConstructionDate(Date constructionDate) {
+    public void setConstructionDate(String constructionDate) {
         this.constructionDate.set(constructionDate);
     }
 
