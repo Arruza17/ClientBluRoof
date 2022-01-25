@@ -120,8 +120,9 @@ public class SignInController {
      */
     @FXML
     public void signIn(ActionEvent action) {
+          User user;
         try {
-            User user = um.login(tfUser.getText(), tfPassword.getText());
+            user = um.login(tfUser.getText(), tfPassword.getText().trim());
             if (user != null) {
                 Parent root;
                 FXMLLoader loader = null;
@@ -137,12 +138,16 @@ public class SignInController {
                 controller.initStage(root);
             }
         } catch (IOException ex) {
-            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Error");
+            alert.setContentText("There was a problem creating the window, try again later");
+            alert.showAndWait();
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
         } catch (BusinessLogicException ex) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("Could not log in");
             alert.setContentText(ex.getMessage());
-           alert.show();
+            alert.show();
         }
     }
 

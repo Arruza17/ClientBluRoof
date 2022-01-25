@@ -5,7 +5,6 @@
  */
 package restful;
 
-import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -24,13 +23,13 @@ import javax.ws.rs.core.GenericType;
  *
  * @author YERAYa
  */
-public class UserRestfulClient {
+public class UserRESTClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = ResourceBundle.getBundle("resources.config").getString("URL");
+    private static final String BASE_URI = "http://localhost:11094/ServerBluRoof/webresources";
 
-    public UserRestfulClient() {
+    public UserRESTClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("entities.user");
     }

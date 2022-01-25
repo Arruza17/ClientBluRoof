@@ -5,12 +5,15 @@
  */
 package view.controllers;
 
+import cipher.Cipher;
 import enumerations.UserPrivilege;
 import enumerations.UserStatus;
 import exceptions.BusinessLogicException;
 import exceptions.EmailFormatException;
 import exceptions.FieldsEmptyException;
 import exceptions.FullNameFormatException;
+import exceptions.MaxCharactersException;
+import exceptions.PhoneFormatException;
 import interfaces.UserManager;
 import java.text.SimpleDateFormat;
 
@@ -43,8 +46,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 
 import model.User;
+import resources.DateEditingCell;
 import static view.controllers.SignUpController.VALID_EMAIL_ADDRESS;
 
 /**
@@ -107,7 +112,7 @@ public class AdminController {
             alert.setHeaderText("Error");
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
-            LOGGER.log(Level.WARNING, "{0} exception thrown at FullNameColumn edit", ex.getClass().getSimpleName());
+            LOGGER.log(Level.WARNING, "{0} exception thrown at AdminController initStage", ex.getClass().getSimpleName());
 
         }
 
@@ -136,11 +141,14 @@ public class AdminController {
             @Override
             public void handle(CellEditEvent<User, String> t) {
                 try {
-                    if (t.getNewValue().isEmpty()) {
+                    if (t.getNewValue().trim().isEmpty()) {
                         throw new FieldsEmptyException();
                     }
-                    if (!t.getNewValue().contains(" ") || t.getNewValue().length() < 3) {
+                    if (!t.getNewValue().trim().contains(" ") || t.getNewValue().trim().length() < 3) {
                         throw new FullNameFormatException();
+                    }
+                    if (t.getNewValue().trim().length() > 255) {
+                        throw new MaxCharactersException();
                     }
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setFullName(t.getNewValue());
@@ -151,21 +159,43 @@ public class AdminController {
                     imgCancel.setDisable(false);
                     imgCancel.setOpacity(1);
                 } catch (FullNameFormatException e) {
-                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colFullName);
-                    tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colFullName);
-                    tblAdmin.edit(t.getTablePosition().getRow(), colFullName);
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Wrong format");
                     alert.setContentText(e.getMessage());
                     alert.show();
+
+                    tblAdmin.layout();
+                    tblAdmin.requestFocus();
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colFullName);
+                    tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colFullName);
+                    tblAdmin.edit(t.getTablePosition().getRow(), colFullName);
                 } catch (FieldsEmptyException e) {
+
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Field empty");
                     alert.setContentText(e.getMessage());
-                    //alert.showAndWait();
-                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colEmail);
-                    tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colEmail);
-                    tblAdmin.edit(t.getTablePosition().getRow(), colEmail);
+                    alert.show();
+
+                    tblAdmin.layout();
+                    tblAdmin.requestFocus();
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colFullName);
+                    tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colFullName);
+                    tblAdmin.edit(t.getTablePosition().getRow(), colFullName);
+
+                } catch (MaxCharactersException e) {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Too many characters");
+                    alert.setContentText(e.getMessage());
+                    alert.show();
+
+                    tblAdmin.layout();
+                    tblAdmin.requestFocus();
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colFullName);
+                    tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colFullName);
+                    tblAdmin.edit(t.getTablePosition().getRow(), colFullName);
+
+                } finally {
+                    tblAdmin.refresh();
                 }
             }
         });
@@ -186,9 +216,14 @@ public class AdminController {
         colLogin.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
                     try {
-                        if (t.getNewValue().isEmpty()) {
+                        if (t.getNewValue().trim().isEmpty()) {
                             throw new FieldsEmptyException();
                         }
+
+                        if (t.getNewValue().trim().length() > 255) {
+                            throw new MaxCharactersException();
+                        }
+
                         ((User) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setLogin(t.getNewValue());
                         tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colLogin);
@@ -205,6 +240,16 @@ public class AdminController {
                         tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colLogin);
                         tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colLogin);
                         tblAdmin.edit(t.getTablePosition().getRow(), colLogin);
+                    } catch (MaxCharactersException e) {
+                        tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colLogin);
+                        tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colLogin);
+                        tblAdmin.edit(t.getTablePosition().getRow(), colLogin);
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Too many characters");
+                        alert.setContentText(e.getMessage());
+                        alert.show();
+                    } finally {
+                        tblAdmin.refresh();
                     }
                 });
 
@@ -225,12 +270,15 @@ public class AdminController {
             public void handle(CellEditEvent<User, String> t) {
                 try {
                     Pattern valid_email = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-                    Matcher matcher = valid_email.matcher(t.getNewValue());
+                    Matcher matcher = valid_email.matcher(t.getNewValue().trim());
                     if (!matcher.find()) {
                         throw new EmailFormatException();
                     }
-                    if (t.getNewValue().isEmpty()) {
+                    if (t.getNewValue().trim().isEmpty()) {
                         throw new FieldsEmptyException();
+                    }
+                    if (t.getNewValue().trim().length() > 255) {
+                        throw new MaxCharactersException();
                     }
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setEmail(t.getNewValue());
@@ -256,6 +304,16 @@ public class AdminController {
                     tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colEmail);
                     tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colEmail);
                     tblAdmin.edit(t.getTablePosition().getRow(), colEmail);
+                } catch (MaxCharactersException e) {
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colEmail);
+                    tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colEmail);
+                    tblAdmin.edit(t.getTablePosition().getRow(), colEmail);
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Too many characters");
+                    alert.setContentText(e.getMessage());
+                    alert.show();
+                } finally {
+                    tblAdmin.refresh();
                 }
 
             }
@@ -277,9 +335,18 @@ public class AdminController {
         colPhone.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
                     try {
-                        if (t.getNewValue().isEmpty()) {
+                        if (t.getNewValue().trim().isEmpty()) {
                             throw new FieldsEmptyException();
                         }
+                        if (t.getNewValue().trim().length() > 255) {
+                            throw new MaxCharactersException();
+                        }
+                        Pattern valid_phone = Pattern.compile("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$");
+                        Matcher matcher = valid_phone.matcher(t.getNewValue().trim());
+                        if (!matcher.find()) {
+                            throw new PhoneFormatException();
+                        }
+
                         ((User) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setPhoneNumber(t.getNewValue());
                         tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
@@ -288,7 +355,7 @@ public class AdminController {
                         imgCommit.setOpacity(1);
                         imgCancel.setDisable(false);
                         imgCancel.setOpacity(1);
-                    } catch (FieldsEmptyException e) {
+                    } catch (FieldsEmptyException | PhoneFormatException e) {
                         Alert alert = new Alert(AlertType.INFORMATION);
                         alert.setTitle("Wrong format");
                         alert.setContentText(e.getMessage());
@@ -296,6 +363,16 @@ public class AdminController {
                         tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
                         tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colPhone);
                         tblAdmin.edit(t.getTablePosition().getRow(), colPhone);
+                    } catch (MaxCharactersException e) {
+                        tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
+                        tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colPhone);
+                        tblAdmin.edit(t.getTablePosition().getRow(), colPhone);
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("Too many characters");
+                        alert.setContentText(e.getMessage());
+                        alert.show();
+                    } finally {
+                        tblAdmin.refresh();
                     }
                 });
 
@@ -310,20 +387,9 @@ public class AdminController {
         //Make birthdate column editable   
         colBirthDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBirthDate()));
         colBirthDate.setEditable(true);
-        colBirthDate.setCellFactory((TableColumn<User, Date> t) -> {
-            return new TableCell<User, Date>() {
-                @Override
-                protected void updateItem(Date date, boolean dateIsEmpty) {
-                    SimpleDateFormat sdFormat = new SimpleDateFormat("dd/MM/yyyy");
-                    super.updateItem(date, dateIsEmpty);
-                    if (date == null || dateIsEmpty) {
-                        setText(null);
-                    } else {
-                        setText(sdFormat.format(date));
-                    }
-                }
-            };
-        });
+        Callback<TableColumn<User, Date>, TableCell<User, Date>> dateCellFactory
+                = (TableColumn<User, Date> param) -> new DateEditingCell();
+        colBirthDate.setCellFactory(dateCellFactory);
 
         colBirthDate.setOnEditCommit(
                 (CellEditEvent<User, Date> t) -> {
@@ -355,8 +421,6 @@ public class AdminController {
     private void handleTableAdd(MouseEvent event) {
         LOGGER.info("Adding new empty admin to the table");
         User newUser = new User();
-        newUser.setPrivilege(UserPrivilege.ADMIN.name());
-        newUser.setStatus(UserStatus.ENABLED.name());
         newUser.setId(Long.MIN_VALUE);
         admin.add(newUser);
         tblAdmin.getSelectionModel().select(admin.size() - 1);
@@ -412,9 +476,12 @@ public class AdminController {
         int pos = tblAdmin.getSelectionModel().getSelectedIndex();
         try {
             if (pos == admin.size() - 1 && user.getId().equals(Long.MIN_VALUE)) {
-                user.setId(null);
+                user.setPrivilege(UserPrivilege.ADMIN.name());
+                user.setStatus(UserStatus.ENABLED.name());
+                user.setBirthDate(new Date());
+              
                 userManager.createUser(user);
-                userManager.resetPassword(user.getLogin());
+                //userManager.resetPassword(user.getLogin());
                 tblAdmin.refresh();
                 LOGGER.info("Creation of new admin");
             } else {
@@ -472,6 +539,10 @@ public class AdminController {
             }
 
         } catch (BusinessLogicException ex) {
+            Alert excAlert = new Alert(AlertType.INFORMATION);
+            excAlert.setTitle("Error");
+            excAlert.setContentText("There was an error finding information " + ex.getMessage());
+            excAlert.show();
             LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at searchByLogin(): {0}", ex.getMessage());
         } finally {
             tblAdmin.setItems(admin);

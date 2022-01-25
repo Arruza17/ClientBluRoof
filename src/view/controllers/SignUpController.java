@@ -1,5 +1,6 @@
 package view.controllers;
 
+import cipher.Cipher;
 import enumerations.ActualState;
 import enumerations.UserPrivilege;
 import enumerations.UserStatus;
@@ -10,6 +11,7 @@ import exceptions.LoginFoundException;
 import exceptions.MaxCharactersException;
 import exceptions.PasswordFormatException;
 import exceptions.PassNotEqualException;
+import exceptions.PhoneFormatException;
 import factories.GuestManagerFactory;
 import factories.OwnerManagerFactory;
 import interfaces.GuestManager;
@@ -61,12 +63,12 @@ import model.User;
  * @author Ander Arruza and Adrián Pérez
  */
 public class SignUpController {
-    
+
     private final int MAX_WIDTH = 1920;
     private final int MAX_HEIGHT = 1024;
     private final int MIN_WIDTH = 1024;
     private final int MIN_HEIGHT = 768;
-    
+
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
 
     /**
@@ -75,6 +77,7 @@ public class SignUpController {
      */
     public static final Pattern VALID_EMAIL_ADDRESS
             = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+    public static final Pattern VALID_PHONE_NUMBER = Pattern.compile("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$");
     private Stage stage;
     @FXML
     private TextField tfUser;
@@ -144,12 +147,12 @@ public class SignUpController {
                     ComboBox<String> cb = new ComboBox(list);
                     cb.getSelectionModel().selectFirst();
                     vbox = new VBox(label, cb);
-                    
+
                 }
                 hbChange.getChildren().add(vbox);
             }
         });
-        
+
         stage.show();
         LOGGER.info("SignUp Open Window");
     }
@@ -169,7 +172,7 @@ public class SignUpController {
      * space character
      * @throws EmailFormatException if the email is not in the valid form
      */
-    private boolean checkFields() throws FieldsEmptyException, MaxCharactersException, PassNotEqualException, PasswordFormatException, FullNameFormatException, EmailFormatException {
+    private boolean checkFields() throws FieldsEmptyException, MaxCharactersException, PassNotEqualException, PasswordFormatException, FullNameFormatException, EmailFormatException, PhoneFormatException {
         //Checks if all the fields are written
         if (tfUser.getText().trim().isEmpty()
                 || tfFullName.getText().trim().isEmpty()
@@ -200,7 +203,7 @@ public class SignUpController {
             //throw validation Error
             LOGGER.warning("The field passField and rptPassword are not the same");
             throw new PassNotEqualException();
-            
+
         }
         //Checks if the password field has an space within
         if (passField.getText().trim().contains(" ")) {
@@ -228,6 +231,11 @@ public class SignUpController {
             //throw validation Error
             throw new EmailFormatException();
         }
+
+        Matcher matcher = VALID_PHONE_NUMBER.matcher(tfPhoneNo.getText().trim());
+        if (!matcher.find()) {
+            throw new PhoneFormatException();
+        }
         //Reachable if everything goes OK
         return true;
     }
@@ -250,7 +258,7 @@ public class SignUpController {
                 //Create's an user with the params
                 RadioButton selectedRadioButton = (RadioButton) userType.getSelectedToggle();
                 User user;
-                
+
                 if (selectedRadioButton.getText().equals("Owner")) {
                     user = new Owner();
                     ObservableList<Node> obs = hbChange.getChildren();
@@ -258,7 +266,7 @@ public class SignUpController {
                     ObservableList<Node> children = vb.getChildren();
                     CheckBox cb = (CheckBox) children.get(children.size() - 1);
                     ((Owner) user).setIsResident(cb.isSelected());
-                    
+
                 } else {
                     user = new Guest();
                     ObservableList<Node> obs = hbChange.getChildren();
@@ -266,17 +274,18 @@ public class SignUpController {
                     ObservableList<Node> children = vb.getChildren();
                     ComboBox<String> cb = (ComboBox) children.get(children.size() - 1);
                     ((Guest) user).setActualState(cb.getSelectionModel().getSelectedItem());
-                    
+
                 }
                 user.setLogin(tfUser.getText().trim());
                 user.setFullName(tfFullName.getText().trim());
-                user.setPassword(passField.getText().trim());
+                Cipher cipher = new Cipher();
+                user.setPassword(cipher.cipher(passField.getText().trim().getBytes()));
                 user.setEmail(tfEmail.getText().trim());
                 user.setPrivilege(selectedRadioButton.getText());
                 user.setStatus(UserStatus.ENABLED.name());
                 user.setLastPasswordChange(new Date());
                 user.setBirthDate(Date.from(dpBdate.getValue().atStartOfDay().toInstant(OffsetDateTime.now().getOffset())));
-            
+
                 String content = "UserName = " + user.getLogin()
                         + "\nFullName = " + user.getFullName()
                         + "\nEmail = " + user.getEmail();
@@ -304,7 +313,7 @@ public class SignUpController {
                 //Stage stage = (Stage) btnCancel.getScene().getWindow();
                 // Close current window 
                 stage.close();
-                
+
             }
         } catch (OperationNotSupportedException ex) {
             Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
@@ -314,9 +323,9 @@ public class SignUpController {
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at signUp method");
-            
+
         }
-        
+
     }
 
     /**
@@ -363,5 +372,5 @@ public class SignUpController {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-    
+
 }
