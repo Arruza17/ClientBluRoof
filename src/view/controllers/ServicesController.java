@@ -117,6 +117,8 @@ public class ServicesController {
 
     private boolean deleting;
 
+    private boolean searching;
+
     public void initStage(Parent root) {
         LOGGER.info("Initializing DwellingWindow stage");
         //Creation of a new Scene
@@ -147,13 +149,13 @@ public class ServicesController {
         imgDelete.setDisable(true);
         imgDelete.setOpacity(0.25);
 
-        
-        if(!spinnerService.isDisabled()){
-             spinnerService.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
-        spinnerService.setEditable(true); 
+        /*
+        if (!spinnerService.isDisabled()) {
+            spinnerService.setValueFactory(
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
+            spinnerService.setEditable(true);
         }
-     
+         */
         //Add the combobox values
         ObservableList<String> optionsForCombo;
         optionsForCombo = FXCollections.observableArrayList(
@@ -214,10 +216,10 @@ public class ServicesController {
             servicesTableBean = FXCollections.observableArrayList(allServices);
             tbvService.setItems(servicesTableBean);
 
-            if (allServices == null) {
+            if (allServices.size() < 1) {
                 imgPrint.setDisable(true);
                 imgPrint.setOpacity(0.25);
-                System.out.println("view.controllers.ServicesController.loadAllServices()");
+
             } else {
                 imgPrint.setDisable(false);
                 imgPrint.setOpacity(1);
@@ -226,9 +228,9 @@ public class ServicesController {
 
         } catch (BusinessLogicException e) {
             Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("AYUDA");
+            alert.setTitle("Attention");
             alert.setHeaderText("Error");
-            alert.setContentText(e.getMessage());
+            alert.setContentText("No services have been found");
             alert.showAndWait();
         }
 
@@ -442,9 +444,10 @@ public class ServicesController {
 
     @FXML
     private void handleButtonSearch(ActionEvent event) {
-       
+
+        searching = true;
         updateServicesTable();
-        
+        tfServices.setText("");
 
     }
 
@@ -470,9 +473,9 @@ public class ServicesController {
 
         } catch (BusinessLogicException e) {
             Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("AYUDA");
+            alert.setTitle("Attention");
             alert.setHeaderText("Error");
-            alert.setContentText(e.getMessage());
+            alert.setContentText("The search field is empty");
             alert.showAndWait();
         }
 
@@ -488,7 +491,7 @@ public class ServicesController {
             tbvService.refresh();
 
             for (Service s : services) {
-                System.out.println(s.toString());
+                
                 services.remove(s);
             }
 
@@ -521,9 +524,9 @@ public class ServicesController {
 
         } catch (BusinessLogicException e) {
             Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("AYUDA");
+            alert.setTitle("Attention");
             alert.setHeaderText("Error");
-            alert.setContentText(e.getMessage());
+            alert.setContentText("The search field is empty");
             alert.showAndWait();
 
         }
@@ -600,9 +603,9 @@ public class ServicesController {
             }
         } catch (BusinessLogicException e) {
             Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("AYUDA");
+            alert.setTitle("Attention");
             alert.setHeaderText("Error");
-            alert.setContentText(e.getMessage());
+            alert.setContentText("The search field is empty");
             alert.showAndWait();
 
         }
@@ -623,17 +626,19 @@ public class ServicesController {
         if (result.get() == ButtonType.OK) {
             try {
                 serviceManager.deleteService(service.getId());
+                deleting = true;
                 updateServicesTable();
                 tbvService.refresh();
+
             } catch (BusinessLogicException ex) {
                 Alert alert1 = new Alert(AlertType.ERROR);
                 alert1.setTitle("AYUDA");
                 alert1.setHeaderText("Error");
                 alert1.setContentText(ex.getMessage());
                 alert1.showAndWait();
+
             }
 
-            deleting = true;
         } else {
             Alert alert3 = new Alert(AlertType.INFORMATION);
             alert3.setTitle("Service not deleted");
@@ -646,13 +651,14 @@ public class ServicesController {
     private void updateServicesTable() {
 
         //Updates the table data depending on the query selected on the cbService comboBox.
-        //updates for delete and queries
-        if (!addingService || committing || deleting && services != null) {
+        //updates for edit,delete and queries
+        if (!addingService && committing || deleting || searching) {
 
             switch (cbService.getValue()) {
                 case SELECT_ALL_SERVICES:
                     clearServicesTable();
                     services = loadAllServices();
+
                     break;
                 case SELECT_BY_ADDRESS:
 
@@ -673,7 +679,9 @@ public class ServicesController {
 
                     break;
             }
-
+            deleting = false;
+            committing = false;
+            searching = false;
             //updates when a row is added
         } else if (addingService && committing) {
 
@@ -686,6 +694,9 @@ public class ServicesController {
 
         }
 
+        committing = false;
+        searching = false;
+
     }
 
     private void createAndEditMode() {
@@ -694,6 +705,10 @@ public class ServicesController {
 
         }
 
+    }
+
+    @FXML
+    private void handleCancelCommit(MouseEvent event) {
     }
 
 }

@@ -98,7 +98,7 @@ public class ServiceManagerImplementation implements ServicesManager{
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception updating user, {0}",
                     ex.getMessage());
-            throw new BusinessLogicException("Error updating user:\n" + ex.getMessage());
+            throw new BusinessLogicException("Error updating Service:\n" + ex.getMessage());
         }
     }
 
@@ -109,9 +109,9 @@ public class ServiceManagerImplementation implements ServicesManager{
             LOGGER.log(Level.INFO, "ServiceManager: Creating service {0}.", service.getName());
             //Send user data to web client for creation. 
             serviceRestfulClient.create(service);
-        } catch (Exception ex) {
+        } catch (ClientErrorException ex) {
             LOGGER.log(Level.SEVERE,
-                    "UsersManager: Exception creating user, {0}",
+                    "UsersManager: Exception creating Service, {0}",
                     ex.getMessage());
             throw new BusinessLogicException("Error creating user:\n" + ex.getMessage());
         }
