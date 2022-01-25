@@ -9,6 +9,6 @@ package model;
  *
  * @author Ander Arruza
  */
-class Owner {
+public class Owner extends User {
     
 }

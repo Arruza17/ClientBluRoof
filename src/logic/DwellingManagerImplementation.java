@@ -16,8 +16,9 @@ import model.Dwelling;
 import restful.DwellingRestfulClient;
 
 /**
- * Class that implements the DwellingManager methods
- * Manager Implementation for the RestFul service
+ * Class that implements the DwellingManager methods Manager Implementation for
+ * the RestFul service
+ *
  * @author Ander Arruza
  */
 public class DwellingManagerImplementation implements DwellingManager {
@@ -67,7 +68,7 @@ public class DwellingManagerImplementation implements DwellingManager {
     @Override
     public void remove(Long id) throws BussinessLogicException {
         try {
-            dwellingRestfulClient.remove(String.valueOf(id));
+            dwellingRestfulClient.remove(id);
         } catch (ClientErrorException e) {
             throw new BussinessLogicException(e.getMessage());
         }
@@ -75,9 +76,18 @@ public class DwellingManagerImplementation implements DwellingManager {
 
     @Override
     public void add(Dwelling dwelling) throws BussinessLogicException {
-        try{
+        try {
             dwellingRestfulClient.create(dwelling);
-        }catch(ClientErrorException e){
+        } catch (ClientErrorException e) {
+            throw new BussinessLogicException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void update(Dwelling dwelling) throws BussinessLogicException {
+        try {
+            dwellingRestfulClient.edit(dwelling,String.valueOf(dwelling.getId()));
+        } catch (ClientErrorException e) {
             throw new BussinessLogicException(e.getMessage());
         }
     }

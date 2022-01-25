@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -42,9 +41,9 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Dwelling;
+import model.Owner;
 import model.User;
 
 /**
@@ -54,7 +53,7 @@ import model.User;
  */
 public class OwnerWindowController {
 
-    private DwellingManager dwellingManager;
+    //ALL THE FXML OBJECTS
     @FXML
     private Label lblTitle;
     @FXML
@@ -89,12 +88,14 @@ public class OwnerWindowController {
     private TableColumn<DwellingTableBean, String> colRating;
     @FXML
     private TableColumn<DwellingTableBean, String> colMoreInfo;
-
+    //MY OBJECTS
     private static final Logger LOGGER = Logger.getLogger(DwellingController.class.getSimpleName());
 
     private User user;
 
     private Stage stage;
+
+    private DwellingManager dwellingManager;
 
     private final String SELECT_ALL_DWELLINGS = "All my dwellings";
 
@@ -119,7 +120,7 @@ public class OwnerWindowController {
         //Creation of a new Scene
         Scene scene = new Scene(root);
         //Save the route of the .css file
-        String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
+        //String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
         //Sets the .css to the Scene
         //scene.getStylesheets().add(css);
         //stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
@@ -159,17 +160,6 @@ public class OwnerWindowController {
 
         //if logged as an owner
         lblTitle.setText("My Dwellings");
-        //Setting the cell value factories
-        /*
-        colAddress.setCellValueFactory(
-                new PropertyValueFactory<>("address"));
-        colWiFi.setCellValueFactory(
-                new PropertyValueFactory<>("wifi"));
-        colSquareMeters.setCellValueFactory(
-                new PropertyValueFactory<>("squareMeters"));
-        colConstructionDate.setCellValueFactory(
-                new PropertyValueFactory<>("constructionDate"));
-         */
 
         //Add the editable table
         tableDwelling.setEditable(true);
@@ -179,6 +169,10 @@ public class OwnerWindowController {
         colAddress.setOnEditCommit(
                 (CellEditEvent<DwellingTableBean, String> t) -> {
                     {
+                        imgConfirmNewDwelling.setDisable(false);
+                        imgConfirmNewDwelling.setOpacity(1);
+                        imgCancelNewDwelling.setDisable(false);
+                        imgCancelNewDwelling.setOpacity(1);
                         try {
                             if (t.getNewValue().isEmpty()) {
                                 throw new FieldsEmptyException();
@@ -189,12 +183,6 @@ public class OwnerWindowController {
 
                             ((DwellingTableBean) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow())).setAddress(t.getNewValue());
-                            if (tableDwelling.getSelectionModel().getSelectedItem().getId() == Long.MIN_VALUE) {
-                                //Add
-                            } else {
-                                //upd
-                            }
-
                         } catch (FieldsEmptyException | MaxCharactersException ex) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Error");
@@ -208,24 +196,32 @@ public class OwnerWindowController {
         colWiFi.setCellValueFactory(cellData
                 -> new SimpleBooleanProperty(cellData.getValue().getWifi()));
         colWiFi.setCellFactory(cellData -> new CheckBoxTableCell<>());
+        colWiFi.setOnEditStart((CellEditEvent<DwellingTableBean, Boolean> t) -> {
+            //PREGUNTAR A JAVI
+                    if (t.getNewValue() != t.getOldValue()) {
+                        imgConfirmNewDwelling.setDisable(false);
+                        imgConfirmNewDwelling.setOpacity(1);
+                        imgCancelNewDwelling.setDisable(false);
+                        imgCancelNewDwelling.setOpacity(1);
+                    }
+                });
         colWiFi.setOnEditCommit(
                 (CellEditEvent<DwellingTableBean, Boolean> t) -> {
-                    if (tableDwelling.getSelectionModel().getSelectedItem().getId() == Long.MIN_VALUE) {
-                        //Add
-                    } else {
-                        //upd
-
-                    }
                     ((DwellingTableBean) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setWifi(t.getNewValue());
                 });
-
+        
+        
         colSquareMeters.setCellValueFactory(cellData
                 -> new SimpleStringProperty(String.valueOf(cellData.getValue().getSquareMeters())));
         colSquareMeters.setCellFactory(TextFieldTableCell.<DwellingTableBean>forTableColumn());
         colSquareMeters.setOnEditCommit(
                 (CellEditEvent<DwellingTableBean, String> t) -> {
                     try {
+                        imgConfirmNewDwelling.setDisable(false);
+                        imgConfirmNewDwelling.setOpacity(1);
+                        imgCancelNewDwelling.setDisable(false);
+                        imgCancelNewDwelling.setOpacity(1);
                         if (t.getNewValue().isEmpty()) {
                             LOGGER.warning("The field is empty");
                             throw new FieldsEmptyException();
@@ -250,13 +246,16 @@ public class OwnerWindowController {
                         alert.showAndWait();
                     }
                 });
-
         colConstructionDate.setCellValueFactory(cellData
                 -> new SimpleStringProperty(cellData.getValue().getConstructionDate()));
         colConstructionDate.setCellFactory(TextFieldTableCell.<DwellingTableBean>forTableColumn());
         colConstructionDate.setOnEditCommit(
                 (CellEditEvent<DwellingTableBean, String> t) -> {
                     try {
+                        imgConfirmNewDwelling.setDisable(false);
+                        imgConfirmNewDwelling.setOpacity(1);
+                        imgCancelNewDwelling.setDisable(false);
+                        imgCancelNewDwelling.setOpacity(1);
                         if (t.getNewValue().isEmpty()) {
                             LOGGER.warning("The field is empty");
                             throw new FieldsEmptyException();
@@ -268,7 +267,6 @@ public class OwnerWindowController {
                         ((DwellingTableBean) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setConstructionDate(t.getNewValue());
                     } catch (FieldsEmptyException e) {
-
                         Alert alert = new Alert(Alert.AlertType.WARNING);
                         alert.setTitle("Error");
                         alert.setHeaderText(e.getMessage());
@@ -286,12 +284,12 @@ public class OwnerWindowController {
                 new PropertyValueFactory<>("rating"));
         colMoreInfo.setCellValueFactory(
                 new PropertyValueFactory<>("moreInfo"));
-        //Setting up the editable fields
 
         //Select the first comboBox item by default
         cbDwellings.getSelectionModel().selectFirst();
         //Load all the dwellings by default
-        imgSearch.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, // double x,
+        imgSearch.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED,
+                0, // double x,
                 0, // double y,
                 0, // double screenX,
                 0, // double screenY,
@@ -460,6 +458,7 @@ public class OwnerWindowController {
         imgCancelNewDwelling.setDisable(false);
         imgCancelNewDwelling.setOpacity(1);
         Dwelling dwelling = new Dwelling();
+        dwelling.setConstructionDate(new Date());
         dwelling.setId(Long.MIN_VALUE);
         dwellingsTableBean.add(new DwellingTableBean(dwelling));
         tableDwelling.getSelectionModel().select(dwellingsTableBean.size() - 1);
@@ -596,6 +595,54 @@ public class OwnerWindowController {
     @FXML
     private void handleConfirmNewDwelling(MouseEvent event) {
 
+        int pos = tableDwelling.getSelectionModel().getSelectedIndex();
+        try {
+            if (pos == dwellingsTableBean.size() - 1 && dwellingsTableBean.get(pos).getId() == Long.MIN_VALUE) {
+
+                Dwelling dwelling = new Dwelling();
+                DwellingTableBean dtb = dwellingsTableBean.get(pos);
+                dwelling.setAddress(dtb.getAddress());
+                String dateString = dtb.getConstructionDate();
+                Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateString);
+                dwelling.setConstructionDate(date1);
+                dwelling.setHasWiFi(dtb.getWifi());
+                dwelling.setHost((Owner) user);
+                dwelling.setId(0L);
+                dwelling.setRating(Float.valueOf(0));
+                dwelling.setSquareMeters(dtb.getSquareMeters());
+                dwellingManager.add(dwelling);
+
+            } else {
+                Dwelling dwelling = new Dwelling();
+                DwellingTableBean dtb = dwellingsTableBean.get(pos);
+                dwelling.setAddress(dtb.getAddress());
+                String dateString = dtb.getConstructionDate();
+                Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateString);
+                dwelling.setConstructionDate(date1);
+                dwelling.setHasWiFi(dtb.getWifi());
+                dwelling.setHost((Owner) user);
+                dwelling.setId(dtb.getId());
+                dwelling.setRating(Float.valueOf(0));
+                dwelling.setSquareMeters(dtb.getSquareMeters());
+                dwellingManager.update(dwelling);
+
+            }
+            imgConfirmNewDwelling.setDisable(true);
+            imgConfirmNewDwelling.setOpacity(0.25);
+            imgCancelNewDwelling.setDisable(true);
+            imgCancelNewDwelling.setOpacity(0.25);
+            imgCreateNewDwelling.setDisable(false);
+            imgCreateNewDwelling.setOpacity(1);
+            imgDeleteDwelling.setDisable(true);
+            imgDeleteDwelling.setOpacity(0.25);
+            tableDwelling.setItems(dwellingsTableBean);
+            tableDwelling.refresh();
+            tableDwelling.getSelectionModel().clearSelection(tableDwelling.getSelectionModel().getSelectedIndex());
+        } catch (ParseException ex) {
+            Logger.getLogger(OwnerWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BussinessLogicException ex) {
+            Logger.getLogger(OwnerWindowController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

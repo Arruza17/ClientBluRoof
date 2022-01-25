@@ -41,7 +41,12 @@ public interface DwellingManager {
      * @throws BussinessLogicException
      */
     public List<Dwelling> findByRating(Integer rating) throws BussinessLogicException;
-
+    /**
+     * 
+     * @param dwelling
+     * @throws BussinessLogicException 
+     */
+    public void update(Dwelling dwelling) throws BussinessLogicException;
     /**
      *
      * @param id
