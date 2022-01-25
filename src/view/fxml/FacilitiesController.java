@@ -18,6 +18,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,12 +36,17 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import static javafx.scene.input.KeyCode.T;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import model.BussinessLogicException;
 import model.Facility;
 import model.FacilityManager;
@@ -134,19 +141,21 @@ public class FacilitiesController {
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
         }
-
+       
         id_Column.setCellValueFactory(
                 new PropertyValueFactory<>("id"));
+        /**
         adq_column.setCellValueFactory(
                 new PropertyValueFactory<>("adqDate"));
         type_column.setCellValueFactory(
                 new PropertyValueFactory<>("type"));
 
         more_Info_Column.setCellValueFactory(
-                new PropertyValueFactory<>("moreInfo"));
+                new PropertyValueFactory<>("moreInfo"));*/
         sp_Facilities.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
         sp_Facilities.setEditable(true);
+        
         EnumSet<FacilityType> ft = EnumSet.allOf(FacilityType.class);
         ArrayList<String> facilTypeList=new ArrayList<>();
        
@@ -155,6 +164,18 @@ public class FacilitiesController {
         }
          ObservableList<String> optionsType= FXCollections.observableArrayList(facilTypeList);
         cb_Type.setItems(optionsType);
+         adq_column.setCellValueFactory(cellData
+                -> new SimpleObjectProperty(cellData.getValue().getAdqDate()));
+        /* Callback<TableColumn<FacilityTableBean, Date>, TableCell<FacilityTableBean, Date>> dateCellFactory
+                = (TableColumn<FacilityTableBean, Date> param) -> new DateEditingCell();*/
+          type_column.setCellValueFactory(cellData
+                -> new SimpleStringProperty(cellData.getValue().getType().toString()));
+        type_column.setCellFactory(ComboBoxTableCell.forTableColumn(optionsType));
+        type_column.setOnEditCommit(
+                (CellEditEvent<FacilityTableBean, String> t) -> {
+                    ((FacilityTableBean) t.getTableView().getItems().get(
+                            t.getTablePosition().getRow())).setType(t.getNewValue());
+                });
         
         stage.show();
     }
@@ -270,6 +291,7 @@ public class FacilitiesController {
         iv_cancel.setDisable(false);
         iv_cancel.setOpacity(1);
         
+        
     }
 
     @FXML
@@ -325,4 +347,7 @@ public class FacilitiesController {
     private void handleTableSelectionChanged(ObservableValue observableValue, Object oldValue, Object newValue) {
 
     }
+  
+  
+
 }
