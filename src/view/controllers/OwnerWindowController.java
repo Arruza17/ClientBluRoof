@@ -104,9 +104,13 @@ public class OwnerWindowController {
     private final String SELECT_BY_MIN_RATING = "Min rating";
 
     private ObservableList<DwellingTableBean> dwellingsTableBean;
-
+    /**
+     * Regex validating a float value, such as 1 or 1.2
+     */
     private final String regexDouble = "^((\\d+\\.)?\\d+)$";
-
+    /**
+     * Regex valudating a date in a dd/MM/yyyy format
+     */
     private final String regexDate = "^(((0[1-9]|[12]\\d|3[01])\\/(0[13578]|1[02])\\/((19|[2-9]\\d)\\d{2}))|((0[1-9]|[12]\\d|30)\\/(0[13456789]|1[012])\\/((19|[2-9]\\d)\\d{2}))|((0[1-9]|1\\d|2[0-8])\\/02\\/((19|[2-9]\\d)\\d{2}))|(29\\/02\\/((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$";
 
     /**
@@ -217,22 +221,26 @@ public class OwnerWindowController {
         colWiFi.setCellFactory(
                 CheckBoxTableCell.<DwellingTableBean>forTableColumn(colWiFi));
         //then, set the value cell factory:
-        colWiFi.setCellValueFactory(
-                new PropertyValueFactory<>("wifi"));
-        //Add a listener for checkbox value changes noting that the
-        //CheckBoxTableCell renders the CheckBox 'live', meaning that the 
-        //CheckBox is always interactive. A side-effect of this is that the 
-        //usual editing callbacks (such as on edit commit) will not be called. 
-        //If you want to be notified of changes, it is recommended to directly 
-        //observe the boolean properties that are manipulated by the CheckBox 
-        //(see description for CheckBoxTableCell in javadoc)
-        //So we iterate on table items adding listeners for property being 
-        //represented by the checkbox.
-        //We use the lambda implementation to access the dwelling object in
-        //whichthe status property is.
+        colWiFi.setCellValueFactory(cellData
+                -> new SimpleBooleanProperty(cellData.getValue().getWifi()));
+        /*
+        Add a listener for checkbox value changes noting that the
+        CheckBoxTableCell renders the CheckBox 'live', meaning that the 
+        CheckBox is always interactive. A side-effect of this is that the 
+        usual editing callbacks (such as on edit commit) will not be called. 
+        If you want to be notified of changes, it is recommended to directly 
+        observe the boolean properties that are manipulated by the CheckBox 
+        (see description for CheckBoxTableCell in javadoc)
+        So we iterate on table items adding listeners for property being 
+        represented by the checkbox.
+        We use the lambda implementation to access the dwelling object in
+        whichthe status property is.
+         */
         dwellingsTableBean.forEach(
                 data -> data.wiFiProperty()
                         .addListener((observable, oldValue, newValue) -> {
+                            imgConfirmNewDwelling.setDisable(false);
+                            imgConfirmNewDwelling.setOpacity(0);
                             LOGGER.log(Level.INFO,
                                     "Status property changed.newvalue {0}",
                                     newValue.toString());

@@ -6,6 +6,7 @@
 package restful;
 
 import interfaces.DwellingManager;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
@@ -29,22 +30,23 @@ public class DwellingRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:37302/ServerBluRoof/webresources";
     private static final Logger LOGGER = Logger.getLogger("DwellingRestfulClient");
+    private ResourceBundle resourceBundle = ResourceBundle.getBundle("resources.config");
+    private static String BASE_URI;
 
     /**
-     * Construct a DwellingRestfulClient. It creates a RESTful web client and establishes
-     * the path of the WebTarget object associated to the client.
+     * Construct a DwellingRestfulClient. It creates a RESTful web client and
+     * establishes the path of the WebTarget object associated to the client.
      */
     public DwellingRestfulClient() {
+        BASE_URI = resourceBundle.getString("BASE_URI");
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("entities.dwelling");
     }
 
     /**
      *
-     * @return
-     * @throws ClientErrorException
+     * @return @throws ClientErrorException
      */
     public String countREST() throws ClientErrorException {
         WebTarget resource = webTarget;
@@ -99,5 +101,5 @@ public class DwellingRestfulClient {
     public void close() {
         client.close();
     }
-    
+
 }
