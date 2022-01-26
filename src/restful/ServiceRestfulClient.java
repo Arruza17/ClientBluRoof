@@ -5,6 +5,7 @@
  */
 package restful;
 
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -27,9 +28,12 @@ public class ServiceRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:37501/ServerBluRoof/webresources";
+    
+    private ResourceBundle resourceBundle=ResourceBundle.getBundle("resources.config");
+    private static String BASE_URI;
 
     public ServiceRestfulClient() {
+        BASE_URI=resourceBundle.getString("BASE_URI");
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("entities.service");
     }
