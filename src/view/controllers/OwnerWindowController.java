@@ -160,7 +160,28 @@ public class OwnerWindowController {
 
         //if logged as an owner
         lblTitle.setText("My Dwellings");
-
+        //Select the first comboBox item by default
+        cbDwellings.getSelectionModel().selectFirst();
+        //Load all the dwellings by default
+        imgSearch.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED,
+                0, // double x,
+                0, // double y,
+                0, // double screenX,
+                0, // double screenY,
+                MouseButton.PRIMARY, // MouseButton button,
+                0, // int clickCount,
+                false, // boolean shiftDown,
+                false, // boolean controlDown,
+                false, // boolean altDown,
+                false, // boolean metaDown,
+                true, // boolean primaryButtonDown,
+                false, // boolean middleButtonDown,
+                false, // boolean secondaryButtonDown,
+                false, // boolean synthesized,
+                false, // boolean popupTrigger,
+                false, // boolean stillSincePress,
+                null // PickResult pickResult
+        ));
         //Add the editable table
         tableDwelling.setEditable(true);
         colAddress.setCellValueFactory(cellData
@@ -192,26 +213,34 @@ public class OwnerWindowController {
                     }
 
                 });
-
-        colWiFi.setCellValueFactory(cellData
-                -> new SimpleBooleanProperty(cellData.getValue().getWifi()));
-        colWiFi.setCellFactory(cellData -> new CheckBoxTableCell<>());
-        colWiFi.setOnEditStart((CellEditEvent<DwellingTableBean, Boolean> t) -> {
-            //PREGUNTAR A JAVI
-                    if (t.getNewValue() != t.getOldValue()) {
-                        imgConfirmNewDwelling.setDisable(false);
-                        imgConfirmNewDwelling.setOpacity(1);
-                        imgCancelNewDwelling.setDisable(false);
-                        imgCancelNewDwelling.setOpacity(1);
-                    }
-                });
-        colWiFi.setOnEditCommit(
-                (CellEditEvent<DwellingTableBean, Boolean> t) -> {
-                    ((DwellingTableBean) t.getTableView().getItems().get(
-                            t.getTablePosition().getRow())).setWifi(t.getNewValue());
-                });
-        
-        
+        //First, set the column cell factory:
+        colWiFi.setCellFactory(
+                CheckBoxTableCell.<DwellingTableBean>forTableColumn(colWiFi));
+        //then, set the value cell factory:
+        colWiFi.setCellValueFactory(
+                new PropertyValueFactory<>("wifi"));
+        //Add a listener for checkbox value changes noting that the
+        //CheckBoxTableCell renders the CheckBox 'live', meaning that the 
+        //CheckBox is always interactive. A side-effect of this is that the 
+        //usual editing callbacks (such as on edit commit) will not be called. 
+        //If you want to be notified of changes, it is recommended to directly 
+        //observe the boolean properties that are manipulated by the CheckBox 
+        //(see description for CheckBoxTableCell in javadoc)
+        //So we iterate on table items adding listeners for property being 
+        //represented by the checkbox.
+        //We use the lambda implementation to access the dwelling object in
+        //whichthe status property is.
+        dwellingsTableBean.forEach(
+                data -> data.wiFiProperty()
+                        .addListener((observable, oldValue, newValue) -> {
+                            LOGGER.log(Level.INFO,
+                                    "Status property changed.newvalue {0}",
+                                    newValue.toString());
+                            LOGGER.log(Level.INFO,
+                                    "User modified: {0}",
+                                    data.getWifi());
+                        })
+        );
         colSquareMeters.setCellValueFactory(cellData
                 -> new SimpleStringProperty(String.valueOf(cellData.getValue().getSquareMeters())));
         colSquareMeters.setCellFactory(TextFieldTableCell.<DwellingTableBean>forTableColumn());
@@ -284,29 +313,6 @@ public class OwnerWindowController {
                 new PropertyValueFactory<>("rating"));
         colMoreInfo.setCellValueFactory(
                 new PropertyValueFactory<>("moreInfo"));
-
-        //Select the first comboBox item by default
-        cbDwellings.getSelectionModel().selectFirst();
-        //Load all the dwellings by default
-        imgSearch.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED,
-                0, // double x,
-                0, // double y,
-                0, // double screenX,
-                0, // double screenY,
-                MouseButton.PRIMARY, // MouseButton button,
-                0, // int clickCount,
-                false, // boolean shiftDown,
-                false, // boolean controlDown,
-                false, // boolean altDown,
-                false, // boolean metaDown,
-                true, // boolean primaryButtonDown,
-                false, // boolean middleButtonDown,
-                false, // boolean secondaryButtonDown,
-                false, // boolean synthesized,
-                false, // boolean popupTrigger,
-                false, // boolean stillSincePress,
-                null // PickResult pickResult
-        ));
 
         //Shows the stage
         stage.show();

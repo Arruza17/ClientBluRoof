@@ -121,4 +121,8 @@ public class DwellingTableBean {
         this.moreInfo = moreInfo;
     }
 
+    public SimpleBooleanProperty wiFiProperty() {
+        return this.wifi;
+    }
+
 }
