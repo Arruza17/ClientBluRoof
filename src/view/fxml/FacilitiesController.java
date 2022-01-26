@@ -96,7 +96,8 @@ public class FacilitiesController {
     private final String date = "Date";
     private final String type = "Type";
     private final String id = "Id";
-
+    private ObservableList<FacilityTableBean> myFacilities;
+    
     /**
      * Initializes the controller class.
      */
@@ -129,6 +130,7 @@ public class FacilitiesController {
                 ObservableList<FacilityTableBean> facilityTableBean
                         = FXCollections.observableArrayList(facilities);
                 tbl_facilities.setItems(facilityTableBean);
+                myFacilities=facilityTableBean;
             } else {
                 //The imgPrint will be disabled if there are not dwellings
                 iv_print.setDisable(true);
@@ -166,10 +168,8 @@ public class FacilitiesController {
         cb_Type.setItems(optionsType);
          adq_column.setCellValueFactory(cellData
                 -> new SimpleObjectProperty(cellData.getValue().getAdqDate()));
-        /* Callback<TableColumn<FacilityTableBean, Date>, TableCell<FacilityTableBean, Date>> dateCellFactory
-                = (TableColumn<FacilityTableBean, Date> param) -> new DateEditingCell();*/
           type_column.setCellValueFactory(cellData
-                -> new SimpleStringProperty(cellData.getValue().getType().toString()));
+                -> new SimpleStringProperty(cellData.getValue().getType()));
         type_column.setCellFactory(ComboBoxTableCell.forTableColumn(optionsType));
         type_column.setOnEditCommit(
                 (CellEditEvent<FacilityTableBean, String> t) -> {
@@ -196,6 +196,7 @@ public class FacilitiesController {
                 cb_Type.setDisable(false);
                 dp_Facilities.setDisable(true);
                 sp_Facilities.setDisable(true);
+                
                 break;
             case date:
                 cb_Type.setDisable(true);
@@ -281,7 +282,7 @@ public class FacilitiesController {
     }
 
     @FXML
-    void clickAdd(MouseEvent event) {
+    void clickAdd(MouseEvent event){
         iv_add.setDisable(true);
         iv_add.setOpacity(0.25);
         iv_minus.setDisable(true);
@@ -290,7 +291,16 @@ public class FacilitiesController {
         iv_check.setOpacity(1);
         iv_cancel.setDisable(false);
         iv_cancel.setOpacity(1);
+        Facility f=new Facility();
+        FacilityTableBean ft = new FacilityTableBean(f);
+        ft.setId(Long.MIN_VALUE);
+        myFacilities.add(ft);
         
+        tbl_facilities.getSelectionModel().select(myFacilities.size() - 1);
+        tbl_facilities.layout();
+       tbl_facilities.getFocusModel().focus(myFacilities.size() - 1, type_column);
+        tbl_facilities.edit(myFacilities.size() - 1, type_column);
+
         
     }
 
@@ -334,6 +344,7 @@ public class FacilitiesController {
 
     @FXML
     void clickClose(MouseEvent action) {
+        
     }
 
     @FXML

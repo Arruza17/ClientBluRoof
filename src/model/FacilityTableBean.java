@@ -29,7 +29,7 @@ public class FacilityTableBean {
 
     public FacilityTableBean(Facility f) {
         this.id= f.getId();
-        this.type =new SimpleStringProperty(f.getType().toString());
+        this.type =new SimpleStringProperty(f.getType());
         this.adqDate= new SimpleObjectProperty<>(f.getAdquisitionDate());
     }
 

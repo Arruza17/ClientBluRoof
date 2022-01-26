@@ -18,7 +18,7 @@ public class Facility implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Long id;
-    private FacilityType type;
+    private String type;
     private Date adquisitionDate;
     private List<FlatFacility> flatFacilities;
 
@@ -47,7 +47,7 @@ public class Facility implements Serializable {
      *
      * @return the type of the facility.
      */
-    public FacilityType getType() {
+    public String getType() {
         return type;
 
     }
@@ -56,7 +56,7 @@ public class Facility implements Serializable {
      *
      * @param type Facility type.
      */
-    public void setType(FacilityType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
