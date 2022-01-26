@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.ServicesController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.ServicesController">
    <top>
       <HBox prefHeight="63.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -96,10 +96,10 @@
             </HBox>
             <TableView fx:id="tbvService" prefHeight="208.0" prefWidth="600.0">
               <columns>
-                <TableColumn fx:id="tcId" prefWidth="75.0" text="ID" />
-                <TableColumn fx:id="tcAddress" prefWidth="75.0" text="Address" />
-                  <TableColumn fx:id="tcName" prefWidth="75.0" text="Name" />
-                  <TableColumn fx:id="tcType" prefWidth="73.0" text="Type" />
+                <TableColumn fx:id="tcId" maxWidth="75.0" prefWidth="75.0" text="ID" />
+                <TableColumn fx:id="tcAddress" maxWidth="350.0" minWidth="40.0" prefWidth="275.0" text="Address" />
+                  <TableColumn fx:id="tcName" prefWidth="125.0" text="Name" />
+                  <TableColumn fx:id="tcType" prefWidth="120.0" text="Type" />
               </columns>
             </TableView>
             <ImageView fx:id="imgPrint" fitHeight="64.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
