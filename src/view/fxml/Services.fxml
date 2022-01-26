@@ -19,12 +19,12 @@
    <top>
       <HBox prefHeight="63.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <Label prefHeight="21.0" prefWidth="108.0" text="Services">
+            <Label prefHeight="21.0" prefWidth="76.0" text="Services">
                <HBox.margin>
                   <Insets left="15.0" top="30.0" />
                </HBox.margin>
             </Label>
-            <ComboBox fx:id="cbService" onAction="#handleChangeComponents" prefHeight="31.0" prefWidth="167.0">
+            <ComboBox fx:id="cbService" onAction="#handleChangeComponents" prefHeight="31.0" prefWidth="180.0">
                <HBox.margin>
                   <Insets left="25.0" top="25.0" />
                </HBox.margin>
@@ -39,7 +39,7 @@
                   <Insets top="25.0" />
                </HBox.margin>
             </TextField>
-            <ComboBox fx:id="cbServiceType" disable="true" minHeight="0.0" minWidth="0.0" prefHeight="31.0" prefWidth="0.0" visible="false">
+            <ComboBox fx:id="cbServiceType" disable="true" minHeight="0.0" minWidth="0.0" prefHeight="25.0" prefWidth="0.0" visible="false">
                <HBox.margin>
                   <Insets top="25.0" />
                </HBox.margin>
