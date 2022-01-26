@@ -114,7 +114,7 @@ public class UserManagerImplementation implements UserManager {
             LOGGER.log(Level.INFO, "UsersManager: Creating user {0}.", user.getLogin());
             //Send user data to web client for creation. 
             webClient.create(user);
-        } catch (Exception ex) {
+        } catch (ClientErrorException ex) {
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception creating user, {0}",
                     ex.getMessage());

@@ -79,15 +79,15 @@ public class User implements Serializable {
     }
 
     public User() {
-         this.id = null;
-        this.login =  new SimpleStringProperty();
-        this.fullName =  new SimpleStringProperty();
-        this.password =  new SimpleStringProperty();
-        this.email =  new SimpleStringProperty();
-        this.birthDate =  new SimpleObjectProperty();
-        this.status =  new SimpleStringProperty();
-        this.privilege =  new SimpleStringProperty();
-        this.lastPasswordChange =  new SimpleObjectProperty();
+        this.id = null;
+        this.login = new SimpleStringProperty();
+        this.fullName = new SimpleStringProperty();
+        this.password = new SimpleStringProperty();
+        this.email = new SimpleStringProperty();
+        this.birthDate = new SimpleObjectProperty();
+        this.status = new SimpleStringProperty();
+        this.privilege = new SimpleStringProperty();
+        this.lastPasswordChange = new SimpleObjectProperty();
         this.phoneNumber = new SimpleStringProperty();;
         this.lastSignIns = new ArrayList<LastSignIn>();
     }
@@ -116,7 +116,7 @@ public class User implements Serializable {
      * @param id the identification number to be set
      */
     public void setId(Long id) {
-        this.id=id;
+        this.id = id;
     }
 
     /**
@@ -322,6 +322,10 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "entities.User[ id=" + id + " ]";
+    }
+
+    public SimpleObjectProperty<Date> getBDateProperty() {
+        return this.birthDate;
     }
 
 }

@@ -386,21 +386,19 @@ public class AdminController {
 
         //Make birthdate column editable   
         colBirthDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBirthDate()));
+
         colBirthDate.setEditable(true);
+
+        DateEditingCell dec = new DateEditingCell();
         Callback<TableColumn<User, Date>, TableCell<User, Date>> dateCellFactory
-                = (TableColumn<User, Date> param) -> new DateEditingCell();
+                = (TableColumn<User, Date> param) -> dec;       
         colBirthDate.setCellFactory(dateCellFactory);
 
         colBirthDate.setOnEditCommit(
                 (CellEditEvent<User, Date> t) -> {
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setBirthDate(t.getNewValue());
-                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
-                    tblAdmin.edit(t.getTablePosition().getRow(), colPhone);
-                    imgCommit.setDisable(false);
-                    imgCommit.setOpacity(1);
-                    imgCancel.setDisable(false);
-                    imgCancel.setOpacity(1);
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colBirthDate);    
                 });
 
         colBirthDate.setOnEditCancel((CellEditEvent<User, Date> t) -> {
@@ -479,16 +477,28 @@ public class AdminController {
                 user.setPrivilege(UserPrivilege.ADMIN.name());
                 user.setStatus(UserStatus.ENABLED.name());
                 user.setBirthDate(new Date());
-              
+
                 userManager.createUser(user);
                 //userManager.resetPassword(user.getLogin());
                 tblAdmin.refresh();
                 LOGGER.info("Creation of new admin");
             } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("User updated");
+                alert.setContentText("User information successfully updated!");
+                alert.show();
                 userManager.updateUser(user);
                 tblAdmin.refresh();
                 LOGGER.info("Update admin");
             }
+            imgCommit.setDisable(true);
+            imgCommit.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
+            imgAdd.setDisable(false);
+            imgAdd.setOpacity(1);
+            imgDel.setDisable(true);
+            imgDel.setOpacity(0.25);
         } catch (BusinessLogicException ex) {
             Alert excAlert = new Alert(AlertType.INFORMATION);
             excAlert.setTitle("Error");
@@ -537,7 +547,14 @@ public class AdminController {
             } else {
                 admin = FXCollections.observableArrayList(userManager.findAllAdminsByLogin("%" + text + "%"));
             }
-
+            imgCommit.setDisable(true);
+            imgCommit.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
+            imgAdd.setDisable(false);
+            imgAdd.setOpacity(1);
+            imgDel.setDisable(true);
+            imgDel.setOpacity(0.25);
         } catch (BusinessLogicException ex) {
             Alert excAlert = new Alert(AlertType.INFORMATION);
             excAlert.setTitle("Error");

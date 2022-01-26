@@ -1,10 +1,8 @@
 package view.controllers;
 
-import enumerations.UserPrivilege;
 import exceptions.BusinessLogicException;
 import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
-import exceptions.ServerDownException;
 import interfaces.UserManager;
 import java.io.IOException;
 import java.util.Optional;
@@ -20,7 +18,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
@@ -148,6 +145,7 @@ public class SignInController {
             alert.setHeaderText("Could not log in");
             alert.setContentText(ex.getMessage());
             alert.show();
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");      
         }
     }
 

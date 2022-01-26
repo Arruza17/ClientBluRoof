@@ -29,7 +29,6 @@ public class DateEditingCell extends TableCell<User, Date> {
     @Override
     public void cancelEdit() {
         super.cancelEdit();
-
         setText(getDate().toString());
         setGraphic(null);
     }
@@ -37,7 +36,7 @@ public class DateEditingCell extends TableCell<User, Date> {
     @Override
     public void updateItem(Date item, boolean empty) {
         super.updateItem(item, empty);
-
+        
         if (empty) {
             setText(null);
             setGraphic(null);
@@ -53,6 +52,7 @@ public class DateEditingCell extends TableCell<User, Date> {
                 setGraphic(null);
             }
         }
+      
     }
 
     private void createDatePicker() {

@@ -10,6 +10,8 @@ import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
+import model.User;
 
 /**
  * Jersey REST client generated for REST resource:UserFacadeREST
@@ -22,7 +24,7 @@ import javax.ws.rs.core.GenericType;
  *        client.close();
  * </pre>
  *
- * @author YERAYa
+ * @author Yeray Sampedro
  */
 public class UserRestfulClient {
 
@@ -37,9 +39,9 @@ public class UserRestfulClient {
 
     public <T> T resetPassword(GenericType<T> responseType, String user) throws ClientErrorException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("reset/{0}", new Object[]{user}));     
+        resource = resource.path(java.text.MessageFormat.format("reset/{0}", new Object[]{user}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
-        
+
     }
 
     public String countREST() throws ClientErrorException {
@@ -65,7 +67,10 @@ public class UserRestfulClient {
     }
 
     public void create(Object requestEntity) throws ClientErrorException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML)
+                .post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), new GenericType<User>() {
+            });
+
     }
 
     public <T> T findAll_XML(GenericType<T> responseType) throws ClientErrorException {
@@ -75,7 +80,9 @@ public class UserRestfulClient {
     }
 
     public void remove(String id) throws ClientErrorException {
-        webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
+        WebTarget resource = webTarget;
+        //Make request
+        resource.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
     public <T> T logInUser(GenericType<T> responseType, String login, String password) throws ClientErrorException {
