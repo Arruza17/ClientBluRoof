@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,10 +40,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Dwelling;
+import model.Owner;
 import model.User;
 
 /**
@@ -124,11 +127,7 @@ public class OwnerWindowController {
             LOGGER.info("Initializing Owner/Guest-Window stage");
             //Creation of a new Scene
             Scene scene = new Scene(root);
-            //Save the route of the .css file
-            //String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
-            //Sets the .css to the Scene
-            //scene.getStylesheets().add(css);
-            //stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
+            stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
             //Sets the scene to the stage
             stage.setScene(scene);
             //Sets the Title of the Window
@@ -195,6 +194,10 @@ public class OwnerWindowController {
                                 alert.setTitle("Error");
                                 alert.setHeaderText(ex.getMessage());
                                 alert.showAndWait();
+                                imgConfirmNewDwelling.setDisable(true);
+                                imgConfirmNewDwelling.setOpacity(0.25);
+                                imgCancelNewDwelling.setDisable(true);
+                                imgCancelNewDwelling.setOpacity(0.25);
                             }
                         }
 
@@ -344,59 +347,42 @@ public class OwnerWindowController {
     }
 
     /**
+     * Method that takes the filter values to load the data calling the logical
+     * part
      *
-     * @param event
+     * @param event the mouse event
      */
     @FXML
     private void handleFilterSearch(MouseEvent event) {
-        /*
-        if (tableDwelling.getItems().size() > 1) {
-            dwellingsCollectionTable.clear();
-        }
         try {
+
+            if (tableDwelling.getItems().size() > 1) {
+                dwellingsCollectionTable.clear();
+            }
+
             switch (cbDwellings.getValue()) {
                 case SELECT_ALL_DWELLINGS:
-                    try {
-                        List<Dwelling> allDwellings = dwellingManager.findAll();
-                        List<Dwelling> dwellings = new ArrayList<>();
-                        if (allDwellings.size() > 0) {
-                            for (Dwelling d : allDwellings) {
-                                dwellings.add(new Dwelling(d));
-                            }
-                            dwellingsCollectionTable = FXCollections.observableArrayList(dwellings);
-                            //The imgPrint will be disabled if there are not dwellings
-                            imgPrint.setDisable(false);
-                            imgPrint.setOpacity(1);
+                    dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.findAll());
+                    //The imgPrint will be disabled if there are not dwellings
+                    imgPrint.setDisable(false);
+                    imgPrint.setOpacity(1);
+                    //The imgPrint will be disabled if there are not dwellings
+                    imgPrint.setDisable(true);
+                    imgPrint.setOpacity(0.25);
 
-                        } else {
-                            //The imgPrint will be disabled if there are not dwellings
-                            imgPrint.setDisable(true);
-                            imgPrint.setOpacity(0.25);
-                        }
-                    } catch (BussinessLogicException ex) {
-                        Alert alert = new Alert(AlertType.INFORMATION);
-                        alert.setTitle("AYUDA");
-                        alert.setHeaderText("Error");
-                        alert.setContentText(ex.getMessage());
-                        alert.showAndWait();
-                    }
                     break;
                 case SELECT_BY_MIN_CONSTRUCTION_DATE:
                     if (dpConstructionDate.getValue() != null) {
                         Date date = Date.from(dpConstructionDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        List<Dwelling> allDwelling = dwellingManager.findByDate(simpleDateFormat.format(date).toString());
-
-                        for (Dwelling d : allDwelling) {
-                            //String type = (d instanceof Flat) ? "Flat" : "Room";
-                            dwellingsCollectionTable.add(new Dwelling(d));
-                        }
+                        dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.findByDate(simpleDateFormat.format(date).toString()));
 
                         Alert alert = new Alert(AlertType.INFORMATION);
                         alert.setTitle("Search successful");
                         alert.setHeaderText("Dwellings have been found");
                         alert.showAndWait();
                     } else {
+
                         //THROW NEW EXCEPTION OF FIELDS EMPTY
                         Alert alert = new Alert(AlertType.INFORMATION);
                         alert.setTitle("Empty fields");
@@ -406,48 +392,40 @@ public class OwnerWindowController {
                     }
                     break;
                 case SELECT_BY_MIN_RATING:
-                    List<Dwelling> ds = dwellingManager.findByRating(spRating.getValue());
+                    dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.findByRating(spRating.getValue()));
 
-                    if (ds != null) {
-                        if (ds.size() > 0) {
-                            for (Dwelling d : ds) {
-                                dwellingsCollectionTable.add(new Dwelling(d));
-                            }
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Search successful");
+                    alert.setHeaderText("Dwellings have been found");
+                    alert.showAndWait();
 
-                            Alert alert = new Alert(AlertType.INFORMATION);
-                            alert.setTitle("Search successful");
-                            alert.setHeaderText("Dwellings have been found");
-                            alert.showAndWait();
-                        } else {
-                            Alert alert = new Alert(AlertType.WARNING);
-                            alert.setTitle("No data");
-                            alert.setHeaderText("No dwellings");
-                            alert.setContentText("No dwellings found with " + spRating.getValue().toString() + " rating or more");
-                            alert.showAndWait();
-                        }
-                    } else {
-                        Alert alert = new Alert(AlertType.ERROR);
-                        alert.setTitle("Empty fields");
-                        alert.setHeaderText("ERRROR AAAA");
-                        alert.setContentText("Try again");
-                        alert.showAndWait();
-                    }
+                    Alert alert2 = new Alert(AlertType.ERROR);
+                    alert2.setTitle("Empty fields");
+                    alert2.setHeaderText("ERRROR AAAA");
+                    alert2.setContentText("Try again");
+                    alert2.showAndWait();
 
                     break;
                 default:
                     break;
             }
+            if (dwellingsCollectionTable.isEmpty()) {
+                Alert alert1 = new Alert(AlertType.WARNING);
+                alert1.setTitle("No data");
+                alert1.setHeaderText("No dwellings");
+                alert1.setContentText("No dwellings found with " + spRating.getValue().toString() + " rating or more");
+                alert1.showAndWait();
+            }
             tableDwelling.setItems(dwellingsCollectionTable);
             tableDwelling.refresh();
-
-        } catch (BussinessLogicException ex) {
+        } catch (BussinessLogicException e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Error while searching");
-            alert.setContentText(ex.getMessage());
+            alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
-         */
+
     }
 
     /**
@@ -580,7 +558,7 @@ public class OwnerWindowController {
      */
     @FXML
     private void handleConfirmNewDwelling(MouseEvent event) {
-        /*
+
         int pos = tableDwelling.getSelectionModel().getSelectedIndex();
         try {
             if (pos == dwellingsCollectionTable.size() - 1 && dwellingsCollectionTable.get(pos).getId() == Long.MIN_VALUE) {
@@ -588,10 +566,9 @@ public class OwnerWindowController {
                 Dwelling dwelling = new Dwelling();
                 Dwelling dtb = dwellingsCollectionTable.get(pos);
                 dwelling.setAddress(dtb.getAddress());
-                String dateString = dtb.getConstructionDate();
-                Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateString);
+                Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateFormatter.format(dtb.getConstructionDate()));
                 dwelling.setConstructionDate(date1);
-                dwelling.setHasWiFi(dtb.getWifi());
+                dwelling.setHasWiFi(dtb.getHasWiFi());
                 dwelling.setHost((Owner) user);
                 dwelling.setId(0L);
                 dwelling.setRating(Float.valueOf(0));
@@ -602,10 +579,9 @@ public class OwnerWindowController {
                 Dwelling dwelling = new Dwelling();
                 Dwelling dtb = dwellingsCollectionTable.get(pos);
                 dwelling.setAddress(dtb.getAddress());
-                String dateString = dtb.getConstructionDate();
-                Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateString);
+                Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateFormatter.format(dtb.getConstructionDate()));
                 dwelling.setConstructionDate(date1);
-                dwelling.setHasWiFi(dtb.getWifi());
+                dwelling.setHasWiFi(dtb.getHasWiFi());
                 dwelling.setHost((Owner) user);
                 dwelling.setId(dtb.getId());
                 dwelling.setRating(Float.valueOf(0));
@@ -625,11 +601,11 @@ public class OwnerWindowController {
             tableDwelling.refresh();
             tableDwelling.getSelectionModel().clearSelection(tableDwelling.getSelectionModel().getSelectedIndex());
         } catch (ParseException ex) {
-            Logger.getLogger(OwnerWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.severe("The date value is not valid while creating/editing");
         } catch (BussinessLogicException ex) {
-            Logger.getLogger(OwnerWindowController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.severe("ERROR WITH THE SERVER SIDE");
         }
-         */
+
     }
 
     /**
