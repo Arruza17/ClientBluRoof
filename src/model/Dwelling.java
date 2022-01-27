@@ -67,6 +67,10 @@ public class Dwelling implements Serializable {
      * List of the comments made by the users about the dwelling.
      */
     private List<Comment> comments;
+    /**
+     * More info column
+     */
+    private SimpleStringProperty moreInfo;
 
     public Dwelling() {
         this.id = new SimpleLongProperty();
@@ -78,6 +82,7 @@ public class Dwelling implements Serializable {
         this.host = new SimpleObjectProperty();
         this.rating = new SimpleFloatProperty();
         this.comments = new ArrayList<>();
+        this.moreInfo = new SimpleStringProperty();
     }
 
     public Dwelling(SimpleLongProperty id, SimpleStringProperty address, SimpleBooleanProperty hasWiFi, SimpleDoubleProperty squareMeters, SimpleObjectProperty<Neighbourhood> neighbourhood, SimpleObjectProperty<Date> constructionDate, SimpleObjectProperty<Owner> host, SimpleFloatProperty rating, List<Comment> comments) {
@@ -301,4 +306,15 @@ public class Dwelling implements Serializable {
         return "Dwelling{" + "id=" + id + '}';
     }
 
+    public String getMoreInfo() {
+        return moreInfo.get();
+    }
+
+    public void setMoreInfo(String moreInfo) {
+        this.moreInfo.set(moreInfo);
+    }
+
+    public SimpleBooleanProperty hasWiFiProperty() {
+        return this.hasWiFi;
+    }
 }

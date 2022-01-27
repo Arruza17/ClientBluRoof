@@ -1,7 +1,6 @@
 package view.controllers;
 
 import exceptions.NotValidDateValueException;
-import model.DwellingTableBean;
 import exceptions.BussinessLogicException;
 import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
@@ -12,12 +11,13 @@ import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,6 +28,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -39,11 +40,9 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Dwelling;
-import model.Owner;
 import model.User;
 
 /**
@@ -75,19 +74,19 @@ public class OwnerWindowController {
     @FXML
     private ImageView imgPrint;
     @FXML
-    private TableView<DwellingTableBean> tableDwelling;
+    private TableView<Dwelling> tableDwelling;
     @FXML
-    private TableColumn<DwellingTableBean, String> colAddress;
+    private TableColumn<Dwelling, String> colAddress;
     @FXML
-    private TableColumn<DwellingTableBean, Boolean> colWiFi;
+    private TableColumn<Dwelling, Boolean> colWiFi;
     @FXML
-    private TableColumn<DwellingTableBean, String> colSquareMeters;
+    private TableColumn<Dwelling, String> colSquareMeters;
     @FXML
-    private TableColumn<DwellingTableBean, String> colConstructionDate;
+    private TableColumn<Dwelling, String> colConstructionDate;
     @FXML
-    private TableColumn<DwellingTableBean, String> colRating;
+    private TableColumn<Dwelling, String> colRating;
     @FXML
-    private TableColumn<DwellingTableBean, String> colMoreInfo;
+    private TableColumn<Dwelling, String> colMoreInfo;
     //MY OBJECTS
     private static final Logger LOGGER = Logger.getLogger(DwellingController.class.getSimpleName());
 
@@ -103,7 +102,9 @@ public class OwnerWindowController {
 
     private final String SELECT_BY_MIN_RATING = "Min rating";
 
-    private ObservableList<DwellingTableBean> dwellingsTableBean;
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+
+    private ObservableList<Dwelling> dwellingsCollectionTable;
     /**
      * Regex validating a float value, such as 1 or 1.2
      */
@@ -119,212 +120,202 @@ public class OwnerWindowController {
      * @param root The Parent object representing root node of view graph.
      */
     public void initStage(Parent root) {
+        try {
+            LOGGER.info("Initializing Owner/Guest-Window stage");
+            //Creation of a new Scene
+            Scene scene = new Scene(root);
+            //Save the route of the .css file
+            //String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
+            //Sets the .css to the Scene
+            //scene.getStylesheets().add(css);
+            //stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
+            //Sets the scene to the stage
+            stage.setScene(scene);
+            //Sets the Title of the Window
+            stage.setTitle("DwellingWindow");
+            //Sets the window not resizable
+            stage.setResizable(false);
+            //Sets the column RATING & SQUARE METERS ro center-right
+            colRating.setStyle("-fx-alignment: CENTER-RIGHT;");
+            colConstructionDate.setStyle("-fx-alignment: CENTER;");
+            colSquareMeters.setStyle("-fx-alignment: CENTER-RIGHT;");
+            //Sets the column More info to center
+            colMoreInfo.setStyle("-fx-alignment: CENTER;");
+            //Sets the datePicker and spinner to disabled
+            dpConstructionDate.setDisable(true);
+            spRating.setDisable(true);
+            //Sets the the delete imgs to not clickable
+            imgDeleteDwelling.setDisable(true);
+            imgDeleteDwelling.setOpacity(0.25);
+            imgConfirmNewDwelling.setDisable(true);
+            imgConfirmNewDwelling.setOpacity(0.25);
+            imgCancelNewDwelling.setDisable(true);
+            imgCancelNewDwelling.setOpacity(0.25);
+            //Add the combobox values
+            ObservableList<String> optionsForCombo;
+            optionsForCombo = FXCollections.observableArrayList(
+                    SELECT_ALL_DWELLINGS,
+                    SELECT_BY_MIN_CONSTRUCTION_DATE,
+                    SELECT_BY_MIN_RATING
+            );
+            cbDwellings.setItems(optionsForCombo);
+            //Add listener to the rows selected
+            tableDwelling.getSelectionModel().selectedItemProperty()
+                    .addListener(this::handleTableSelectionChanged);
 
-        LOGGER.info("Initializing Owner/Guest-Window stage");
-        //Creation of a new Scene
-        Scene scene = new Scene(root);
-        //Save the route of the .css file
-        //String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
-        //Sets the .css to the Scene
-        //scene.getStylesheets().add(css);
-        //stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
-        //Sets the scene to the stage
-        stage.setScene(scene);
-        //Sets the Title of the Window
-        stage.setTitle("DwellingWindow");
-        //Sets the window not resizable
-        stage.setResizable(false);
-        //Sets the column RATING & SQUARE METERS ro center-right
-        colRating.setStyle("-fx-alignment: CENTER-RIGHT;");
-        colConstructionDate.setStyle("-fx-alignment: CENTER;");
-        colSquareMeters.setStyle("-fx-alignment: CENTER-RIGHT;");
-        //Sets the column More info to center
-        colMoreInfo.setStyle("-fx-alignment: CENTER;");
-        //Sets the datePicker and spinner to disabled
-        dpConstructionDate.setDisable(true);
-        spRating.setDisable(true);
-        //Sets the the delete imgs to not clickable
-        imgDeleteDwelling.setDisable(true);
-        imgDeleteDwelling.setOpacity(0.25);
-        imgConfirmNewDwelling.setDisable(true);
-        imgConfirmNewDwelling.setOpacity(0.25);
-        imgCancelNewDwelling.setDisable(true);
-        imgCancelNewDwelling.setOpacity(0.25);
-        //Add the combobox values
-        ObservableList<String> optionsForCombo;
-        optionsForCombo = FXCollections.observableArrayList(
-                SELECT_ALL_DWELLINGS,
-                SELECT_BY_MIN_CONSTRUCTION_DATE,
-                SELECT_BY_MIN_RATING
-        );
-        cbDwellings.setItems(optionsForCombo);
-        //Add listener to the rows selected
-        tableDwelling.getSelectionModel().selectedItemProperty()
-                .addListener(this::handleTableSelectionChanged);
+            //if logged as an owner
+            lblTitle.setText("My Dwellings");
+            //Select the first comboBox item by default
+            cbDwellings.getSelectionModel().selectFirst();
+            //Load all the dwellings by default
 
-        //if logged as an owner
-        lblTitle.setText("My Dwellings");
-        //Select the first comboBox item by default
-        cbDwellings.getSelectionModel().selectFirst();
-        //Load all the dwellings by default
-        imgSearch.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED,
-                0, // double x,
-                0, // double y,
-                0, // double screenX,
-                0, // double screenY,
-                MouseButton.PRIMARY, // MouseButton button,
-                0, // int clickCount,
-                false, // boolean shiftDown,
-                false, // boolean controlDown,
-                false, // boolean altDown,
-                false, // boolean metaDown,
-                true, // boolean primaryButtonDown,
-                false, // boolean middleButtonDown,
-                false, // boolean secondaryButtonDown,
-                false, // boolean synthesized,
-                false, // boolean popupTrigger,
-                false, // boolean stillSincePress,
-                null // PickResult pickResult
-        ));
-        //Add the editable table
-        tableDwelling.setEditable(true);
-        colAddress.setCellValueFactory(cellData
-                -> new SimpleStringProperty(cellData.getValue().getAddress()));
-        colAddress.setCellFactory(TextFieldTableCell.<DwellingTableBean>forTableColumn());
-        colAddress.setOnEditCommit(
-                (CellEditEvent<DwellingTableBean, String> t) -> {
-                    {
-                        imgConfirmNewDwelling.setDisable(false);
-                        imgConfirmNewDwelling.setOpacity(1);
-                        imgCancelNewDwelling.setDisable(false);
-                        imgCancelNewDwelling.setOpacity(1);
+            //Add the editable table
+            tableDwelling.setEditable(true);
+            colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+            colAddress.setCellFactory(TextFieldTableCell.<Dwelling>forTableColumn());
+            colAddress.setOnEditCommit(
+                    (CellEditEvent<Dwelling, String> t) -> {
+                        {
+                            try {
+                                if (t.getNewValue().isEmpty()) {
+                                    throw new FieldsEmptyException();
+                                }
+                                if (t.getNewValue().length() > 255) {
+                                    throw new MaxCharactersException();
+                                }
+
+                                ((Dwelling) t.getTableView().getItems().get(
+                                        t.getTablePosition().getRow())).setAddress(t.getNewValue());
+                                imgConfirmNewDwelling.setDisable(false);
+                                imgConfirmNewDwelling.setOpacity(1);
+                                imgCancelNewDwelling.setDisable(false);
+                                imgCancelNewDwelling.setOpacity(1);
+                            } catch (FieldsEmptyException | MaxCharactersException ex) {
+                                Alert alert = new Alert(Alert.AlertType.WARNING);
+                                alert.setTitle("Error");
+                                alert.setHeaderText(ex.getMessage());
+                                alert.showAndWait();
+                            }
+                        }
+
+                    });
+
+            colSquareMeters.setCellValueFactory(cellData
+                    -> new SimpleStringProperty(String.valueOf(cellData.getValue().getSquareMeters())));
+            colSquareMeters.setCellFactory(TextFieldTableCell.<Dwelling>forTableColumn());
+            colSquareMeters.setOnEditCommit(
+                    (CellEditEvent<Dwelling, String> t) -> {
                         try {
                             if (t.getNewValue().isEmpty()) {
+                                LOGGER.warning("The field is empty");
                                 throw new FieldsEmptyException();
                             }
-                            if (t.getNewValue().length() > 255) {
-                                throw new MaxCharactersException();
+                            if (!t.getNewValue().matches(regexDouble)) {
+                                //throw validation Error
+                                LOGGER.warning("The squareMeter value is not valid");
+                                throw new NotValidSquareMetersValueException("The squareMeter value is not valid");
                             }
-
-                            ((DwellingTableBean) t.getTableView().getItems().get(
-                                    t.getTablePosition().getRow())).setAddress(t.getNewValue());
-                        } catch (FieldsEmptyException | MaxCharactersException ex) {
+                            ((Dwelling) t.getTableView().getItems().get(
+                                    t.getTablePosition().getRow())).setSquareMeters(Double.valueOf(t.getNewValue()));
+                            imgConfirmNewDwelling.setDisable(false);
+                            imgConfirmNewDwelling.setOpacity(1);
+                            imgCancelNewDwelling.setDisable(false);
+                            imgCancelNewDwelling.setOpacity(1);
+                        } catch (FieldsEmptyException e) {
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("Error");
+                            alert.setHeaderText(e.getMessage());
+                            alert.showAndWait();
+                        } catch (NotValidSquareMetersValueException ex) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Error");
                             alert.setHeaderText(ex.getMessage());
+                            alert.setContentText("Valid values:\n1\n1.2");
                             alert.showAndWait();
                         }
-                    }
+                    });
+            colConstructionDate.setCellValueFactory(cellData
+                    -> new SimpleStringProperty(dateFormatter.format(cellData.getValue().getConstructionDate())));
+            colConstructionDate.setCellFactory(TextFieldTableCell.<Dwelling>forTableColumn());
+            colConstructionDate.setOnEditCommit(
+                    (CellEditEvent<Dwelling, String> t) -> {
+                        try {
 
-                });
-        //First, set the column cell factory:
-        colWiFi.setCellFactory(
-                CheckBoxTableCell.<DwellingTableBean>forTableColumn(colWiFi));
-        //then, set the value cell factory:
-        colWiFi.setCellValueFactory(cellData
-                -> new SimpleBooleanProperty(cellData.getValue().getWifi()));
-        /*
-        Add a listener for checkbox value changes noting that the
-        CheckBoxTableCell renders the CheckBox 'live', meaning that the 
-        CheckBox is always interactive. A side-effect of this is that the 
-        usual editing callbacks (such as on edit commit) will not be called. 
-        If you want to be notified of changes, it is recommended to directly 
-        observe the boolean properties that are manipulated by the CheckBox 
-        (see description for CheckBoxTableCell in javadoc)
-        So we iterate on table items adding listeners for property being 
-        represented by the checkbox.
-        We use the lambda implementation to access the dwelling object in
-        whichthe status property is.
-         */
-        dwellingsTableBean.forEach(
-                data -> data.wiFiProperty()
-                        .addListener((observable, oldValue, newValue) -> {
+                            if (t.getNewValue().isEmpty()) {
+                                LOGGER.warning("The field is empty");
+                                throw new FieldsEmptyException();
+                            }
+
+                            ((Dwelling) t.getTableView().getItems().get(
+                                    t.getTablePosition().getRow())).setConstructionDate(
+                                    dateFormatter.parse(t.getNewValue())
+                            );
                             imgConfirmNewDwelling.setDisable(false);
-                            imgConfirmNewDwelling.setOpacity(0);
-                            LOGGER.log(Level.INFO,
-                                    "Status property changed.newvalue {0}",
-                                    newValue.toString());
-                            LOGGER.log(Level.INFO,
-                                    "User modified: {0}",
-                                    data.getWifi());
-                        })
-        );
-        colSquareMeters.setCellValueFactory(cellData
-                -> new SimpleStringProperty(String.valueOf(cellData.getValue().getSquareMeters())));
-        colSquareMeters.setCellFactory(TextFieldTableCell.<DwellingTableBean>forTableColumn());
-        colSquareMeters.setOnEditCommit(
-                (CellEditEvent<DwellingTableBean, String> t) -> {
-                    try {
-                        imgConfirmNewDwelling.setDisable(false);
-                        imgConfirmNewDwelling.setOpacity(1);
-                        imgCancelNewDwelling.setDisable(false);
-                        imgCancelNewDwelling.setOpacity(1);
-                        if (t.getNewValue().isEmpty()) {
-                            LOGGER.warning("The field is empty");
-                            throw new FieldsEmptyException();
+                            imgConfirmNewDwelling.setOpacity(1);
+                            imgCancelNewDwelling.setDisable(false);
+                            imgCancelNewDwelling.setOpacity(1);
+                        } catch (FieldsEmptyException e) {
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("Error");
+                            alert.setHeaderText(e.getMessage());
+                            alert.showAndWait();
+                        } catch (ParseException e) {
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("Error");
+                            alert.setHeaderText(e.getMessage());
+                            alert.setContentText("Valid value:\ndd/MM/yyyy\nex. 17/11/2008");
+                            alert.showAndWait();
                         }
-                        if (!t.getNewValue().matches(regexDouble)) {
-                            //throw validation Error
-                            LOGGER.warning("The squareMeter value is not valid");
-                            throw new NotValidSquareMetersValueException("The squareMeter value is not valid");
-                        }
-                        ((DwellingTableBean) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())).setSquareMeters(Double.valueOf(t.getNewValue()));
-                    } catch (FieldsEmptyException e) {
-                        Alert alert = new Alert(Alert.AlertType.WARNING);
-                        alert.setTitle("Error");
-                        alert.setHeaderText(e.getMessage());
-                        alert.showAndWait();
-                    } catch (NotValidSquareMetersValueException ex) {
-                        Alert alert = new Alert(Alert.AlertType.WARNING);
-                        alert.setTitle("Error");
-                        alert.setHeaderText(ex.getMessage());
-                        alert.setContentText("Valid values:\n1\n1.2");
-                        alert.showAndWait();
-                    }
-                });
-        colConstructionDate.setCellValueFactory(cellData
-                -> new SimpleStringProperty(cellData.getValue().getConstructionDate()));
-        colConstructionDate.setCellFactory(TextFieldTableCell.<DwellingTableBean>forTableColumn());
-        colConstructionDate.setOnEditCommit(
-                (CellEditEvent<DwellingTableBean, String> t) -> {
-                    try {
-                        imgConfirmNewDwelling.setDisable(false);
-                        imgConfirmNewDwelling.setOpacity(1);
-                        imgCancelNewDwelling.setDisable(false);
-                        imgCancelNewDwelling.setOpacity(1);
-                        if (t.getNewValue().isEmpty()) {
-                            LOGGER.warning("The field is empty");
-                            throw new FieldsEmptyException();
-                        }
-                        if (!t.getNewValue().matches(regexDate)) {
-                            LOGGER.warning("The date value is not OK");
-                            throw new NotValidDateValueException("The construction date format is not valid");
-                        }
-                        ((DwellingTableBean) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())).setConstructionDate(t.getNewValue());
-                    } catch (FieldsEmptyException e) {
-                        Alert alert = new Alert(Alert.AlertType.WARNING);
-                        alert.setTitle("Error");
-                        alert.setHeaderText(e.getMessage());
-                        alert.showAndWait();
-                    } catch (NotValidDateValueException e) {
-                        Alert alert = new Alert(Alert.AlertType.WARNING);
-                        alert.setTitle("Error");
-                        alert.setHeaderText(e.getMessage());
-                        alert.setContentText("Valid value:\ndd/MM/yyyy\nex. 17/11/2008");
-                        alert.showAndWait();
-                    }
-                });
 
-        colRating.setCellValueFactory(
-                new PropertyValueFactory<>("rating"));
-        colMoreInfo.setCellValueFactory(
-                new PropertyValueFactory<>("moreInfo"));
+                    });
 
-        //Shows the stage
-        stage.show();
-        LOGGER.info("Owner/Guest-Window Open");
+            colRating.setCellValueFactory(
+                    new PropertyValueFactory<>("rating"));
+            colMoreInfo.setCellValueFactory(
+                    new PropertyValueFactory<>("moreInfo"));
+            //CARGAR LOS DATOS EN LA TABLA
+            dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.findAll());
+            /*
+                            Add a listener for checkbox value changes noting that the
+                            CheckBoxTableCell renders the CheckBox 'live', meaning that the 
+                            CheckBox is always interactive. A side-effect of this is that the 
+                            usual editing callbacks (such as on edit commit) will not be called. 
+                            If you want to be notified of changes, it is recommended to directly 
+                            observe the boolean properties that are manipulated by the CheckBox 
+                            (see description for CheckBoxTableCell in javadoc)
+                            So we iterate on table items adding listeners for property being 
+                            represented by the checkbox.
+                            We use the lambda implementation to access the dwelling object in
+                            whichthe status property is.
+             */
+            //First, set the column cell factory:
+            colWiFi.setCellFactory(
+                    CheckBoxTableCell.<Dwelling>forTableColumn(colWiFi));
+            //then, set the value cell factory:
+            colWiFi.setCellValueFactory(
+                    new PropertyValueFactory<>("hasWiFi"));
+            dwellingsCollectionTable.forEach(
+                    d -> d.hasWiFiProperty()
+                            .addListener((observable, oldValue, newValue) -> {
+                                LOGGER.log(Level.INFO,
+                                        "Status property changed.newvalue {0}",
+                                        newValue.toString());
+                                LOGGER.log(Level.INFO,
+                                        "User modified: {0}",
+                                        d.getHasWiFi());
+                            })
+            );
+            tableDwelling.setItems(dwellingsCollectionTable);
+
+            //ESTABLECIDOS
+            //Shows the stage
+            stage.show();
+            LOGGER.info("Owner/Guest-Window Open");
+        } catch (Exception e) {
+            LOGGER.severe(e.getMessage());
+            e.printStackTrace();
+            //ALERT
+        }
     }
 
     /**
@@ -358,25 +349,24 @@ public class OwnerWindowController {
      */
     @FXML
     private void handleFilterSearch(MouseEvent event) {
+        /*
         if (tableDwelling.getItems().size() > 1) {
-            dwellingsTableBean.clear();
+            dwellingsCollectionTable.clear();
         }
         try {
             switch (cbDwellings.getValue()) {
                 case SELECT_ALL_DWELLINGS:
                     try {
                         List<Dwelling> allDwellings = dwellingManager.findAll();
-                        List<DwellingTableBean> dwellings = new ArrayList<>();
+                        List<Dwelling> dwellings = new ArrayList<>();
                         if (allDwellings.size() > 0) {
                             for (Dwelling d : allDwellings) {
-                                dwellings.add(new DwellingTableBean(d));
+                                dwellings.add(new Dwelling(d));
                             }
-                            dwellingsTableBean = FXCollections.observableArrayList(dwellings);
+                            dwellingsCollectionTable = FXCollections.observableArrayList(dwellings);
                             //The imgPrint will be disabled if there are not dwellings
                             imgPrint.setDisable(false);
                             imgPrint.setOpacity(1);
-                            //Add the items to the tableView
-                            tableDwelling.setItems(dwellingsTableBean);
 
                         } else {
                             //The imgPrint will be disabled if there are not dwellings
@@ -399,7 +389,7 @@ public class OwnerWindowController {
 
                         for (Dwelling d : allDwelling) {
                             //String type = (d instanceof Flat) ? "Flat" : "Room";
-                            dwellingsTableBean.add(new DwellingTableBean(d));
+                            dwellingsCollectionTable.add(new Dwelling(d));
                         }
 
                         Alert alert = new Alert(AlertType.INFORMATION);
@@ -421,7 +411,7 @@ public class OwnerWindowController {
                     if (ds != null) {
                         if (ds.size() > 0) {
                             for (Dwelling d : ds) {
-                                dwellingsTableBean.add(new DwellingTableBean(d));
+                                dwellingsCollectionTable.add(new Dwelling(d));
                             }
 
                             Alert alert = new Alert(AlertType.INFORMATION);
@@ -447,7 +437,7 @@ public class OwnerWindowController {
                 default:
                     break;
             }
-            tableDwelling.setItems(dwellingsTableBean);
+            tableDwelling.setItems(dwellingsCollectionTable);
             tableDwelling.refresh();
 
         } catch (BussinessLogicException ex) {
@@ -457,7 +447,7 @@ public class OwnerWindowController {
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
         }
-
+         */
     }
 
     /**
@@ -474,30 +464,12 @@ public class OwnerWindowController {
         Dwelling dwelling = new Dwelling();
         dwelling.setConstructionDate(new Date());
         dwelling.setId(Long.MIN_VALUE);
-        dwellingsTableBean.add(new DwellingTableBean(dwelling));
-        tableDwelling.getSelectionModel().select(dwellingsTableBean.size() - 1);
+        dwellingsCollectionTable.add(dwelling);
+        tableDwelling.getSelectionModel().select(dwellingsCollectionTable.size() - 1);
         tableDwelling.layout();
-        tableDwelling.getFocusModel().focus(dwellingsTableBean.size() - 1, colAddress);
-        tableDwelling.edit(dwellingsTableBean.size() - 1, colAddress);
+        tableDwelling.getFocusModel().focus(dwellingsCollectionTable.size() - 1, colAddress);
+        tableDwelling.edit(dwellingsCollectionTable.size() - 1, colAddress);
 
-        /*
-        //PLAN B
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/NewDwelling.fxml"));
-            Stage stageNewDwelling = new Stage();
-            Parent root = (Parent) loader.load();
-            NewDwellingController controller = ((NewDwellingController) loader.getController());
-            controller.setStage(stageNewDwelling);
-            stageNewDwelling.initModality(Modality.APPLICATION_MODAL);
-            stageNewDwelling.initOwner(
-                    ((Node) event.getSource()).getScene().getWindow());
-            controller.setDwellingManager(dwellingManager);
-            controller.initStage(root);//Initialize stage
-            LOGGER.info("Openning SignIn Window");
-        } catch (IOException ex) {
-            Logger.getLogger(OwnerWindowController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         */
     }
 
     /**
@@ -506,7 +478,7 @@ public class OwnerWindowController {
      */
     @FXML
     private void handleDeleteDwelling(MouseEvent event) {
-        DwellingTableBean selectedDwelling = tableDwelling.getSelectionModel()
+        Dwelling selectedDwelling = tableDwelling.getSelectionModel()
                 .getSelectedItem();
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setHeaderText(null);
@@ -516,7 +488,7 @@ public class OwnerWindowController {
         if (result.get() == ButtonType.OK) {
             try {
                 dwellingManager.remove(selectedDwelling.getId());
-                dwellingsTableBean.remove(selectedDwelling);
+                dwellingsCollectionTable.remove(selectedDwelling);
                 tableDwelling.refresh();
             } catch (BussinessLogicException ex) {
                 Alert alert1 = new Alert(AlertType.ERROR);
@@ -581,9 +553,9 @@ public class OwnerWindowController {
         Optional<ButtonType> result = alert.showAndWait();
         //try {
         if (result.get() == ButtonType.OK) {
-            if (pos == dwellingsTableBean.size() - 1 && dwellingsTableBean.get(pos).getId() == Long.MIN_VALUE) {
+            if (pos == dwellingsCollectionTable.size() - 1 && dwellingsCollectionTable.get(pos).getId() == Long.MIN_VALUE) {
                 LOGGER.info("Cancel creation");
-                dwellingsTableBean.remove(dwellingsTableBean.size() - 1);
+                dwellingsCollectionTable.remove(dwellingsCollectionTable.size() - 1);
             } else {
                 LOGGER.info("Cancel update");
             }
@@ -595,7 +567,7 @@ public class OwnerWindowController {
             imgCreateNewDwelling.setOpacity(1);
             imgDeleteDwelling.setDisable(true);
             imgDeleteDwelling.setOpacity(0.25);
-            tableDwelling.setItems(dwellingsTableBean);
+            tableDwelling.setItems(dwellingsCollectionTable);
             tableDwelling.refresh();
             tableDwelling.getSelectionModel().clearSelection(tableDwelling.getSelectionModel().getSelectedIndex());
         }
@@ -608,13 +580,13 @@ public class OwnerWindowController {
      */
     @FXML
     private void handleConfirmNewDwelling(MouseEvent event) {
-
+        /*
         int pos = tableDwelling.getSelectionModel().getSelectedIndex();
         try {
-            if (pos == dwellingsTableBean.size() - 1 && dwellingsTableBean.get(pos).getId() == Long.MIN_VALUE) {
+            if (pos == dwellingsCollectionTable.size() - 1 && dwellingsCollectionTable.get(pos).getId() == Long.MIN_VALUE) {
 
                 Dwelling dwelling = new Dwelling();
-                DwellingTableBean dtb = dwellingsTableBean.get(pos);
+                Dwelling dtb = dwellingsCollectionTable.get(pos);
                 dwelling.setAddress(dtb.getAddress());
                 String dateString = dtb.getConstructionDate();
                 Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateString);
@@ -628,7 +600,7 @@ public class OwnerWindowController {
 
             } else {
                 Dwelling dwelling = new Dwelling();
-                DwellingTableBean dtb = dwellingsTableBean.get(pos);
+                Dwelling dtb = dwellingsCollectionTable.get(pos);
                 dwelling.setAddress(dtb.getAddress());
                 String dateString = dtb.getConstructionDate();
                 Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateString);
@@ -649,7 +621,7 @@ public class OwnerWindowController {
             imgCreateNewDwelling.setOpacity(1);
             imgDeleteDwelling.setDisable(true);
             imgDeleteDwelling.setOpacity(0.25);
-            tableDwelling.setItems(dwellingsTableBean);
+            tableDwelling.setItems(dwellingsCollectionTable);
             tableDwelling.refresh();
             tableDwelling.getSelectionModel().clearSelection(tableDwelling.getSelectionModel().getSelectedIndex());
         } catch (ParseException ex) {
@@ -657,6 +629,7 @@ public class OwnerWindowController {
         } catch (BussinessLogicException ex) {
             Logger.getLogger(OwnerWindowController.class.getName()).log(Level.SEVERE, null, ex);
         }
+         */
     }
 
     /**
