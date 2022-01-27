@@ -57,6 +57,7 @@ public class AdminMenuController extends GenericMenuController {
             BorderPane node = loader.load();
             AdminController controller = loader.getController();
             controller.setUserManager(UserManagerFactory.createUsersManager(UserManagerFactory.REST_WEB_CLIENT_TYPE));
+            controller.setUser(getUser());
             getBorder().setCenter(node);
             controller.initStage();
 

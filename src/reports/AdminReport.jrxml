@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="57918919-f1e5-4edc-8110-e4dac6842298">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Heading 1" fontSize="16" isBold="true"/>
+	<style name="Heading 2" fontSize="14" isBold="true" isItalic="true"/>
+	<field name="fullName" class="java.lang.String"/>
+	<field name="login" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="phoneNumber" class="java.lang.String"/>
+	<field name="birthDate" class="java.util.Date"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="20" width="100" height="20" uuid="f3830395-7e83-4104-b56b-5af31ded35cc"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="Heading 1" x="169" y="0" width="215" height="79" uuid="a3a5af52-9f9b-4d44-8bed-00483a0f15b2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="28"/>
+				</textElement>
+				<text><![CDATA[Admins ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20" uuid="21566a81-2e7e-4db6-8e55-6037756b9586"/>
+				<text><![CDATA[Printed in:]]></text>
+			</staticText>
+			<image>
+				<reportElement x="384" y="0" width="71" height="69" uuid="f2c6c61f-5268-4b8e-9d6c-9caa79d6fd6e"/>
+				<imageExpression><![CDATA["C:\\Users\\2dam\\Documents\\NetBeansProjects\\ClientBluRoof\\src\\view\\resources\\img\\BluRoofLogo.jpg"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="455" y="10" width="100" height="59" uuid="c30f29fb-7211-470a-966d-8e7cd26baf65"/>
+				<imageExpression><![CDATA["C:\\Users\\2dam\\Documents\\NetBeansProjects\\ClientBluRoof\\src\\view\\resources\\img\\BluRoofName.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement style="Heading 2" x="0" y="0" width="100" height="61" uuid="7efc41c8-b0f4-4e24-9a12-68da3a245885"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[LOGIN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 2" x="100" y="0" width="100" height="61" uuid="347af90b-455c-4202-96e4-9034bf4de3ea"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[FULL NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 2" x="355" y="0" width="100" height="61" uuid="6563a470-b117-4f2d-a127-7ecd78a9e467"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[PHONE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 2" x="200" y="0" width="155" height="61" uuid="d7a5f436-2a16-4020-8a83-63a7fb7559dc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[EMAIL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Heading 2" x="455" y="0" width="100" height="61" uuid="3a8a324b-ed4e-47e8-a8da-2543d4cd8829"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[BIRTH DATE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="9c6e8384-57a2-416a-8b37-1c0abfa91d0f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{login}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="100" height="20" uuid="b30f30ae-4597-4312-8669-e52d46376f71"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fullName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="155" height="20" uuid="431df58b-def1-4ac3-9e56-2dd58ae05aa2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="355" y="0" width="100" height="20" uuid="0c313772-fe23-4bc7-a528-a133a0786e71"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{phoneNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="0" width="100" height="20" uuid="135298e7-4961-499b-a06a-83978aebb493"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{birthDate})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<textField>
+				<reportElement x="455" y="34" width="100" height="20" uuid="39feae53-1bbf-4555-8d3c-f5bc083e14fc"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

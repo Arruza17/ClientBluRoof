@@ -16,8 +16,11 @@ import exceptions.MaxCharactersException;
 import exceptions.PhoneFormatException;
 import interfaces.UserManager;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,6 +52,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 import model.User;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 import resources.DateEditingCell;
 import static view.controllers.SignUpController.VALID_EMAIL_ADDRESS;
 
@@ -62,6 +72,7 @@ public class AdminController {
     private static final Logger LOGGER = Logger.getLogger(AdminController.class.getName());
 
     private UserManager userManager;
+    private User user;
 
     @FXML
     private TextField tfSearch;
@@ -389,16 +400,15 @@ public class AdminController {
 
         colBirthDate.setEditable(true);
 
-        DateEditingCell dec = new DateEditingCell();
         Callback<TableColumn<User, Date>, TableCell<User, Date>> dateCellFactory
-                = (TableColumn<User, Date> param) -> dec;       
+                = (TableColumn<User, Date> param) -> new DateEditingCell();;
         colBirthDate.setCellFactory(dateCellFactory);
 
         colBirthDate.setOnEditCommit(
                 (CellEditEvent<User, Date> t) -> {
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setBirthDate(t.getNewValue());
-                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colBirthDate);    
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colBirthDate);
                 });
 
         colBirthDate.setOnEditCancel((CellEditEvent<User, Date> t) -> {
@@ -473,38 +483,54 @@ public class AdminController {
         User user = tblAdmin.getSelectionModel().getSelectedItem();
         int pos = tblAdmin.getSelectionModel().getSelectedIndex();
         try {
-            if (pos == admin.size() - 1 && user.getId().equals(Long.MIN_VALUE)) {
-                user.setPrivilege(UserPrivilege.ADMIN.name());
-                user.setStatus(UserStatus.ENABLED.name());
-                user.setBirthDate(new Date());
-
-                userManager.createUser(user);
-                //userManager.resetPassword(user.getLogin());
-                tblAdmin.refresh();
-                LOGGER.info("Creation of new admin");
+            if (user.getLogin().isEmpty()
+                    || user.getBirthDate() != null
+                    || user.getEmail().isEmpty()
+                    || user.getFullName().isEmpty()
+                    || user.getLogin().isEmpty()
+                    || user.getPhoneNumber().isEmpty()) {
+                throw new FieldsEmptyException();
             } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText("User updated");
-                alert.setContentText("User information successfully updated!");
-                alert.show();
-                userManager.updateUser(user);
-                tblAdmin.refresh();
-                LOGGER.info("Update admin");
+                if (pos == admin.size() - 1 && user.getId().equals(Long.MIN_VALUE)) {
+                    user.setPrivilege(UserPrivilege.ADMIN.name());
+                    user.setStatus(UserStatus.ENABLED.name());
+                    user.setBirthDate(new Date());
+
+                    userManager.createUser(user);
+                    userManager.resetPassword(user.getLogin());
+                    tblAdmin.refresh();
+                    LOGGER.info("Creation of new admin");
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText("User updated");
+                    alert.setContentText("User information successfully updated!");
+                    alert.show();
+                    userManager.updateUser(user);
+                    tblAdmin.refresh();
+                    LOGGER.info("Update admin");
+                }
+                imgCommit.setDisable(true);
+                imgCommit.setOpacity(0.25);
+                imgCancel.setDisable(true);
+                imgCancel.setOpacity(0.25);
+                imgAdd.setDisable(false);
+                imgAdd.setOpacity(1);
+                imgDel.setDisable(true);
+                imgDel.setOpacity(0.25);
             }
-            imgCommit.setDisable(true);
-            imgCommit.setOpacity(0.25);
-            imgCancel.setDisable(true);
-            imgCancel.setOpacity(0.25);
-            imgAdd.setDisable(false);
-            imgAdd.setOpacity(1);
-            imgDel.setDisable(true);
-            imgDel.setOpacity(0.25);
         } catch (BusinessLogicException ex) {
             Alert excAlert = new Alert(AlertType.INFORMATION);
             excAlert.setTitle("Error");
             excAlert.setContentText("There was an error with the edition of the user: " + ex.getMessage());
             excAlert.show();
             LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at handleTableCommit(): {0}", ex.getMessage());
+        } catch (FieldsEmptyException ex) {
+            Alert excAlert = new Alert(AlertType.INFORMATION);
+            excAlert.setTitle("Error");
+            excAlert.setContentText(ex.getMessage());
+            excAlert.show();
+            LOGGER.log(Level.SEVERE, "FieldsEmptyException thrown at handleTableCommit(): {0}", ex.getMessage());
+
         }
     }
 
@@ -571,6 +597,35 @@ public class AdminController {
 
     @FXML
     private void printReport(MouseEvent event) {
-
+        try {
+            LOGGER.info("Beginning printing action...");
+            JasperReport report
+                    = JasperCompileManager.compileReport(getClass()
+                            .getResourceAsStream("/reports/AdminReport.jrxml"));
+            //Data for the report: a collection of User passed as a JRDataSource implementation 
+            JRBeanCollectionDataSource dataItems
+                    = new JRBeanCollectionDataSource((Collection<User>) this.tblAdmin.getItems());
+            //Get the name of the admin who printed the report as a parameter
+            Map<String, Object> parameters = new HashMap<>();
+            //Fill report with the data of the table     
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
+            //Create and show the report window. The second parameter false value makes 
+            //report window not to close app.
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+            jasperViewer.setVisible(true);
+            // jasperViewer.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        } catch (JRException ex) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setHeaderText("Error printing");
+            alert.setContentText("There was an error printing the information, try again later");
+            LOGGER.log(Level.SEVERE,
+                    "Error printing report at printReport(): {0}",
+                    ex.getMessage());
+        }
     }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }
