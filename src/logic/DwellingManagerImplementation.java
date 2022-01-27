@@ -30,7 +30,7 @@ public class DwellingManagerImplementation implements DwellingManager {
     }
 
     @Override
-    public List<Dwelling> findAll() throws BussinessLogicException {
+    public List<Dwelling> loadAllDwellings() throws BussinessLogicException {
         List<Dwelling> dwellings = null;
         try {
             dwellings = dwellingRestfulClient.findAll_XML(new GenericType<List<Dwelling>>() {

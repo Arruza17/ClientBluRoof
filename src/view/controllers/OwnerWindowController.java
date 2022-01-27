@@ -140,7 +140,7 @@ public class OwnerWindowController {
             colSquareMeters.setStyle("-fx-alignment: CENTER-RIGHT;");
             //Sets the column More info to center
             colMoreInfo.setStyle("-fx-alignment: CENTER;");
-            //Sets the datePicker and spinner to disabled
+            //The spinner and the date Picker will be disabled
             dpConstructionDate.setDisable(true);
             spRating.setDisable(true);
             //Sets the the delete imgs to not clickable
@@ -150,7 +150,7 @@ public class OwnerWindowController {
             imgConfirmNewDwelling.setOpacity(0.25);
             imgCancelNewDwelling.setDisable(true);
             imgCancelNewDwelling.setOpacity(0.25);
-            //Add the combobox values
+            //Load the comboBox data
             ObservableList<String> optionsForCombo;
             optionsForCombo = FXCollections.observableArrayList(
                     SELECT_ALL_DWELLINGS,
@@ -166,8 +166,6 @@ public class OwnerWindowController {
             lblTitle.setText("My Dwellings");
             //Select the first comboBox item by default
             cbDwellings.getSelectionModel().selectFirst();
-            //Load all the dwellings by default
-
             //Add the editable table
             tableDwelling.setEditable(true);
             colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
@@ -176,15 +174,20 @@ public class OwnerWindowController {
                     (CellEditEvent<Dwelling, String> t) -> {
                         {
                             try {
-                                if (t.getNewValue().isEmpty()) {
+                                if (t.getNewValue().trim().isEmpty()) {
+                                    //throw validation Error
+                                    LOGGER.warning("The address field is empty");
                                     throw new FieldsEmptyException();
                                 }
-                                if (t.getNewValue().length() > 255) {
+                                if (t.getNewValue().trim().length() > 255) {
+                                    //throw validation Error
+                                    LOGGER.warning("The field has more than 255 characters");
                                     throw new MaxCharactersException();
                                 }
 
                                 ((Dwelling) t.getTableView().getItems().get(
                                         t.getTablePosition().getRow())).setAddress(t.getNewValue());
+                                //SETS THE CONFIRM AND CANCEL BUTTONS TO CLICKABLE
                                 imgConfirmNewDwelling.setDisable(false);
                                 imgConfirmNewDwelling.setOpacity(1);
                                 imgCancelNewDwelling.setDisable(false);
@@ -194,6 +197,7 @@ public class OwnerWindowController {
                                 alert.setTitle("Error");
                                 alert.setHeaderText(ex.getMessage());
                                 alert.showAndWait();
+                                //SETS THE CONFIRM AND CANCEL BUTTONS TO NOT CLICKABLE
                                 imgConfirmNewDwelling.setDisable(true);
                                 imgConfirmNewDwelling.setOpacity(0.25);
                                 imgCancelNewDwelling.setDisable(true);
@@ -210,7 +214,8 @@ public class OwnerWindowController {
                     (CellEditEvent<Dwelling, String> t) -> {
                         try {
                             if (t.getNewValue().isEmpty()) {
-                                LOGGER.warning("The field is empty");
+                                //throw validation Error
+                                LOGGER.warning("The squareMeters field is empty");
                                 throw new FieldsEmptyException();
                             }
                             if (!t.getNewValue().matches(regexDouble)) {
@@ -220,6 +225,7 @@ public class OwnerWindowController {
                             }
                             ((Dwelling) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow())).setSquareMeters(Double.valueOf(t.getNewValue()));
+                            //SETS THE CONFIRM AND CANCEL BUTTONS TO CLICKABLE
                             imgConfirmNewDwelling.setDisable(false);
                             imgConfirmNewDwelling.setOpacity(1);
                             imgCancelNewDwelling.setDisable(false);
@@ -229,12 +235,22 @@ public class OwnerWindowController {
                             alert.setTitle("Error");
                             alert.setHeaderText(e.getMessage());
                             alert.showAndWait();
+                            //SETS THE CONFIRM AND CANCEL BUTTONS TO NOT CLICKABLE
+                            imgConfirmNewDwelling.setDisable(true);
+                            imgConfirmNewDwelling.setOpacity(0.25);
+                            imgCancelNewDwelling.setDisable(true);
+                            imgCancelNewDwelling.setOpacity(0.25);
                         } catch (NotValidSquareMetersValueException ex) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Error");
                             alert.setHeaderText(ex.getMessage());
                             alert.setContentText("Valid values:\n1\n1.2");
                             alert.showAndWait();
+                            //SETS THE CONFIRM AND CANCEL BUTTONS TO NOT CLICKABLE
+                            imgConfirmNewDwelling.setDisable(true);
+                            imgConfirmNewDwelling.setOpacity(0.25);
+                            imgCancelNewDwelling.setDisable(true);
+                            imgCancelNewDwelling.setOpacity(0.25);
                         }
                     });
             colConstructionDate.setCellValueFactory(cellData
@@ -245,29 +261,44 @@ public class OwnerWindowController {
                         try {
 
                             if (t.getNewValue().isEmpty()) {
-                                LOGGER.warning("The field is empty");
+                                LOGGER.warning("The field in the construction date is empty");
                                 throw new FieldsEmptyException();
+                            }
+                            if (!t.getNewValue().matches(regexDate)) {
+                                LOGGER.severe("The field in the construction date has a not valid date");
+                                throw new NotValidDateValueException("Not valid date");
                             }
 
                             ((Dwelling) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow())).setConstructionDate(
                                     dateFormatter.parse(t.getNewValue())
                             );
+                            //SETS THE CONFIRM AND CANCEL BUTTONS TO CLICKABLE
                             imgConfirmNewDwelling.setDisable(false);
                             imgConfirmNewDwelling.setOpacity(1);
                             imgCancelNewDwelling.setDisable(false);
                             imgCancelNewDwelling.setOpacity(1);
-                        } catch (FieldsEmptyException e) {
+                        } catch (FieldsEmptyException | NotValidDateValueException e) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Error");
                             alert.setHeaderText(e.getMessage());
                             alert.showAndWait();
+                            //SETS THE CONFIRM AND CANCEL BUTTONS TO NOT CLICKABLE
+                            imgConfirmNewDwelling.setDisable(true);
+                            imgConfirmNewDwelling.setOpacity(0.25);
+                            imgCancelNewDwelling.setDisable(true);
+                            imgCancelNewDwelling.setOpacity(0.25);
                         } catch (ParseException e) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Error");
                             alert.setHeaderText(e.getMessage());
                             alert.setContentText("Valid value:\ndd/MM/yyyy\nex. 17/11/2008");
                             alert.showAndWait();
+                            //SETS THE CONFIRM AND CANCEL BUTTONS TO NOT CLICKABLE
+                            imgConfirmNewDwelling.setDisable(true);
+                            imgConfirmNewDwelling.setOpacity(0.25);
+                            imgCancelNewDwelling.setDisable(true);
+                            imgCancelNewDwelling.setOpacity(0.25);
                         }
 
                     });
@@ -276,20 +307,20 @@ public class OwnerWindowController {
                     new PropertyValueFactory<>("rating"));
             colMoreInfo.setCellValueFactory(
                     new PropertyValueFactory<>("moreInfo"));
-            //CARGAR LOS DATOS EN LA TABLA
-            dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.findAll());
+            //Load all the dwellings by default
+            dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.loadAllDwellings());
             /*
-                            Add a listener for checkbox value changes noting that the
-                            CheckBoxTableCell renders the CheckBox 'live', meaning that the 
-                            CheckBox is always interactive. A side-effect of this is that the 
-                            usual editing callbacks (such as on edit commit) will not be called. 
-                            If you want to be notified of changes, it is recommended to directly 
-                            observe the boolean properties that are manipulated by the CheckBox 
-                            (see description for CheckBoxTableCell in javadoc)
-                            So we iterate on table items adding listeners for property being 
-                            represented by the checkbox.
-                            We use the lambda implementation to access the dwelling object in
-                            whichthe status property is.
+            Add a listener for checkbox value changes noting that the
+            CheckBoxTableCell renders the CheckBox 'live', meaning that the 
+            CheckBox is always interactive. A side-effect of this is that the 
+            usual editing callbacks (such as on edit commit) will not be called. 
+            If you want to be notified of changes, it is recommended to directly 
+            observe the boolean properties that are manipulated by the CheckBox 
+            (see description for CheckBoxTableCell in javadoc)
+            So we iterate on table items adding listeners for property being 
+            represented by the checkbox.
+            We use the lambda implementation to access the dwelling object in
+            whichthe status property is.
              */
             //First, set the column cell factory:
             colWiFi.setCellFactory(
@@ -306,37 +337,48 @@ public class OwnerWindowController {
                                 LOGGER.log(Level.INFO,
                                         "User modified: {0}",
                                         d.getHasWiFi());
+                                imgConfirmNewDwelling.setDisable(false);
+                                imgConfirmNewDwelling.setOpacity(1);
+                                imgCancelNewDwelling.setDisable(false);
+                                imgCancelNewDwelling.setOpacity(1);
                             })
             );
             tableDwelling.setItems(dwellingsCollectionTable);
-
-            //ESTABLECIDOS
             //Shows the stage
             stage.show();
             LOGGER.info("Owner/Guest-Window Open");
-        } catch (Exception e) {
+        } catch (BussinessLogicException e) {
             LOGGER.severe(e.getMessage());
-            e.printStackTrace();
-            //ALERT
+            LOGGER.severe("ERROR");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText(null);
+            alert.setContentText("Error");
+            alert.showAndWait();
         }
     }
 
     /**
+     * Method executed when the components of the comboBox of the filter is
+     * changed
      *
-     * @param event
+     * @param event the ActionEvent
      */
     @FXML
     private void handleChangeComponents(ActionEvent event) {
         switch (cbDwellings.getValue()) {
             case SELECT_ALL_DWELLINGS:
+                LOGGER.info("Select All Dwelling choosed");
                 dpConstructionDate.setDisable(true);
                 spRating.setDisable(true);
                 break;
             case SELECT_BY_MIN_CONSTRUCTION_DATE:
+                LOGGER.info("Select by min ConstructionDate choosed");
                 dpConstructionDate.setDisable(false);
                 spRating.setDisable(true);
                 break;
             case SELECT_BY_MIN_RATING:
+                LOGGER.info("Select by min rating choosed");
                 dpConstructionDate.setDisable(true);
                 spRating.setDisable(false);
                 break;
@@ -362,13 +404,7 @@ public class OwnerWindowController {
 
             switch (cbDwellings.getValue()) {
                 case SELECT_ALL_DWELLINGS:
-                    dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.findAll());
-                    //The imgPrint will be disabled if there are not dwellings
-                    imgPrint.setDisable(false);
-                    imgPrint.setOpacity(1);
-                    //The imgPrint will be disabled if there are not dwellings
-                    imgPrint.setDisable(true);
-                    imgPrint.setOpacity(0.25);
+                    dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.loadAllDwellings());
 
                     break;
                 case SELECT_BY_MIN_CONSTRUCTION_DATE:
@@ -377,51 +413,49 @@ public class OwnerWindowController {
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.findByDate(simpleDateFormat.format(date).toString()));
 
-                        Alert alert = new Alert(AlertType.INFORMATION);
-                        alert.setTitle("Search successful");
-                        alert.setHeaderText("Dwellings have been found");
-                        alert.showAndWait();
                     } else {
-
-                        //THROW NEW EXCEPTION OF FIELDS EMPTY
+                        //Show an Alert when trying to search with the enabled field empty.
                         Alert alert = new Alert(AlertType.INFORMATION);
                         alert.setTitle("Empty fields");
-                        alert.setHeaderText("The construction date is null");
-                        alert.setContentText("Try again");
+                        alert.setHeaderText("The construction date is empty");
+                        alert.setContentText("Please select a date");
                         alert.showAndWait();
                     }
                     break;
                 case SELECT_BY_MIN_RATING:
                     dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.findByRating(spRating.getValue()));
-
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Search successful");
-                    alert.setHeaderText("Dwellings have been found");
-                    alert.showAndWait();
-
-                    Alert alert2 = new Alert(AlertType.ERROR);
-                    alert2.setTitle("Empty fields");
-                    alert2.setHeaderText("ERRROR AAAA");
-                    alert2.setContentText("Try again");
-                    alert2.showAndWait();
-
                     break;
                 default:
                     break;
             }
+            //Set the items to the table & refres the table
+            tableDwelling.setItems(dwellingsCollectionTable);
+            tableDwelling.refresh();
             if (dwellingsCollectionTable.isEmpty()) {
+                LOGGER.warning("No dwelling have been found");
+                //The imgPrint will be disabled if there are not dwellings
+                imgPrint.setDisable(true);
+                imgPrint.setOpacity(0.25);
                 Alert alert1 = new Alert(AlertType.WARNING);
                 alert1.setTitle("No data");
                 alert1.setHeaderText("No dwellings");
-                alert1.setContentText("No dwellings found with " + spRating.getValue().toString() + " rating or more");
+                alert1.setContentText("No dwellings have been found");
                 alert1.showAndWait();
+            } else {
+                LOGGER.warning("No dwelling have been found");
+                //The imgPrint will be enabled if there are dwellings
+                imgPrint.setDisable(false);
+                imgPrint.setOpacity(1);
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Search successful");
+                alert.setHeaderText("Dwellings have been found");
+                alert.showAndWait();
             }
-            tableDwelling.setItems(dwellingsCollectionTable);
-            tableDwelling.refresh();
         } catch (BussinessLogicException e) {
+            LOGGER.severe("Error with the server side");
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("Error while searching");
+            alert.setHeaderText("Error with the server");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
@@ -431,10 +465,12 @@ public class OwnerWindowController {
     /**
      * Method executed when the imgViewNewDwelling is clicked
      *
-     * @param event
+     * @param event the MouseEvent
      */
     @FXML
     private void handleNewDwelling(MouseEvent event) {
+        LOGGER.info("Adding a new row to the table");
+        //A new line with blank fields will be added
         imgConfirmNewDwelling.setDisable(false);
         imgConfirmNewDwelling.setOpacity(1);
         imgCancelNewDwelling.setDisable(false);
@@ -451,13 +487,16 @@ public class OwnerWindowController {
     }
 
     /**
+     * Method executed when the imgDeleteDwelling is clicked
      *
-     * @param event
+     * @param event the MouseEvent
      */
     @FXML
     private void handleDeleteDwelling(MouseEvent event) {
+        LOGGER.info("Trying to delete a dwelling");
         Dwelling selectedDwelling = tableDwelling.getSelectionModel()
                 .getSelectedItem();
+        //An alert will be shown informing the owner if they’re sure about deleting that specific dwelling
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setHeaderText(null);
         alert.setTitle("Confirmation");
@@ -467,8 +506,10 @@ public class OwnerWindowController {
             try {
                 dwellingManager.remove(selectedDwelling.getId());
                 dwellingsCollectionTable.remove(selectedDwelling);
+                LOGGER.info("A Dwelling have been removed");
                 tableDwelling.refresh();
             } catch (BussinessLogicException ex) {
+                LOGGER.severe("Error with the server side");
                 Alert alert1 = new Alert(AlertType.ERROR);
                 alert1.setTitle("AYUDA");
                 alert1.setHeaderText("Error");
@@ -476,6 +517,7 @@ public class OwnerWindowController {
                 alert1.showAndWait();
             }
         } else {
+            LOGGER.info("Dwelling finally not removed by the user");
             Alert alert3 = new Alert(AlertType.INFORMATION);
             alert3.setTitle("Dwelling not deleted");
             alert3.setHeaderText(null);
@@ -491,19 +533,16 @@ public class OwnerWindowController {
      */
     @FXML
     private void handlePrintDwellings(MouseEvent event) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("AYUDA");
-        alert.setHeaderText("Boton de print");
-        alert.setContentText("A");
-        alert.showAndWait();
+        LOGGER.info("Openning the JasperReport view to print");
+
     }
 
     /**
      * Method to control if there's a item selected in the table
      *
-     * @param observableValue
-     * @param oldValue
-     * @param newValue
+     * @param observableValue the Observable value
+     * @param oldValue the old value
+     * @param newValue the new value
      */
     private void handleTableSelectionChanged(ObservableValue observableValue, Object oldValue, Object newValue) {
 
@@ -518,12 +557,13 @@ public class OwnerWindowController {
     }
 
     /**
+     * Method that is executed when the imgCancel is clicked
      *
-     * @param event
+     * @param event the mouse event
      */
     @FXML
     private void handleCancelNewDwelling(MouseEvent event) {
-
+        LOGGER.info("Cancelling");
         int pos = tableDwelling.getSelectionModel().getSelectedIndex();
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText("Cancel");
@@ -546,6 +586,7 @@ public class OwnerWindowController {
             imgDeleteDwelling.setDisable(true);
             imgDeleteDwelling.setOpacity(0.25);
             tableDwelling.setItems(dwellingsCollectionTable);
+            LOGGER.info("Refreshing the table");
             tableDwelling.refresh();
             tableDwelling.getSelectionModel().clearSelection(tableDwelling.getSelectionModel().getSelectedIndex());
         }
@@ -554,11 +595,11 @@ public class OwnerWindowController {
     /**
      * Method executed when the confirm imgView is clicked
      *
-     * @param event
+     * @param event the mousevent
      */
     @FXML
     private void handleConfirmNewDwelling(MouseEvent event) {
-
+        LOGGER.info("Confirm button clicked");
         int pos = tableDwelling.getSelectionModel().getSelectedIndex();
         try {
             if (pos == dwellingsCollectionTable.size() - 1 && dwellingsCollectionTable.get(pos).getId() == Long.MIN_VALUE) {
@@ -601,9 +642,20 @@ public class OwnerWindowController {
             tableDwelling.refresh();
             tableDwelling.getSelectionModel().clearSelection(tableDwelling.getSelectionModel().getSelectedIndex());
         } catch (ParseException ex) {
-            LOGGER.severe("The date value is not valid while creating/editing");
+            LOGGER.severe("Error while parseing the date");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(ex.getMessage());
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
         } catch (BussinessLogicException ex) {
             LOGGER.severe("ERROR WITH THE SERVER SIDE");
+            LOGGER.severe("Error with the server side");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error with the server");
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
         }
 
     }

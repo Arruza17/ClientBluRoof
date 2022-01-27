@@ -38,7 +38,6 @@ public class Application extends javafx.application.Application {
         Parent root = (Parent) fxmlLoader.load();
         OwnerWindowController controller = ((OwnerWindowController) fxmlLoader.getController());
         controller.setStage(primaryStage);
-            
         controller.setDwellingManager(DwellingManagerFactory.createDwellingManager(DwellingManagerFactory.REST_WEB_CLIENT_TYPE));
         //Initialize stage
         LOGGER.info("Openning SignIn Window");

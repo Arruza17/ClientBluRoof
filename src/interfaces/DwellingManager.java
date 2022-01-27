@@ -24,7 +24,7 @@ public interface DwellingManager {
      *
      * @return @throws BussinessLogicException
      */
-    public List<Dwelling> findAll() throws BussinessLogicException;
+    public List<Dwelling> loadAllDwellings() throws BussinessLogicException;
 
     /**
      *
