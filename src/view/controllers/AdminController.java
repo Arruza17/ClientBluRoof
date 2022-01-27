@@ -163,8 +163,8 @@ public class AdminController {
                     }
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setFullName(t.getNewValue());
-                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colFullName);
-                    tblAdmin.edit(t.getTablePosition().getRow(), colFullName);
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colLogin);
+                    tblAdmin.edit(t.getTablePosition().getRow(), colLogin);
                     imgCommit.setDisable(false);
                     imgCommit.setOpacity(1);
                     imgCancel.setDisable(false);
@@ -237,8 +237,8 @@ public class AdminController {
 
                         ((User) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setLogin(t.getNewValue());
-                        tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colLogin);
-                        tblAdmin.edit(t.getTablePosition().getRow(), colLogin);
+                        tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colEmail);
+                        tblAdmin.edit(t.getTablePosition().getRow(), colEmail);
                         imgCommit.setDisable(false);
                         imgCommit.setOpacity(1);
                         imgCancel.setDisable(false);
@@ -293,8 +293,8 @@ public class AdminController {
                     }
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setEmail(t.getNewValue());
-                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colEmail);
-                    tblAdmin.edit(t.getTablePosition().getRow(), colEmail);
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colBirthDate);
+                    tblAdmin.edit(t.getTablePosition().getRow(), colBirthDate);
                     imgCommit.setDisable(false);
                     imgCommit.setOpacity(1);
                     imgCancel.setDisable(false);
@@ -408,7 +408,12 @@ public class AdminController {
                 (CellEditEvent<User, Date> t) -> {
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setBirthDate(t.getNewValue());
-                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colBirthDate);
+                    imgCommit.setDisable(false);
+                    imgCommit.setOpacity(1);
+                    imgCancel.setDisable(false);
+                    imgCancel.setOpacity(1);
+                    tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
+                    tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colPhone);
                 });
 
         colBirthDate.setOnEditCancel((CellEditEvent<User, Date> t) -> {
@@ -484,10 +489,9 @@ public class AdminController {
         int pos = tblAdmin.getSelectionModel().getSelectedIndex();
         try {
             if (user.getLogin().isEmpty()
-                    || user.getBirthDate() != null
+                    || user.getBirthDate().equals(null)
                     || user.getEmail().isEmpty()
                     || user.getFullName().isEmpty()
-                    || user.getLogin().isEmpty()
                     || user.getPhoneNumber().isEmpty()) {
                 throw new FieldsEmptyException();
             } else {

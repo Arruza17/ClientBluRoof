@@ -21,6 +21,9 @@ public class DateEditingCell extends TableCell<User, Date> {
         if (!isEmpty()) {
             super.startEdit();
             createDatePicker();
+            datePicker.setOnAction((e) -> {
+                commitEdit(Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            });
             setText(null);
             setGraphic(datePicker);
         }
@@ -35,8 +38,7 @@ public class DateEditingCell extends TableCell<User, Date> {
 
     @Override
     public void updateItem(Date item, boolean empty) {
-        super.updateItem(item, empty);
-        
+        super.updateItem(item, empty);  
         if (empty) {
             setText(null);
             setGraphic(null);
@@ -58,8 +60,10 @@ public class DateEditingCell extends TableCell<User, Date> {
     private void createDatePicker() {
         datePicker = new DatePicker(getDate());
         datePicker.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
+        datePicker.setEditable(false);
         datePicker.setOnAction((e) -> {
             commitEdit(Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            
         });
 
     }
