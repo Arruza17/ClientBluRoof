@@ -114,6 +114,7 @@ public class FacilitiesController {
      * Initializes the controller class.
      */
     public void initStage(Parent root) {
+        try{
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Facilities Window");
@@ -185,6 +186,13 @@ public class FacilitiesController {
                 });
 
         stage.show();
+        }catch(Exception e){
+         Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("ERROR");
+                    alert.setHeaderText("Can't create view");
+                    alert.setContentText("");
+                    alert.showAndWait();
+        }
     }
 
     public void setStage(Stage stage) {
@@ -364,11 +372,11 @@ public class FacilitiesController {
                 alert1.showAndWait();
             }
         } else {
-            Alert alert3 = new Alert(AlertType.INFORMATION);
-            alert3.setTitle("Facility not deleted");
-            alert3.setHeaderText(null);
-            alert3.setContentText("Content not deleted");
-            alert3.showAndWait();
+            Alert alert2 = new Alert(AlertType.INFORMATION);
+            alert2.setTitle("Facility not deleted");
+            alert2.setHeaderText(null);
+            alert2.setContentText("Content not deleted");
+            alert2.showAndWait();
         }
     }
 
