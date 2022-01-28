@@ -10,8 +10,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,6 +50,13 @@ import javafx.stage.Stage;
 import model.Dwelling;
 import model.Owner;
 import model.User;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  * FXML Controller class for OwnerWindow.fxml
@@ -347,13 +357,13 @@ public class OwnerWindowController {
             //Shows the stage
             stage.show();
             LOGGER.info("Owner/Guest-Window Open");
-        } catch (BussinessLogicException e) {
+        } catch (Exception e) {
             LOGGER.severe(e.getMessage());
             LOGGER.severe("ERROR");
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("ERROR");
             alert.setHeaderText(null);
-            alert.setContentText("Error");
+            alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
     }
@@ -533,7 +543,32 @@ public class OwnerWindowController {
      */
     @FXML
     private void handlePrintDwellings(MouseEvent event) {
-        LOGGER.info("Openning the JasperReport view to print");
+        try {
+            LOGGER.info("Beginning printing action...");
+            JasperReport report
+                    = JasperCompileManager.compileReport(getClass()
+                            .getResourceAsStream("/reports/dwellingreport.jrxml"));
+            //Data for the report: a collection of UserBean passed as a JRDataSource 
+            //implementation 
+            JRBeanCollectionDataSource dataItems
+                    = new JRBeanCollectionDataSource((Collection<Dwelling>) this.tableDwelling.getItems());
+            //Map of parameter to be passed to the report
+            Map<String, Object> parameters = new HashMap<>();
+            //Fill report with data
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
+            //Create and show the report window. The second parameter false value makes 
+            //report window not to close app.
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+            jasperViewer.setVisible(true);
+            // jasperViewer.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        } catch (JRException ex) {
+            LOGGER.severe("Error printing");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error with the server");
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
+        }
 
     }
 
