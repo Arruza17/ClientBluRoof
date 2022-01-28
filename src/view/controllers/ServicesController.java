@@ -8,6 +8,7 @@ package view.controllers;
 import enumerations.ServiceType;
 import exceptions.BusinessLogicException;
 import exceptions.FieldsEmptyException;
+import exceptions.MaxCharactersException;
 import interfaces.ServicesManager;
 import java.util.Collection;
 import java.util.HashMap;
@@ -198,7 +199,7 @@ public class ServicesController {
 
             types = FXCollections.observableArrayList();
 
-            for (ServiceType st : serviceType.values()) {
+            for (ServiceType st : ServiceType.values()) {
                 types.add(st.toString());
             }
 
@@ -335,22 +336,44 @@ public class ServicesController {
                     tbvService.getSelectionModel().select(t.getTablePosition().getRow(), tcName);
                     tbvService.edit(t.getTablePosition().getRow(), tcName);
 
-                    if (!addingService && oldName != null) {
-
-                        if (oldName.equals(t.getNewValue())) {
-                            editing = false;
-                            committing = false;
-                        } else if (!oldName.equals(t.getNewValue())) {
-
-                            committing = true;
+                    try {
+                        if (t.getNewValue().trim().isEmpty()) {
+                            //throw validation Error
+                            LOGGER.warning("The address field is empty");
+                            throw new FieldsEmptyException();
                         }
-                        handleEditModeComponents();
+                        if (t.getNewValue().trim().length() > 255) {
+                            //throw validation Error
+                            LOGGER.warning("The field has more than 255 characters");
+                            throw new MaxCharactersException();
+                        }
 
-                    } else {
-                        committing = true;
-                        handleEditModeComponents();
+                        if (!addingService && oldName != null) {
+
+                            if (oldName.equals(t.getNewValue())) {
+                                editing = false;
+                                committing = false;
+                            } else if (!oldName.equals(t.getNewValue())) {
+
+                                committing = true;
+                            }
+                            handleEditModeComponents();
+
+                        } else {
+                            committing = true;
+                            handleEditModeComponents();
+                        }
+                    } catch (FieldsEmptyException | MaxCharactersException ex) {
+                        Alert alert = new Alert(Alert.AlertType.WARNING);
+                        alert.setTitle("Error");
+                        alert.setHeaderText(ex.getMessage());
+                        alert.showAndWait();
+                        //SETS THE CONFIRM AND CANCEL BUTTONS TO NOT CLICKABLE
+                        imgCommit.setDisable(true);
+                        imgCommit.setOpacity(0.25);
+                        imgCancel.setDisable(true);
+                        imgCancel.setOpacity(0.25);
                     }
-
                 });
 
         tcName.setOnEditCancel((CellEditEvent<Service, String> t) -> {
@@ -386,21 +409,43 @@ public class ServicesController {
                             t.getTablePosition().getRow())).setAddress(t.getNewValue());
                     tbvService.getSelectionModel().select(t.getTablePosition().getRow(), tcAddress);
                     tbvService.edit(t.getTablePosition().getRow(), tcAddress);
-
-                    if (!addingService && oldAddress != null) {
-
-                        if (oldAddress.equals(t.getNewValue())) {
-
-                            editing = false;
-                            committing = false;
-                        } else {
-                            committing = true;
+                    try {
+                        if (t.getNewValue().trim().isEmpty()) {
+                            //throw validation Error
+                            LOGGER.warning("The address field is empty");
+                            throw new FieldsEmptyException();
+                        }
+                        if (t.getNewValue().trim().length() > 255) {
+                            //throw validation Error
+                            LOGGER.warning("The field has more than 255 characters");
+                            throw new MaxCharactersException();
                         }
 
-                        handleEditModeComponents();
-                    } else {
-                        committing = true;
-                        handleEditModeComponents();
+                        if (!addingService && oldName != null) {
+
+                            if (oldName.equals(t.getNewValue())) {
+                                editing = false;
+                                committing = false;
+                            } else if (!oldName.equals(t.getNewValue())) {
+
+                                committing = true;
+                            }
+                            handleEditModeComponents();
+
+                        } else {
+                            committing = true;
+                            handleEditModeComponents();
+                        }
+                    } catch (FieldsEmptyException | MaxCharactersException ex) {
+                        Alert alert = new Alert(Alert.AlertType.WARNING);
+                        alert.setTitle("Error");
+                        alert.setHeaderText(ex.getMessage());
+                        alert.showAndWait();
+                        //SETS THE CONFIRM AND CANCEL BUTTONS TO NOT CLICKABLE
+                        imgCommit.setDisable(true);
+                        imgCommit.setOpacity(0.25);
+                        imgCancel.setDisable(true);
+                        imgCancel.setOpacity(0.25);
                     }
 
                 });
@@ -595,10 +640,9 @@ public class ServicesController {
             tbvService.getItems().removeAll(services);
             tbvService.refresh();
 
-            for (Service s : services) {
-
+            services.forEach((s) -> {
                 services.remove(s);
-            }
+            });
 
             imgPrint.setDisable(true);
             imgPrint.setOpacity(0.25);
@@ -984,12 +1028,10 @@ public class ServicesController {
             tfServices.setDisable(false);
         }
 
-        if(tbvService.getItems()!=null){
-        imgDelete.setDisable(false);
-        imgDelete.setOpacity(1);
+        if (tbvService.getItems() != null) {
+            imgDelete.setDisable(false);
+            imgDelete.setOpacity(1);
         }
-        
-        
 
     }
 
