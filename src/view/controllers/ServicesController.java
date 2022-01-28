@@ -9,7 +9,10 @@ import enumerations.ServiceType;
 import exceptions.BusinessLogicException;
 import exceptions.FieldsEmptyException;
 import interfaces.ServicesManager;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +40,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Service;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  * FXML Controller class
@@ -112,6 +122,8 @@ public class ServicesController {
 
     private boolean cancelling;
 
+    private boolean addingWithNullServices;
+
     private String savedAddress;
 
     private String savedName;
@@ -125,89 +137,98 @@ public class ServicesController {
     private String oldServiceType;
 
     public void initStage(Parent root) {
-        LOGGER.info("Initializing ServiceWindow stage");
-        //Creation of a new Scene
-        Scene scene = new Scene(root);
-        /*
+        try {
+            LOGGER.info("Initializing ServiceWindow stage");
+            //Creation of a new Scene
+            Scene scene = new Scene(root);
+            /*
         //Save the route of the .css file
         String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
         //Sets the .css to the Scene
         scene.getStylesheets().add(css);
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
-         */
-        //Sets the scene to the stage
-        stage.setScene(scene);
-        //Sets the Title of the Window
-        stage.setTitle("ServiceWindow");
-        //Sets the window not resizable
-        stage.setResizable(false);
-        //Shows the stage
-        stage.show();
-        LOGGER.info("ServiceWindow Open");
+             */
+            //Sets the scene to the stage
+            stage.setScene(scene);
+            //Sets the Title of the Window
+            stage.setTitle("ServiceWindow");
+            //Sets the window not resizable
+            stage.setResizable(false);
+            //Shows the stage
+            stage.show();
+            LOGGER.info("ServiceWindow Open");
 
-        //Sets the confirm & cancel imgs to not clickable
-        imgCommit.setDisable(true);
-        imgCommit.setOpacity(0.25);
-        imgCancel.setDisable(true);
-        imgCancel.setOpacity(0.25);
-        //Sets the the delete imgs to not clickable
-        imgDelete.setDisable(true);
-        imgDelete.setOpacity(0.25);
+            //Sets the confirm & cancel imgs to not clickable
+            imgCommit.setDisable(true);
+            imgCommit.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
+            //Sets the the delete imgs to not clickable
+            imgDelete.setDisable(true);
+            imgDelete.setOpacity(0.25);
 
-        /*
+            /*
         if (!spinnerService.isDisabled()) {
             spinnerService.setValueFactory(
                     new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
             spinnerService.setEditable(true);
         }
-         */
-        //Add the combobox values
-        ObservableList<String> optionsForCombo;
-        optionsForCombo = FXCollections.observableArrayList(
-                SELECT_ALL_SERVICES,
-                SELECT_BY_ADDRESS,
-                SELECT_BY_NAME,
-                SELECT_BY_TYPE
-        );
-        cbService.setItems(optionsForCombo);
+             */
+            //Add the combobox values
+            ObservableList<String> optionsForCombo;
+            optionsForCombo = FXCollections.observableArrayList(
+                    SELECT_ALL_SERVICES,
+                    SELECT_BY_ADDRESS,
+                    SELECT_BY_NAME,
+                    SELECT_BY_TYPE
+            );
+            cbService.setItems(optionsForCombo);
 
-        tbvService.getSelectionModel().selectedItemProperty()
-                .addListener(this::handleTableSelectionChanged);
+            tbvService.getSelectionModel().selectedItemProperty()
+                    .addListener(this::handleTableSelectionChanged);
 
-        tcId.setCellValueFactory(
-                new PropertyValueFactory<>("id"));
-        tcAddress.setCellValueFactory(
-                new PropertyValueFactory<>("address"));
-        tcName.setCellValueFactory(
-                new PropertyValueFactory<>("name"));
+            tcId.setCellValueFactory(
+                    new PropertyValueFactory<>("id"));
+            tcAddress.setCellValueFactory(
+                    new PropertyValueFactory<>("address"));
+            tcName.setCellValueFactory(
+                    new PropertyValueFactory<>("name"));
 
-        type = new ComboBox();
+            type = new ComboBox();
 
-        types = FXCollections.observableArrayList();
+            types = FXCollections.observableArrayList();
 
-        for (ServiceType st : serviceType.values()) {
-            types.add(st.toString());
+            for (ServiceType st : serviceType.values()) {
+                types.add(st.toString());
+            }
+
+            type.setItems((ObservableList) types);
+
+            tcType.setCellValueFactory(
+                    new PropertyValueFactory<>("type"));
+
+            tbvService.setEditable(true);
+            tbvService.setMinWidth(500);
+
+            //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
+            cbService.getSelectionModel().selectFirst();
+
+            //Making table columns editable. 
+            setEditableColumns();
+
+            //Loads all the services in the table
+            services = loadAllServices();
+
+            stage.show();
+        } catch (Exception e) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Attention");
+            alert.setHeaderText("Error");
+            alert.setContentText("database error.");
+            alert.showAndWait();
+
+            stage.close();
         }
-
-        type.setItems((ObservableList) types);
-
-        tcType.setCellValueFactory(
-                new PropertyValueFactory<>("type"));
-
-        tbvService.setEditable(true);
-        tbvService.setMinWidth(500);
-
-        //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
-        cbService.getSelectionModel().selectFirst();
-
-        //Making table columns editable. 
-        setEditableColumns();
-
-        //Loads all the services in the table
-        services = loadAllServices();
-
-        stage.show();
-
     }
 
     private ObservableList loadAllServices() {
@@ -267,6 +288,10 @@ public class ServicesController {
     private void handleServiceCreation(MouseEvent event) {
 
         LOGGER.info("Adding new empty service to the table");
+
+        if (addingWithNullServices) {
+            updateServicesTable();
+        }
 
         Service s = new Service();
         s.setId(Long.MIN_VALUE);
@@ -516,16 +541,18 @@ public class ServicesController {
     private ObservableList<Service> loadServicesByAddress() {
 
         ObservableList<Service> servicesTableBean = null;
+        addingWithNullServices = false;
 
         try {
 
-            if (tfServices.getText() != null || committing) {
+            if (!tfServices.getText().equals("") || committing) {
 
                 List<Service> allServices = serviceManager.findServiceByAddress(savedAddress);
 
                 if (allServices.size() < 1) {
                     imgPrint.setDisable(true);
                     imgPrint.setOpacity(0.25);
+                    addingWithNullServices = true;
 
                 } else {
                     imgPrint.setDisable(false);
@@ -536,15 +563,11 @@ public class ServicesController {
                 }
             } else {
 
+                addingWithNullServices = true;
+
                 throw new FieldsEmptyException();
             }
 
-        } catch (BusinessLogicException e) {
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Attention");
-            alert.setHeaderText("Error");
-            alert.setContentText("The search field is empty");
-            alert.showAndWait();
         } catch (FieldsEmptyException ex) {
             Logger.getLogger(ServicesController.class.getName()).log(Level.SEVERE, null, ex);
             Alert alert = new Alert(AlertType.INFORMATION);
@@ -553,6 +576,12 @@ public class ServicesController {
             alert.setContentText("The search field is empty");
             alert.showAndWait();
 
+        } catch (BusinessLogicException e) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Attention");
+            alert.setHeaderText("Error");
+            alert.setContentText("database error.");
+            alert.showAndWait();
         }
 
         tbvService.refresh();
@@ -583,9 +612,10 @@ public class ServicesController {
     private ObservableList<Service> loadServicesByName() {
 
         ObservableList<Service> servicesTableBean = null;
+        addingWithNullServices = false;
         try {
 
-            if (tfServices.getText() != null || committing) {
+            if (!tfServices.getText().equals("") || committing) {
 
                 List<Service> allServices = serviceManager.findServiceByName(savedName);
                 servicesTableBean = FXCollections.observableArrayList(allServices);
@@ -594,6 +624,8 @@ public class ServicesController {
                 if (allServices.size() < 1) {
                     imgPrint.setDisable(true);
                     imgPrint.setOpacity(0.25);
+
+                    addingWithNullServices = true;
                 } else {
                     imgPrint.setDisable(false);
                     imgPrint.setOpacity(1);
@@ -602,8 +634,9 @@ public class ServicesController {
 
             } else {
 
-                throw new FieldsEmptyException();
+                addingWithNullServices = true;
 
+                throw new FieldsEmptyException();
             }
 
         } catch (BusinessLogicException e) {
@@ -665,6 +698,7 @@ public class ServicesController {
     private ObservableList<Service> loadServicesByType() {
 
         ObservableList<Service> servicesTableBean = null;
+        addingWithNullServices = false;
         try {
 
             if (cbServiceType.getValue() != null || committing) {
@@ -674,6 +708,8 @@ public class ServicesController {
                 if (allServices.size() < 1) {
                     imgPrint.setDisable(true);
                     imgPrint.setOpacity(0.25);
+
+                    addingWithNullServices = true;
 
                 } else {
                     servicesTableBean = FXCollections.observableArrayList(allServices);
@@ -685,6 +721,8 @@ public class ServicesController {
 
                 }
             } else {
+
+                addingWithNullServices = true;
 
                 throw new FieldsEmptyException();
 
@@ -747,56 +785,53 @@ public class ServicesController {
 
         //Updates the table data depending on the query selected on the cbService comboBox.
         //updates for edit,delete and queries
-        if (cancelling || committingDB || deleting || searching) {
+        if (addingService || addingWithNullServices) {
 
-            if (addingService) {
+            cbService.setDisable(false);
+            cbService.getSelectionModel().select(0);
+            clearServicesTable();
+            services = loadAllServices();
 
-                cbService.setDisable(false);
-                cbService.getSelectionModel().select(0);
-                clearServicesTable();
-                services = loadAllServices();
+            addingService = false;
+            addingWithNullServices = false;
+            committingDB = false;
 
-                addingService = false;
-                committingDB = false;
+        } else {
 
-            } else {
+            switch (cbService.getValue()) {
+                case SELECT_ALL_SERVICES:
+                    clearServicesTable();
+                    services = loadAllServices();
 
-                switch (cbService.getValue()) {
-                    case SELECT_ALL_SERVICES:
-                        clearServicesTable();
-                        services = loadAllServices();
+                    break;
+                case SELECT_BY_ADDRESS:
 
-                        break;
-                    case SELECT_BY_ADDRESS:
+                    clearServicesTable();
+                    services = loadServicesByAddress();
 
-                        clearServicesTable();
-                        services = loadServicesByAddress();
+                    break;
+                case SELECT_BY_NAME:
+                    clearServicesTable();
+                    services = loadServicesByName();
 
-                        break;
-                    case SELECT_BY_NAME:
-                        clearServicesTable();
-                        services = loadServicesByName();
+                    break;
 
-                        break;
+                case SELECT_BY_TYPE:
 
-                    case SELECT_BY_TYPE:
+                    clearServicesTable();
+                    services = loadServicesByType();
 
-                        clearServicesTable();
-                        services = loadServicesByType();
-
-                        break;
-                }
-                cancelling = false;
-                deleting = false;
-                committingDB = false;
-                searching = false;
-                //updates when a row is added
+                    break;
             }
-
+            cancelling = false;
+            deleting = false;
             committingDB = false;
             searching = false;
+            //updates when a row is added
         }
 
+        committingDB = false;
+        searching = false;
     }
 
     private void handleEditModeComponents() {
@@ -910,22 +945,80 @@ public class ServicesController {
     }
 
     private void enableDefaultComponents() {
-        imgCommit.setDisable(true);
-        imgCommit.setOpacity(0.25);
-        imgCancel.setDisable(true);
-        imgCancel.setOpacity(0.25);
 
-        imgDelete.setDisable(true);
-        imgDelete.setOpacity(0.25);
-        imgAdd.setDisable(false);
-        imgAdd.setOpacity(1);
+        if (cbService.getValue().equals(SELECT_ALL_SERVICES)) {
 
-        btnSearchService.setDisable(false);
-        btnBack.setDisable(false);
-        cbService.setDisable(false);
-        cbServiceType.setDisable(false);
+            imgCommit.setDisable(true);
+            imgCommit.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
 
-        tfServices.setDisable(false);
+            imgDelete.setDisable(true);
+            imgDelete.setOpacity(0.25);
+            imgAdd.setDisable(false);
+            imgAdd.setOpacity(1);
+
+            btnSearchService.setDisable(false);
+            btnBack.setDisable(false);
+            cbService.setDisable(false);
+            cbServiceType.setDisable(false);
+
+            tfServices.setDisable(true);
+
+        } else {
+            imgCommit.setDisable(true);
+            imgCommit.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
+
+            imgDelete.setDisable(true);
+            imgDelete.setOpacity(0.25);
+            imgAdd.setDisable(false);
+            imgAdd.setOpacity(1);
+
+            btnSearchService.setDisable(false);
+            btnBack.setDisable(false);
+            cbService.setDisable(false);
+            cbServiceType.setDisable(false);
+
+            tfServices.setDisable(false);
+        }
+
+        if(tbvService.getItems()!=null){
+        imgDelete.setDisable(false);
+        imgDelete.setOpacity(1);
+        }
+        
+        
+
     }
 
+    @FXML
+    private void handlePrintReport(MouseEvent event) {
+        try {
+            LOGGER.info("Beginning printing action...");
+            JasperReport report
+                    = JasperCompileManager.compileReport(getClass()
+                            .getResourceAsStream("/reports/AdminServiceReport.jrxml"));
+            //Data for the report: a collection of User passed as a JRDataSource implementation 
+            JRBeanCollectionDataSource dataItems
+                    = new JRBeanCollectionDataSource((Collection<Service>) this.tbvService.getItems());
+            //Get the name of the admin who printed the report as a parameter
+            Map<String, Object> parameters = new HashMap<>();
+            //Fill report with the data of the table     
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
+            //Create and show the report window. The second parameter false value makes 
+            //report window not to close app.
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+            jasperViewer.setVisible(true);
+            // jasperViewer.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        } catch (JRException ex) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setHeaderText("Error printing");
+            alert.setContentText("There was an error printing the information, try again later");
+            LOGGER.log(Level.SEVERE,
+                    "Error printing report at printReport(): {0}",
+                    ex.getMessage());
+        }
+    }
 }

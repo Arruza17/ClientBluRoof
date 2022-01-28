@@ -102,7 +102,7 @@
                   <TableColumn fx:id="tcType" prefWidth="120.0" text="Type" />
               </columns>
             </TableView>
-            <ImageView fx:id="imgPrint" fitHeight="64.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imgPrint" fitHeight="64.0" fitWidth="65.0" onMousePressed="#handlePrintReport" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../resources/img/fax.png" />
                </image>
