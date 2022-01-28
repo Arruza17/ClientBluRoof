@@ -29,14 +29,16 @@ import javax.naming.OperationNotSupportedException;
 import model.User;
 
 /**
- * FXML Controller class
+ * Controller of the Admin menu
  *
- * @author YERAY
+ * @author Yeray Sampedro
  */
 public class AdminMenuController extends GenericMenuController {
 
+    //Logger of the classs
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
 
+    //Each of the windows
     @FXML
     private HBox menuAdminCrud;
     @FXML
@@ -49,7 +51,11 @@ public class AdminMenuController extends GenericMenuController {
     private Label menuExit;
     @FXML
     private HBox menuProfile;
-
+    
+    /**
+     * Used to generate the AdminCrud window
+     * @param event 
+     */
     @FXML
     private void handleAdminCrud(MouseEvent event) {
         try {
@@ -68,14 +74,26 @@ public class AdminMenuController extends GenericMenuController {
         }
     }
 
+      /**
+     * Used to generate the Service window
+     * @param event 
+     */
     @FXML
     private void handleServiceCrud(MouseEvent event) {
     }
 
+      /**
+     * Used to generate the Facilities window
+     * @param event 
+     */
     @FXML
     private void handleFacilitiesCrud(MouseEvent event) {
     }
 
+    /**
+     * Usaed to sign out 
+     * @param event 
+     */
     @FXML
     private void handleSignOut(MouseEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -93,6 +111,10 @@ public class AdminMenuController extends GenericMenuController {
         }
     }
 
+    /**
+     * Used to exit the application
+     * @param event 
+     */
     @FXML
     private void handleExit(MouseEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -105,6 +127,10 @@ public class AdminMenuController extends GenericMenuController {
         }
     }
 
+    /**
+     * Used to handle the profile window
+     * @param event 
+     */
     @FXML
     private void handleProfile(MouseEvent event) {
         try {

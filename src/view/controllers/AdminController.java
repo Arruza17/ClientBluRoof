@@ -63,15 +63,19 @@ import resources.DateEditingCell;
 import static view.controllers.SignUpController.VALID_EMAIL_ADDRESS;
 
 /**
- * FXML Controller class
+ * FXML Controller for AdminTable
  *
  * @author Yeray Sampedro
  */
 public class AdminController {
 
+    //Logger of the class
     private static final Logger LOGGER = Logger.getLogger(AdminController.class.getName());
 
+    //Implementation of the userManager
     private UserManager userManager;
+
+    //The user that opened the window
     private User user;
 
     @FXML
@@ -110,12 +114,15 @@ public class AdminController {
      */
     public void initStage() {
         LOGGER.info("Loading admin controller view");
+        //Setting all the value factories
         colFullName.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         colLogin.setCellValueFactory(new PropertyValueFactory<>("login"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
         colPhone.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
+
         try {
+            //Reading all the information of the admins
             admin = FXCollections.observableArrayList(userManager.findAllAdmins());
             tblAdmin.setItems(admin);
         } catch (BusinessLogicException ex) {
@@ -126,7 +133,7 @@ public class AdminController {
             LOGGER.log(Level.WARNING, "{0} exception thrown at AdminController initStage", ex.getClass().getSimpleName());
 
         }
-
+        //Method used to control if a table row has been or not selected
         tblAdmin.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 imgDel.setDisable(false);
@@ -136,7 +143,9 @@ public class AdminController {
                 imgDel.setOpacity(0.25);
             }
         });
+        //Setting the table editable
         tblAdmin.setEditable(true);
+        //Setting all the button properties
         imgCancel.setDisable(true);
         imgCancel.setOpacity(0.25);
         imgCommit.setDisable(true);
@@ -152,6 +161,7 @@ public class AdminController {
             @Override
             public void handle(CellEditEvent<User, String> t) {
                 try {
+                    //Catch the exceptions in case the user imput is not valid
                     if (t.getNewValue().trim().isEmpty()) {
                         throw new FieldsEmptyException();
                     }
@@ -161,8 +171,10 @@ public class AdminController {
                     if (t.getNewValue().trim().length() > 255) {
                         throw new MaxCharactersException();
                     }
+                    //Update the data of the user
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setFullName(t.getNewValue());
+                    //Move row
                     tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colLogin);
                     tblAdmin.edit(t.getTablePosition().getRow(), colLogin);
                     imgCommit.setDisable(false);
@@ -174,7 +186,6 @@ public class AdminController {
                     alert.setTitle("Wrong format");
                     alert.setContentText(e.getMessage());
                     alert.show();
-
                     tblAdmin.layout();
                     tblAdmin.requestFocus();
                     tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colFullName);
@@ -186,31 +197,28 @@ public class AdminController {
                     alert.setTitle("Field empty");
                     alert.setContentText(e.getMessage());
                     alert.show();
-
                     tblAdmin.layout();
                     tblAdmin.requestFocus();
                     tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colFullName);
                     tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colFullName);
                     tblAdmin.edit(t.getTablePosition().getRow(), colFullName);
-
                 } catch (MaxCharactersException e) {
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Too many characters");
                     alert.setContentText(e.getMessage());
                     alert.show();
-
                     tblAdmin.layout();
                     tblAdmin.requestFocus();
                     tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colFullName);
                     tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colFullName);
                     tblAdmin.edit(t.getTablePosition().getRow(), colFullName);
-
                 } finally {
                     tblAdmin.refresh();
                 }
             }
         });
 
+        //Disable the commit and cancel buttons if the user cancels
         colFullName.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
             imgCommit.setDisable(true);
@@ -226,6 +234,7 @@ public class AdminController {
         colLogin.setCellFactory(TextFieldTableCell.<User>forTableColumn());
         colLogin.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
+                    //Catch the exceptions in case the user imput is not valid
                     try {
                         if (t.getNewValue().trim().isEmpty()) {
                             throw new FieldsEmptyException();
@@ -234,9 +243,10 @@ public class AdminController {
                         if (t.getNewValue().trim().length() > 255) {
                             throw new MaxCharactersException();
                         }
-
+                        //Update the data of the user
                         ((User) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setLogin(t.getNewValue());
+                        //Move row
                         tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colEmail);
                         tblAdmin.edit(t.getTablePosition().getRow(), colEmail);
                         imgCommit.setDisable(false);
@@ -264,6 +274,7 @@ public class AdminController {
                     }
                 });
 
+        //Disable the commit and cancel buttons if the user cancels
         colLogin.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
             imgCommit.setDisable(true);
@@ -282,6 +293,7 @@ public class AdminController {
                 try {
                     Pattern valid_email = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
                     Matcher matcher = valid_email.matcher(t.getNewValue().trim());
+                    //Disable the commit and cancel buttons if the user cancels
                     if (!matcher.find()) {
                         throw new EmailFormatException();
                     }
@@ -291,9 +303,11 @@ public class AdminController {
                     if (t.getNewValue().trim().length() > 255) {
                         throw new MaxCharactersException();
                     }
+                    //Update the data of the user
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setEmail(t.getNewValue());
                     tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colBirthDate);
+                    //Move row
                     tblAdmin.edit(t.getTablePosition().getRow(), colBirthDate);
                     imgCommit.setDisable(false);
                     imgCommit.setOpacity(1);
@@ -330,6 +344,7 @@ public class AdminController {
             }
         });
 
+        //Disable the commit and cancel buttons if the user cancels
         colEmail.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
             imgCommit.setDisable(true);
@@ -340,12 +355,12 @@ public class AdminController {
 
         //Make phone column editable
         colPhone.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPhoneNumber()));
-
         colPhone.setEditable(true);
         colPhone.setCellFactory(TextFieldTableCell.<User>forTableColumn());
         colPhone.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
                     try {
+                        //Catch the exceptions in case the user imput is not valid
                         if (t.getNewValue().trim().isEmpty()) {
                             throw new FieldsEmptyException();
                         }
@@ -357,9 +372,10 @@ public class AdminController {
                         if (!matcher.find()) {
                             throw new PhoneFormatException();
                         }
-
+                        //Update the data of the user
                         ((User) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setPhoneNumber(t.getNewValue());
+                        //Move row
                         tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
                         tblAdmin.edit(t.getTablePosition().getRow(), colPhone);
                         imgCommit.setDisable(false);
@@ -387,6 +403,7 @@ public class AdminController {
                     }
                 });
 
+        //Disable the commit and cancel buttons if the user cancels
         colPhone.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
             imgCommit.setDisable(true);
@@ -400,10 +417,12 @@ public class AdminController {
 
         colBirthDate.setEditable(true);
 
+        //Create the datePicker cell
         Callback<TableColumn<User, Date>, TableCell<User, Date>> dateCellFactory
                 = (TableColumn<User, Date> param) -> new DateEditingCell();;
         colBirthDate.setCellFactory(dateCellFactory);
 
+        //Enable the buttons and update the data of the user when commiting
         colBirthDate.setOnEditCommit(
                 (CellEditEvent<User, Date> t) -> {
                     ((User) t.getTableView().getItems().get(
@@ -416,6 +435,7 @@ public class AdminController {
                     tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colPhone);
                 });
 
+        //Disable the commit and cancel buttons if the user cancels
         colBirthDate.setOnEditCancel((CellEditEvent<User, Date> t) -> {
             tblAdmin.refresh();
             imgCommit.setDisable(true);
@@ -430,15 +450,24 @@ public class AdminController {
         this.userManager = userManager;
     }
 
+    /**
+     * Handles the adition of new rows to the table
+     *
+     * @param event
+     */
     @FXML
     private void handleTableAdd(MouseEvent event) {
         LOGGER.info("Adding new empty admin to the table");
         User newUser = new User();
+        //Setting the id to the lowest long value to know it is a creation
         newUser.setId(Long.MIN_VALUE);
         admin.add(newUser);
+        //Selecting that row
         tblAdmin.getSelectionModel().select(admin.size() - 1);
         tblAdmin.layout();
+        //Focusing the column
         tblAdmin.getFocusModel().focus(admin.size() - 1, colFullName);
+        //Opening the first column in edit mode
         tblAdmin.edit(admin.size() - 1, colFullName);
         imgCommit.setDisable(false);
         imgCommit.setOpacity(1);
@@ -450,23 +479,37 @@ public class AdminController {
         imgDel.setOpacity(0.25);
     }
 
+    /**
+     * Used to handle the deletion of rows
+     *
+     * @param event
+     */
     @FXML
     private void handleTableDelete(MouseEvent event) {
         LOGGER.info("Deleteing information about user");
+        //Getting the information of the user to delete
         User user = tblAdmin.getSelectionModel().getSelectedItem();
+        //Getting the position of the user to delete
         int pos = tblAdmin.getSelectionModel().getSelectedIndex();
+        //Show an alert to confirm
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText("Delete");
         alert.setContentText("You are about to delete the information about " + user.getFullName() + ". Are you sure?");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != ButtonType.OK) {
             LOGGER.info("User deletion cancelled");
+            Alert allert = new Alert(AlertType.INFORMATION);
+            allert.setTitle("Cancelled");
+            allert.setContentText("User deletion cancelled");
+            allert.show();
         } else {
             LOGGER.info("User deleted");
             try {
+                //If it was not an addition of row
                 if (!(pos == admin.size() - 1 && user.getId().equals(Long.MIN_VALUE))) {
                     userManager.deleteUser(String.valueOf(user.getId()));
                 }
+                //Either case, we update the table
                 admin.remove(user);
                 tblAdmin.refresh();
             } catch (BusinessLogicException ex) {
@@ -477,51 +520,58 @@ public class AdminController {
                 excAlert.show();
             }
         }
+
         imgDel.setDisable(true);
         imgDel.setOpacity(0.25);
         imgAdd.setDisable(false);
         imgAdd.setOpacity(1);
     }
 
+    /**
+     * Method used to commit the changes of the table
+     *
+     * @param event
+     */
     @FXML
     private void handleTableCommit(MouseEvent event) {
         User user = tblAdmin.getSelectionModel().getSelectedItem();
         int pos = tblAdmin.getSelectionModel().getSelectedIndex();
         try {
-            if (user.getLogin().isEmpty()
-                    || user.getBirthDate().equals(null)
-                    || user.getEmail().isEmpty()
-                    || user.getFullName().isEmpty()
-                    || user.getPhoneNumber().isEmpty()) {
+            //Check if any of the data inputted is empty
+            if (user.getLogin().isEmpty() || user.getBirthDate().equals(null)
+                    || user.getEmail().isEmpty() || user.getFullName().isEmpty() || user.getPhoneNumber().isEmpty()) {
                 throw new FieldsEmptyException();
-            } else {
-                if (pos == admin.size() - 1 && user.getId().equals(Long.MIN_VALUE)) {
-                    user.setPrivilege(UserPrivilege.ADMIN.name());
-                    user.setStatus(UserStatus.ENABLED.name());
-                    user.setBirthDate(new Date());
-
-                    userManager.createUser(user);
-                    userManager.resetPassword(user.getLogin());
-                    tblAdmin.refresh();
-                    LOGGER.info("Creation of new admin");
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText("User updated");
-                    alert.setContentText("User information successfully updated!");
-                    alert.show();
-                    userManager.updateUser(user);
-                    tblAdmin.refresh();
-                    LOGGER.info("Update admin");
-                }
-                imgCommit.setDisable(true);
-                imgCommit.setOpacity(0.25);
-                imgCancel.setDisable(true);
-                imgCancel.setOpacity(0.25);
-                imgAdd.setDisable(false);
-                imgAdd.setOpacity(1);
-                imgDel.setDisable(true);
-                imgDel.setOpacity(0.25);
             }
+            //Check if the position its the last (Addition)
+            if (pos == admin.size() - 1 && user.getId().equals(Long.MIN_VALUE)) {
+                //Setting the values that are compulsery
+                user.setPrivilege(UserPrivilege.ADMIN.name());
+                user.setStatus(UserStatus.ENABLED.name());
+                user.setLastPasswordChange(new Date());
+
+                userManager.createUser(user);
+                //Reset the password so the admins receive a unique pass
+                userManager.resetPassword(user.getLogin());
+                tblAdmin.refresh();
+                LOGGER.info("Creation of new admin");
+            } else {
+                userManager.updateUser(user);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("User updated");
+                alert.setContentText("User information successfully updated!");
+                alert.show();
+                tblAdmin.refresh();
+                LOGGER.info("Update admin");
+            }
+            imgCommit.setDisable(true);
+            imgCommit.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
+            imgAdd.setDisable(false);
+            imgAdd.setOpacity(1);
+            imgDel.setDisable(true);
+            imgDel.setOpacity(0.25);
+
         } catch (BusinessLogicException ex) {
             Alert excAlert = new Alert(AlertType.INFORMATION);
             excAlert.setTitle("Error");
@@ -538,15 +588,20 @@ public class AdminController {
         }
     }
 
+    /**
+     * Method used to handle the cancel action
+     * @param event 
+     */
     @FXML
     private void handleTableCancel(MouseEvent event) {
         int pos = tblAdmin.getSelectionModel().getSelectedIndex();
+        //Alert to ask if they want to cancel
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText("Cancel");
         alert.setContentText("You are about to stop the edition\nAre you sure?");
         Optional<ButtonType> result = alert.showAndWait();
-        //try {
         if (result.get() == ButtonType.OK) {
+            //Remove the data if called an addition
             if (pos == admin.size() - 1 && admin.get(pos).getId() == Long.MIN_VALUE) {
                 LOGGER.info("Cancel creation");
                 admin.remove(admin.size() - 1);
@@ -567,14 +622,21 @@ public class AdminController {
         }
     }
 
+    /**
+     * Method used to search admins that contain words in their login
+     * @param event 
+     */
     @FXML
     private void searchByLogin(ActionEvent event) {
         try {
+            //Clear the data of the admins in the table
             admin.clear();
             String text = tfSearch.getText().trim();
             if (text.isEmpty()) {
+                //Search for all the admins if no text is imput
                 admin = FXCollections.observableArrayList(userManager.findAllAdmins());
             } else {
+                //Search for the admins that contain the text
                 admin = FXCollections.observableArrayList(userManager.findAllAdminsByLogin("%" + text + "%"));
             }
             imgCommit.setDisable(true);
@@ -617,7 +679,7 @@ public class AdminController {
             //report window not to close app.
             JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
             jasperViewer.setVisible(true);
-            // jasperViewer.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+
         } catch (JRException ex) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setHeaderText("Error printing");

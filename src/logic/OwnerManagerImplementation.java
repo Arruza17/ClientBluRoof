@@ -15,8 +15,8 @@ import model.Owner;
 import restful.OwnerRestfulClient;
 
 /**
- *
- * @author YERAY
+ * Implementation of the owner manager for a restful client
+ * @author Yeray Sampedro
  */
 public class OwnerManagerImplementation implements OwnerManager {
 
@@ -27,6 +27,11 @@ public class OwnerManagerImplementation implements OwnerManager {
         webClient = new OwnerRestfulClient();
     }
 
+        /**
+     * Method used to register a owner
+     * @param owner the owner to register
+     * @throws BusinessLogicException 
+     */
     @Override
     public void register(Owner owner) throws BusinessLogicException {
         try {
@@ -41,6 +46,12 @@ public class OwnerManagerImplementation implements OwnerManager {
         }
     }
 
+        /**
+     * Method used to find a owner by id
+     * @param id the owner to find
+     * @return the owner with that id
+     * @throws BusinessLogicException 
+     */
     @Override
     public Owner findById(String id) throws BusinessLogicException {
         Owner owner = null;

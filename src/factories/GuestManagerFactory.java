@@ -11,12 +11,18 @@ import logic.GuestManagerImplementation;
 
 /**
  *
- * @author YERAY
+ * @author Yeray Sampedro
  */
 public class GuestManagerFactory {
 
     public static final String REST_WEB_CLIENT_TYPE = "REST_WEB_CLIENT";
 
+    /**
+     * Method that returns an implementation of GuestManager
+     * @param type the type of instance
+     * @return  GuestManager the implementation 
+     * @throws OperationNotSupportedException 
+     */
     public static GuestManager createGuestManager(String type)
             throws OperationNotSupportedException {
         //The object to be returned.

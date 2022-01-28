@@ -12,11 +12,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
 /**
- *
- * @author YERAY
+ * Factory used to generate the menus
+ * @author Yeray Sampedro
  */
 public class MenuFactory {
 
+    /**
+     * Method used to get the menu depending on the type of user
+     * @param privilege UserPrivilege item refering to the type of user
+     * @return fxmlloader the menu
+     * @throws IOException 
+     */
     public FXMLLoader getMenu(String privilege) throws IOException {
         FXMLLoader fxmlLoader;
         switch (privilege) {

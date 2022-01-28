@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view.controllers;
 
 import exceptions.BusinessLogicException;
@@ -19,21 +14,22 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
 import javax.naming.OperationNotSupportedException;
 import model.User;
 
 /**
- * FXML Controller class
+ * Password change fxml handler
  *
  * @author Yeray Sampedro
  */
 public class ChangePasswordController {
 
+    //Logger of the class
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
 
+    //The user to change tha password from
     private User user;
 
     private Stage stage;
@@ -46,6 +42,11 @@ public class ChangePasswordController {
     @FXML
     private Button btnUpdate;
 
+    /**
+     * Initializer of the stage
+     *
+     * @param root
+     */
     public void initStage(Parent root) {
         LOGGER.info("Initializing ChangePassword stage.");
         //Creation of a new Scene
@@ -60,9 +61,15 @@ public class ChangePasswordController {
         this.stage = stage;
     }
 
+    /**
+     * Method used to handle the password change
+     *
+     * @param event
+     */
     @FXML
     private void handlePasswordChange(ActionEvent event) {
         try {
+            //Control if any of the fields are empty
             if (tfCurPas.getText().trim().isEmpty() || tfNewPass.getText().trim().isEmpty() || tfRptNewPass.getText().trim().isEmpty()) {
                 throw new FieldsEmptyException();
             }
@@ -80,8 +87,9 @@ public class ChangePasswordController {
             }
 
             UserManager um = UserManagerFactory.createUsersManager(UserManagerFactory.REST_WEB_CLIENT_TYPE);
-
+            //Login to check if the password is correct
             user = um.login(user.getLogin(), tfCurPas.getText().trim());
+            //Update the pasword
             um.changePassword(user.getLogin(), tfRptNewPass.getText().trim());
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("Password successfully changed");

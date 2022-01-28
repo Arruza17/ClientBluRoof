@@ -35,9 +35,9 @@ import javafx.stage.Stage;
 import model.User;
 
 /**
- * FXML Controller class
+ * 
  *
- * @author YERAY
+ * @author Yeray Sampedro
  */
 public class ProfileController {
 
@@ -121,6 +121,10 @@ public class ProfileController {
         }
     }
 
+    /**
+     * Method used to handle the password change
+     * @param event 
+     */
     @FXML
     private void handlePasswordChange(ActionEvent event) {
         try {

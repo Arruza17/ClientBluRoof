@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package restful;
 
 import java.util.ResourceBundle;
@@ -69,7 +64,7 @@ public class UserRestfulClient {
     public void create(Object requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML)
                 .post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), new GenericType<User>() {
-            });
+                });
 
     }
 
@@ -87,7 +82,9 @@ public class UserRestfulClient {
 
     public <T> T logInUser(GenericType<T> responseType, String login, String password) throws ClientErrorException {
         WebTarget resource = webTarget;
+        //Make request
         resource = resource.path(java.text.MessageFormat.format("login/{0}/password/{1}", new Object[]{login, password}));
+        //Return data from the response
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 

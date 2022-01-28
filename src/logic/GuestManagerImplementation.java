@@ -16,8 +16,8 @@ import model.Owner;
 import restful.GuestRestfulClient;
 
 /**
- *
- * @author YERAY
+ * Implementation of the guest manager for a restful client
+ * @author Yeray Sampedro
  */
 public class GuestManagerImplementation implements GuestManager {
 
@@ -28,6 +28,11 @@ public class GuestManagerImplementation implements GuestManager {
         webClient = new GuestRestfulClient();
     }
 
+    /**
+     * Method used to register a guest
+     * @param guest the guest to register
+     * @throws BusinessLogicException 
+     */
     @Override
     public void register(Guest guest) throws BusinessLogicException {
         try {
@@ -42,6 +47,12 @@ public class GuestManagerImplementation implements GuestManager {
         }
     }
 
+    /**
+     * Method used to find a guest by id
+     * @param id the guest to find
+     * @return the guest with that id
+     * @throws BusinessLogicException 
+     */
     @Override
     public Guest findById(String id) throws BusinessLogicException {
         Guest guest = null;

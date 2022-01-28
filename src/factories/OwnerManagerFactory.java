@@ -11,8 +11,11 @@ import javax.naming.OperationNotSupportedException;
 import logic.OwnerManagerImplementation;
 
 /**
+ * Method that returns an implementation of UserManager
  *
- * @author YERAY
+ * @param type the type of instance
+ * @return UserManager the implementation
+ * @throws OperationNotSupportedException
  */
 public class OwnerManagerFactory {
 

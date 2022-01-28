@@ -117,8 +117,9 @@ public class SignInController {
      */
     @FXML
     public void signIn(ActionEvent action) {
-          User user;
+        User user;
         try {
+            checkEmptyFields();
             user = um.login(tfUser.getText(), tfPassword.getText().trim());
             if (user != null) {
                 Parent root;
@@ -140,12 +141,19 @@ public class SignInController {
             alert.setContentText("There was a problem creating the window, try again later");
             alert.showAndWait();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
-        } catch (BusinessLogicException ex) {
+        } catch (FieldsEmptyException | MaxCharactersException ex) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("There was an issue with the fields");
+            alert.setContentText(ex.getMessage());
+            alert.show();
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
+
+        } catch (Exception ex) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("Could not log in");
             alert.setContentText(ex.getMessage());
             alert.show();
-            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");      
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
         }
     }
 

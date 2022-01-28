@@ -17,8 +17,8 @@ import model.User;
 import restful.UserRestfulClient;
 
 /**
- *
- * @author YERAY
+ * Implementation of the user manager for a restful client
+ * @author Yeray Sampedro
  */
 public class UserManagerImplementation implements UserManager {
 
@@ -29,6 +29,11 @@ public class UserManagerImplementation implements UserManager {
         webClient = new UserRestfulClient();
     }
 
+    /**
+     * Method used to find all the users of the database
+     * @return List with all the users
+     * @throws BusinessLogicException 
+     */
     @Override
     public List<User> findAllUsers() throws BusinessLogicException {
         List<User> users = null;
@@ -46,6 +51,12 @@ public class UserManagerImplementation implements UserManager {
         return users;
     }
 
+    
+    /**
+     * Method used to find all the admins containing a string in their name
+     * @return List with all the admins
+     * @throws BusinessLogicException 
+     */
     @Override
     public List<User> findAllAdminsByLogin(String login) throws BusinessLogicException {
         List<User> users = null;
@@ -63,6 +74,12 @@ public class UserManagerImplementation implements UserManager {
         return users;
     }
 
+    
+    /**
+     * Method used to find all the admins of the database
+     * @return List with all the admins
+     * @throws BusinessLogicException 
+     */
     @Override
     public List<User> findAllAdmins() throws BusinessLogicException {
         List<User> admins = null;
@@ -85,7 +102,7 @@ public class UserManagerImplementation implements UserManager {
      * This method updates data for an existing User data for user. This is done
      * by sending a PUT request to a RESTful web service.
      *
-     * @param user The UserBean object to be updated.
+     * @param user The User object to be updated.
      * @throws BusinessLogicException If there is any error while processing.
      */
     @Override
@@ -102,10 +119,10 @@ public class UserManagerImplementation implements UserManager {
     }
 
     /**
-     * This method adds a new created UserBean. This is done by sending a POST
+     * This method adds a new created User. This is done by sending a POST
      * request to a RESTful web service.
      *
-     * @param user The UserBean object to be added.
+     * @param user The User object to be added.
      * @throws BusinessLogicException If there is any error while processing.
      */
     @Override
@@ -142,6 +159,13 @@ public class UserManagerImplementation implements UserManager {
         }
     }
 
+    /**
+     * Method used to login a user
+     * @param login the login of the user
+     * @param password the password of the user
+     * @return user, the user that has logged in 
+     * @throws BusinessLogicException 
+     */
     @Override
     public User login(String login, String password) throws BusinessLogicException {
         User user = null;
@@ -158,6 +182,13 @@ public class UserManagerImplementation implements UserManager {
         return user;
     }
 
+     /**
+     * Method used to change the password a user
+     * @param login the login of the user
+     * @param password the password to change
+     * @return user, the user 
+     * @throws BusinessLogicException 
+     */
     @Override
     public User changePassword(String user, String pass) throws BusinessLogicException {
         User changedUser = null;
@@ -174,6 +205,11 @@ public class UserManagerImplementation implements UserManager {
         return changedUser;
     }
 
+    /**
+     * Method used to reset the password of a user
+     * @param user the login of the user to reset the password from
+     * @throws BusinessLogicException 
+     */
     @Override
     public void resetPassword(String user) throws BusinessLogicException {
         try {
