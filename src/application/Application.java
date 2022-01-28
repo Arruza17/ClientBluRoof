@@ -7,7 +7,7 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 import model.FacilityManagerImplementation;
 import view.controllers.SignInController;
-import view.fxml.FacilitiesController;
+import view.controllers.FacilitiesController;
 
 /**
  * Entry point for the java application

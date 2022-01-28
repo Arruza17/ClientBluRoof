@@ -6,12 +6,8 @@
 package model;
 
 import java.util.Date;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Hyperlink;
 
 /**
@@ -24,8 +20,6 @@ public class FacilityTableBean {
     private final SimpleStringProperty type;
 
     private SimpleObjectProperty<Date> adqDate;
-
-    private Hyperlink moreInfo;
 
     public FacilityTableBean(Facility f) {
         this.id= f.getId();

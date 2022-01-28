@@ -20,4 +20,6 @@ public interface FacilityManager {
     public List<Facility> selectByType(String type) throws BusinessLogicException;
     public void remove(Long l) throws BussinessLogicException;
     public Facility selectById(Long id) throws BusinessLogicException;
+    public void create(Facility f) throws BusinessLogicException;
+    public void update(Facility f,Long id) throws BusinessLogicException;
 }

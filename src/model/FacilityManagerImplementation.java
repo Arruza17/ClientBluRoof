@@ -84,4 +84,22 @@ public class FacilityManagerImplementation implements FacilityManager {
             throw new BussinessLogicException(e.getMessage());
         }
     }
+
+    @Override
+    public void create(Facility f) throws BusinessLogicException {
+         try {
+            frc.create(f);
+        } catch (ClientErrorException e) {
+            throw new BusinessLogicException();
+        }
+    }
+
+    @Override
+    public void update(Facility f, Long id) throws BusinessLogicException {
+        try {
+            frc.edit(f, id.toString());
+        } catch (ClientErrorException e) {
+            throw new BusinessLogicException();
+        }
+    }
 }

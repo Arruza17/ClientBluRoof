@@ -3,17 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package view.fxml;
+package view.controllers;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 import exceptions.BusinessLogicException;
 import javafx.scene.input.MouseEvent;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -43,6 +47,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import static javafx.scene.input.KeyCode.T;
 import javafx.stage.Stage;
@@ -52,6 +57,13 @@ import model.Facility;
 import model.FacilityManager;
 import model.FacilityTableBean;
 import model.FacilityType;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  * FXML Controller class
@@ -65,7 +77,7 @@ public class FacilitiesController {
     private ComboBox<String> cb_Facilities;
     @FXML
     private DatePicker dp_Facilities;
-    
+
     @FXML
     private Spinner<Integer> sp_Facilities;
     @FXML
@@ -77,7 +89,7 @@ public class FacilitiesController {
     @FXML
     private TableColumn<FacilityTableBean, Long> id_Column;
     @FXML
-    private TableColumn<FacilityTableBean, Date> adq_column;
+    private TableColumn<FacilityTableBean, String> adq_column;
     @FXML
     private TableColumn<FacilityTableBean, String> type_column;
     @FXML
@@ -97,7 +109,7 @@ public class FacilitiesController {
     private final String type = "Type";
     private final String id = "Id";
     private ObservableList<FacilityTableBean> myFacilities;
-    
+
     /**
      * Initializes the controller class.
      */
@@ -130,7 +142,7 @@ public class FacilitiesController {
                 ObservableList<FacilityTableBean> facilityTableBean
                         = FXCollections.observableArrayList(facilities);
                 tbl_facilities.setItems(facilityTableBean);
-                myFacilities=facilityTableBean;
+                myFacilities = facilityTableBean;
             } else {
                 //The imgPrint will be disabled if there are not dwellings
                 iv_print.setDisable(true);
@@ -143,32 +155,27 @@ public class FacilitiesController {
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
         }
-       
+
         id_Column.setCellValueFactory(
                 new PropertyValueFactory<>("id"));
-        /**
-        adq_column.setCellValueFactory(
-                new PropertyValueFactory<>("adqDate"));
-        type_column.setCellValueFactory(
-                new PropertyValueFactory<>("type"));
-
-        more_Info_Column.setCellValueFactory(
-                new PropertyValueFactory<>("moreInfo"));*/
         sp_Facilities.setValueFactory(
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
         sp_Facilities.setEditable(true);
-        
+
         EnumSet<FacilityType> ft = EnumSet.allOf(FacilityType.class);
-        ArrayList<String> facilTypeList=new ArrayList<>();
-       
-        for(FacilityType f: ft){
-        facilTypeList.add(f.toString());
+        ArrayList<String> facilTypeList = new ArrayList<>();
+
+        for (FacilityType f : ft) {
+            facilTypeList.add(f.toString());
         }
-         ObservableList<String> optionsType= FXCollections.observableArrayList(facilTypeList);
+        ObservableList<String> optionsType = FXCollections.observableArrayList(facilTypeList);
         cb_Type.setItems(optionsType);
-         adq_column.setCellValueFactory(cellData
-                -> new SimpleObjectProperty(cellData.getValue().getAdqDate()));
-          type_column.setCellValueFactory(cellData
+        /*adq_column.setCellValueFactory(cellData
+                -> new SimpleObjectProperty(cellData.getValue().getAdqDate()));*/
+        adq_column.setCellValueFactory(cellData
+                -> new SimpleStringProperty(cellData.getValue().getAdqDate().toString()));
+        adq_column.setCellFactory(TextFieldTableCell.<FacilityTableBean>forTableColumn());
+        type_column.setCellValueFactory(cellData
                 -> new SimpleStringProperty(cellData.getValue().getType()));
         type_column.setCellFactory(ComboBoxTableCell.forTableColumn(optionsType));
         type_column.setOnEditCommit(
@@ -176,7 +183,7 @@ public class FacilitiesController {
                     ((FacilityTableBean) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setType(t.getNewValue());
                 });
-        
+
         stage.show();
     }
 
@@ -196,7 +203,7 @@ public class FacilitiesController {
                 cb_Type.setDisable(false);
                 dp_Facilities.setDisable(true);
                 sp_Facilities.setDisable(true);
-                
+
                 break;
             case date:
                 cb_Type.setDisable(true);
@@ -218,7 +225,7 @@ public class FacilitiesController {
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         List<FacilityTableBean> facilities = new ArrayList<>();
                         List<Facility> fs = facMan.selectByDate(simpleDateFormat.format(date).toString());
-                         if (fs.size() > 0) {
+                        if (fs.size() > 0) {
                             for (Facility f : fs) {
                                 facilities.add(new FacilityTableBean(f));
                             }
@@ -239,7 +246,7 @@ public class FacilitiesController {
                 }
                 break;
             case type:
-                if (cb_Type.getValue()!=null) {
+                if (cb_Type.getValue() != null) {
                     try {
 
                         List<FacilityTableBean> facilities = new ArrayList<>();
@@ -282,7 +289,7 @@ public class FacilitiesController {
     }
 
     @FXML
-    void clickAdd(MouseEvent event){
+    void clickAdd(MouseEvent event) {
         iv_add.setDisable(true);
         iv_add.setOpacity(0.25);
         iv_minus.setDisable(true);
@@ -291,17 +298,16 @@ public class FacilitiesController {
         iv_check.setOpacity(1);
         iv_cancel.setDisable(false);
         iv_cancel.setOpacity(1);
-        Facility f=new Facility();
+        Facility f = new Facility();
         FacilityTableBean ft = new FacilityTableBean(f);
         ft.setId(Long.MIN_VALUE);
         myFacilities.add(ft);
-        
-        tbl_facilities.getSelectionModel().select(myFacilities.size() - 1);
-        tbl_facilities.layout();
-       tbl_facilities.getFocusModel().focus(myFacilities.size() - 1, type_column);
-        tbl_facilities.edit(myFacilities.size() - 1, type_column);
 
-        
+       tbl_facilities.getSelectionModel().select(myFacilities.size() - 1);
+        tbl_facilities.layout();
+        tbl_facilities.getFocusModel().focus(myFacilities.size() - 1, adq_column);
+        tbl_facilities.edit(myFacilities.size() - 1, adq_column);
+
     }
 
     @FXML
@@ -310,21 +316,45 @@ public class FacilitiesController {
 
     @FXML
     void clickPrint(MouseEvent action) {
-
+        try {
+            
+            JasperReport report
+                    = JasperCompileManager.compileReport(getClass()
+                            .getResourceAsStream("/reports/AdminFacilityReport.jrxml"));
+            //Data for the report: a collection of User passed as a JRDataSource implementation 
+            JRBeanCollectionDataSource dataItems
+                    = new JRBeanCollectionDataSource((Collection<FacilityTableBean>) this.tbl_facilities.getItems());
+            //Get the name of the admin who printed the report as a parameter
+            Map<String, Object> parameters = new HashMap<>();
+            //Fill report with the data of the table     
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
+            //Create and show the report window. The second parameter false value makes 
+            //report window not to close app.
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+            jasperViewer.setVisible(true);
+            // jasperViewer.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        } catch (JRException ex){
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setHeaderText("Error printing");
+            alert.setContentText("There was an error printing the information, try again later");
+            LOGGER.log(Level.SEVERE,
+                    "Error printing report at printReport(): {0}",
+                    ex.getMessage());
+        }
     }
 
     @FXML
     void clickMinus(MouseEvent action) {
-        FacilityTableBean facTBean=tbl_facilities.getSelectionModel().getSelectedItem();
+        FacilityTableBean facTBean = tbl_facilities.getSelectionModel().getSelectedItem();
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setHeaderText(null);
         alert.setTitle("Confirmation");
-        alert.setContentText("Are you sure you want to delete\n this facility with the following ID:"+facTBean.getId()+"?");
+        alert.setContentText("Are you sure you want to delete\n this facility with the following ID:" + facTBean.getId() + "?");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             try {
                 facMan.remove(facTBean.getId());
-               //TODO .remove(facTBean);
+                //TODO .remove(facTBean);
                 tbl_facilities.refresh();
             } catch (BussinessLogicException ex) {
                 Alert alert1 = new Alert(AlertType.ERROR);
@@ -344,11 +374,38 @@ public class FacilitiesController {
 
     @FXML
     void clickClose(MouseEvent action) {
-        
+
     }
 
     @FXML
     void clickCheck(MouseEvent action) {
+        Facility f = new Facility();
+        Date date;
+        FacilityTableBean ft = new FacilityTableBean(f);
+        ft = tbl_facilities.getSelectionModel().getSelectedItem();
+        int pos = tbl_facilities.getSelectionModel().getSelectedIndex();
+        try {
+                f.setId(ft.getId());
+                f.setType(ft.getType());
+                f.setAdquisitionDate(ft.getAdqDate());
+            if (pos == myFacilities.size() - 1 && ft.getId().equals(Long.MIN_VALUE)) {
+                facMan.create(f);
+                tbl_facilities.refresh();
+                
+            } else {
+                
+                facMan.update(f,f.getId());
+                tbl_facilities.refresh();
+               
+
+            }
+        } catch (BusinessLogicException ex) {
+            Alert excAlert = new Alert(AlertType.INFORMATION);
+            excAlert.setTitle("Error");
+            excAlert.setContentText("There was an error with the edition of the service: " + ex.getMessage());
+            excAlert.show();
+           
+        }
     }
 
     public void setFacMan(FacilityManager facMan) {
@@ -358,7 +415,5 @@ public class FacilitiesController {
     private void handleTableSelectionChanged(ObservableValue observableValue, Object oldValue, Object newValue) {
 
     }
-  
-  
 
 }

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b4ec8c83-293a-498c-a567-019194e9ac11">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="type" class="java.lang.String"/>
+	<field name="id" class="java.lang.Long"/>
+	<field name="adqDate" class="java.util.Date"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="139" y="15" width="284" height="64" uuid="d051cf6c-b571-4c32-a0a9-f8cbb9ebe2c3"/>
+				<textElement textAlignment="Center">
+					<font size="48"/>
+				</textElement>
+				<text><![CDATA[Facilities]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="51" splitType="Stretch">
+			<image>
+				<reportElement x="26" y="0" width="74" height="51" uuid="4e0bc4f1-81de-41ba-92f4-5c4acc86187e"/>
+				<imageExpression><![CDATA["C:\\Users\\2dam.HZ375749\\Documents\\NetBeansProjects\\ClientSignInUp\\ClientSignInUp\\src\\view\\resources\\img\\BluRoofLogo.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="48" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="21" width="100" height="27" uuid="d2d5a122-094a-4be0-acef-39d8ff19b106"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="21" width="100" height="27" uuid="27194ed1-9fe9-46c6-afd0-bec81f337f1a"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Adquisition date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="21" width="100" height="27" uuid="07a9ec77-5fd5-48e7-888b-b9dbe92e399d"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Type]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="4ebde55b-50b7-4e05-89cb-2722b51da192"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="100" height="20" uuid="6a8d5d2a-6a83-4eb5-a024-75fa4a0024b9"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{adqDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="100" height="20" uuid="413a71f2-44f7-47a9-98c9-77e14a0fdc96"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{type}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<textField>
+				<reportElement x="452" y="25" width="100" height="20" uuid="0c62a11d-0651-45fc-afce-ac6651dff8df"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="112" y="25" width="100" height="20" uuid="5d2c9ac0-c94c-4be1-af4d-2e79456e49df"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="12" y="25" width="100" height="20" uuid="0a015629-5139-4ac5-bacc-7645d492dbad"/>
+				<text><![CDATA[report generated at:]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="13" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="10" splitType="Stretch"/>
+	</summary>
+</jasperReport>
