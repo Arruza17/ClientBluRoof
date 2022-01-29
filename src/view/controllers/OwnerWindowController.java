@@ -547,7 +547,7 @@ public class OwnerWindowController {
             LOGGER.info("Beginning printing action...");
             JasperReport report
                     = JasperCompileManager.compileReport(getClass()
-                            .getResourceAsStream("/reports/dwellingreport.jrxml"));
+                            .getResourceAsStream("/reports/dwellingReportFinal.jrxml"));
             //Data for the report: a collection of UserBean passed as a JRDataSource 
             //implementation 
             JRBeanCollectionDataSource dataItems
