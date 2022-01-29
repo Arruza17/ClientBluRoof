@@ -7,8 +7,10 @@ package view.controllers;
 
 import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 import exceptions.BusinessLogicException;
+import exceptions.FieldsEmptyException;
 import javafx.scene.input.MouseEvent;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -55,7 +57,6 @@ import javafx.util.Callback;
 import model.BussinessLogicException;
 import model.Facility;
 import model.FacilityManager;
-import model.FacilityTableBean;
 import model.FacilityType;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -77,7 +78,7 @@ public class FacilitiesController {
     private ComboBox<String> cb_Facilities;
     @FXML
     private DatePicker dp_Facilities;
-
+    private final String regexDate = "^(((0[1-9]|[12]\\d|3[01])\\/(0[13578]|1[02])\\/((19|[2-9]\\d)\\d{2}))|((0[1-9]|[12]\\d|30)\\/(0[13456789]|1[012])\\/((19|[2-9]\\d)\\d{2}))|((0[1-9]|1\\d|2[0-8])\\/02\\/((19|[2-9]\\d)\\d{2}))|(29\\/02\\/((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$";
     @FXML
     private Spinner<Integer> sp_Facilities;
     @FXML
@@ -85,15 +86,15 @@ public class FacilitiesController {
     @FXML
     private ComboBox<String> cb_Type;
     @FXML
-    private TableView<FacilityTableBean> tbl_facilities;
+    private TableView<Facility> tbl_facilities;
     @FXML
-    private TableColumn<FacilityTableBean, Long> id_Column;
+    private TableColumn<Facility, Long> id_Column;
     @FXML
-    private TableColumn<FacilityTableBean, String> adq_column;
+    private TableColumn<Facility, String> adq_column;
     @FXML
-    private TableColumn<FacilityTableBean, String> type_column;
+    private TableColumn<Facility, String> type_column;
     @FXML
-    private TableColumn<FacilityTableBean, String> more_Info_Column;
+    private TableColumn<Facility, String> more_Info_Column;
     @FXML
     private ImageView iv_add;
     @FXML
@@ -108,13 +109,14 @@ public class FacilitiesController {
     private final String date = "Date";
     private final String type = "Type";
     private final String id = "Id";
-    private ObservableList<FacilityTableBean> myFacilities;
+    private ObservableList<Facility> myFacilities;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Initializes the controller class.
      */
     public void initStage(Parent root) {
-        try{
+      
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Facilities Window");
@@ -133,18 +135,20 @@ public class FacilitiesController {
         cb_Facilities.getSelectionModel().selectFirst();
         tbl_facilities.getSelectionModel().selectedItemProperty()
                 .addListener(this::handleTableSelectionChanged);
-        List<FacilityTableBean> facilities = new ArrayList<>();
+       
         try {
             List<Facility> allFacilities = facMan.selectAll();
-            if (allFacilities.size() > 0) {
-                for (Facility f : allFacilities) {
-                    facilities.add(new FacilityTableBean(f));
-                }
-                ObservableList<FacilityTableBean> facilityTableBean
-                        = FXCollections.observableArrayList(facilities);
-                tbl_facilities.setItems(facilityTableBean);
+            ObservableList<Facility> facilityTableBean
+                        = FXCollections.observableArrayList(allFacilities);
                 myFacilities = facilityTableBean;
+                System.out.println(myFacilities.get(0).getId());
+                System.out.println(myFacilities.get(0).getAdquisitionDate());
+                System.out.println(myFacilities.get(0).getType());
+               
+            if (allFacilities.size() > 0) {
+        
             } else {
+                
                 //The imgPrint will be disabled if there are not dwellings
                 iv_print.setDisable(true);
                 iv_print.setOpacity(0.25);
@@ -174,25 +178,66 @@ public class FacilitiesController {
         /*adq_column.setCellValueFactory(cellData
                 -> new SimpleObjectProperty(cellData.getValue().getAdqDate()));*/
         adq_column.setCellValueFactory(cellData
-                -> new SimpleStringProperty(cellData.getValue().getAdqDate().toString()));
-        adq_column.setCellFactory(TextFieldTableCell.<FacilityTableBean>forTableColumn());
+                -> new SimpleStringProperty(formatter.format(cellData.getValue().getAdquisitionDate())));
+        adq_column.setCellFactory(TextFieldTableCell.<Facility>forTableColumn());
+        adq_column.setOnEditCommit(
+                    (CellEditEvent<Facility, String> t) -> {
+                        try {
+
+                            if (t.getNewValue().isEmpty()) {
+                                LOGGER.warning("The field in the construction date is empty");
+                                throw new FieldsEmptyException();
+                            }
+                            if (!t.getNewValue().matches(regexDate)) {
+                                LOGGER.severe("The field in the construction date has a not valid date");
+                                //throw new NotValidDateValueException("Not valid date");
+                            }
+
+                            ((Facility) t.getTableView().getItems().get(
+                                    t.getTablePosition().getRow())).setAdquisitionDate(
+                                    formatter.parse(t.getNewValue())
+                            );
+                            //SETS THE CONFIRM AND CANCEL BUTTONS TO CLICKABLE
+                            //imgConfirmNewDwelling.setDisable(false);
+                            //imgConfirmNewDwelling.setOpacity(1);
+                            //imgCancelNewDwelling.setDisable(false);
+                            //imgCancelNewDwelling.setOpacity(1);
+                        } catch (FieldsEmptyException e) {
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("Error");
+                            alert.setHeaderText(e.getMessage());
+                            alert.showAndWait();
+                            //SETS THE CONFIRM AND CANCEL BUTTONS TO NOT CLICKABLE
+                            //imgConfirmNewDwelling.setDisable(true);
+                            //imgConfirmNewDwelling.setOpacity(0.25);
+                            //imgCancelNewDwelling.setDisable(true);
+                            //imgCancelNewDwelling.setOpacity(0.25);
+                        } catch (ParseException e) {
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("Error");
+                            alert.setHeaderText(e.getMessage());
+                            alert.setContentText("Valid value:\ndd/MM/yyyy\nex. 17/11/2008");
+                            alert.showAndWait();
+                            //SETS THE CONFIRM AND CANCEL BUTTONS TO NOT CLICKABLE
+                            //imgConfirmNewDwelling.setDisable(true);
+                            //imgConfirmNewDwelling.setOpacity(0.25);
+                            //imgCancelNewDwelling.setDisable(true);
+                            //imgCancelNewDwelling.setOpacity(0.25);
+                        }
+
+                    });
+
         type_column.setCellValueFactory(cellData
                 -> new SimpleStringProperty(cellData.getValue().getType()));
         type_column.setCellFactory(ComboBoxTableCell.forTableColumn(optionsType));
         type_column.setOnEditCommit(
-                (CellEditEvent<FacilityTableBean, String> t) -> {
-                    ((FacilityTableBean) t.getTableView().getItems().get(
+                (CellEditEvent<Facility, String> t) -> {
+                    ((Facility) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setType(t.getNewValue());
                 });
-
+        tbl_facilities.setItems(myFacilities);
         stage.show();
-        }catch(Exception e){
-         Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("ERROR");
-                    alert.setHeaderText("Can't create view");
-                    alert.setContentText("");
-                    alert.showAndWait();
-        }
+       
     }
 
     public void setStage(Stage stage) {
@@ -231,13 +276,13 @@ public class FacilitiesController {
                     try {
                         Date date = Date.from(dp_Facilities.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        List<FacilityTableBean> facilities = new ArrayList<>();
+                        List<Facility> facilities = new ArrayList<>();
                         List<Facility> fs = facMan.selectByDate(simpleDateFormat.format(date).toString());
                         if (fs.size() > 0) {
                             for (Facility f : fs) {
-                                facilities.add(new FacilityTableBean(f));
+                                facilities.add(new Facility());
                             }
-                            ObservableList<FacilityTableBean> facilityTableBean
+                            ObservableList<Facility> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
                             tbl_facilities.setItems(facilityTableBean);
                         }
@@ -257,13 +302,13 @@ public class FacilitiesController {
                 if (cb_Type.getValue() != null) {
                     try {
 
-                        List<FacilityTableBean> facilities = new ArrayList<>();
+                        List<Facility> facilities = new ArrayList<>();
                         List<Facility> fs = facMan.selectByType(cb_Type.getValue());
                         if (fs.size() > 0) {
                             for (Facility f : fs) {
-                                facilities.add(new FacilityTableBean(f));
+                                facilities.add(new Facility());
                             }
-                            ObservableList<FacilityTableBean> facilityTableBean
+                            ObservableList<Facility> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
                             tbl_facilities.setItems(facilityTableBean);
                         }
@@ -277,12 +322,12 @@ public class FacilitiesController {
                 if (sp_Facilities != null) {
                     Long aux = Long.valueOf(sp_Facilities.getValue().toString());
                     try {
-                        List<FacilityTableBean> facilities = new ArrayList<>();
+                        List<Facility> facilities = new ArrayList<>();
                         Facility fs = facMan.selectById(aux);
                         if (fs != null) {
 
-                            facilities.add(new FacilityTableBean(fs));
-                            ObservableList<FacilityTableBean> facilityTableBean
+                            facilities.add(fs);
+                            ObservableList<Facility> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
                             tbl_facilities.setItems(facilityTableBean);
                         }
@@ -306,9 +351,10 @@ public class FacilitiesController {
         iv_check.setOpacity(1);
         iv_cancel.setDisable(false);
         iv_cancel.setOpacity(1);
-        Facility f = new Facility();
-        FacilityTableBean ft = new FacilityTableBean(f);
+        
+        Facility ft = new Facility();
         ft.setId(Long.MIN_VALUE);
+        ft.setAdquisitionDate(new Date());
         myFacilities.add(ft);
 
        tbl_facilities.getSelectionModel().select(myFacilities.size() - 1);
@@ -331,7 +377,7 @@ public class FacilitiesController {
                             .getResourceAsStream("/reports/AdminFacilityReport.jrxml"));
             //Data for the report: a collection of User passed as a JRDataSource implementation 
             JRBeanCollectionDataSource dataItems
-                    = new JRBeanCollectionDataSource((Collection<FacilityTableBean>) this.tbl_facilities.getItems());
+                    = new JRBeanCollectionDataSource((Collection<Facility>) this.tbl_facilities.getItems());
             //Get the name of the admin who printed the report as a parameter
             Map<String, Object> parameters = new HashMap<>();
             //Fill report with the data of the table     
@@ -353,7 +399,7 @@ public class FacilitiesController {
 
     @FXML
     void clickMinus(MouseEvent action) {
-        FacilityTableBean facTBean = tbl_facilities.getSelectionModel().getSelectedItem();
+        Facility facTBean = tbl_facilities.getSelectionModel().getSelectedItem();
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setHeaderText(null);
         alert.setTitle("Confirmation");
@@ -387,16 +433,13 @@ public class FacilitiesController {
 
     @FXML
     void clickCheck(MouseEvent action) {
-        Facility f = new Facility();
         Date date;
-        FacilityTableBean ft = new FacilityTableBean(f);
-        ft = tbl_facilities.getSelectionModel().getSelectedItem();
+        Facility f = new Facility();
+        f = tbl_facilities.getSelectionModel().getSelectedItem();
         int pos = tbl_facilities.getSelectionModel().getSelectedIndex();
         try {
-                f.setId(ft.getId());
-                f.setType(ft.getType());
-                f.setAdquisitionDate(ft.getAdqDate());
-            if (pos == myFacilities.size() - 1 && ft.getId().equals(Long.MIN_VALUE)) {
+              
+            if (pos == myFacilities.size() - 1 && f.getId().equals(Long.MIN_VALUE)) {
                 facMan.create(f);
                 tbl_facilities.refresh();
                 

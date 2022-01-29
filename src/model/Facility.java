@@ -3,6 +3,10 @@ package model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import static javax.persistence.CascadeType.ALL;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -10,16 +14,20 @@ import javax.xml.bind.annotation.XmlTransient;
  * Entity representing Facilities. Contains personal data, identification data
  * and relational data for accessing flat facilities.
  *
- * @author Adrián
+ * @author jorge
  */
 
 @XmlRootElement
 public class Facility implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Long id;
-    private String type;
-    private Date adquisitionDate;
+
+    private SimpleLongProperty id;
+
+    private SimpleStringProperty type;
+
+    private SimpleObjectProperty<Date> adquisitionDate;
+
     private List<FlatFacility> flatFacilities;
 
     @XmlTransient
@@ -31,8 +39,14 @@ public class Facility implements Serializable {
         this.flatFacilities = flatFacilities;
     }
 
+    public Facility() {
+        this.adquisitionDate=new SimpleObjectProperty();
+        this.id= new SimpleLongProperty();
+        this.type=new SimpleStringProperty();
+    }
+
     public Long getId() {
-        return id;
+         return this.id.get();
     }
 
     /**
@@ -40,7 +54,7 @@ public class Facility implements Serializable {
      * @param id facility id.
      */
     public void setId(Long id) {
-        this.id = id;
+        this.id.set(id);
     }
 
     /**
@@ -48,7 +62,7 @@ public class Facility implements Serializable {
      * @return the type of the facility.
      */
     public String getType() {
-        return type;
+        return this.type.get();
 
     }
 
@@ -57,7 +71,7 @@ public class Facility implements Serializable {
      * @param type Facility type.
      */
     public void setType(String type) {
-        this.type = type;
+        this.type.set(type);
     }
 
     /**
@@ -65,7 +79,7 @@ public class Facility implements Serializable {
      * @return Adquisition date of the facility.
      */
     public Date getAdquisitionDate() {
-        return adquisitionDate;
+        return this.adquisitionDate.get();
     }
 
     /**
@@ -73,47 +87,11 @@ public class Facility implements Serializable {
      * @param adquisitionDate Facility adquisition date.
      */
     public void setAdquisitionDate(Date adquisitionDate) {
-        this.adquisitionDate = adquisitionDate;
+        this.adquisitionDate.set(adquisitionDate);
     }
 
-    /**
-     * Integer representation for Facility instance.
-     *
-     * @return
-     */
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    /**
-     * Compares two Facility objects for equality. This method consider a
-     * Facility equal to another Facility if their id fields have the same
-     * value.
-     *
-     * @param object The other Facility object to compare to.
-     * @return true if ids are equals.
-     */
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Facility)) {
-            return false;
-        }
-        Facility other = (Facility) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Obtains a string representation of the Facility.
-     *
-     * @return The String representing the Facility.
-     */
+   
+    
     @Override
     public String toString() {
         return "Facility{" + "id=" + id + ", type=" + type + ", adquisitionDate=" + adquisitionDate + ", flatFacilities=" + flatFacilities + '}';

@@ -74,6 +74,7 @@ public class FacilityManagerImplementation implements FacilityManager {
             }, id.toString());
         } catch (ClientErrorException ex) {
         }
+        
         return fac;
     }
     @Override
