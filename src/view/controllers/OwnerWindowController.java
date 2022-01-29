@@ -526,6 +526,10 @@ public class OwnerWindowController {
                 alert1.setContentText(ex.getMessage());
                 alert1.showAndWait();
             }
+            imgConfirmNewDwelling.setDisable(true);
+            imgConfirmNewDwelling.setOpacity(0.25);
+            imgCancelNewDwelling.setDisable(true);
+            imgCancelNewDwelling.setOpacity(0.25);
         } else {
             LOGGER.info("Dwelling finally not removed by the user");
             Alert alert3 = new Alert(AlertType.INFORMATION);
