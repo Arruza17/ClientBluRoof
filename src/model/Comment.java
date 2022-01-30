@@ -2,6 +2,7 @@ package model;
 
 import java.io.Serializable;
 import java.util.Date;
+
 /**
  * Entity representing comments. It contains the following fields: comment id,
  * comment text, the date in which the comment was made, the commenter who made
@@ -9,18 +10,23 @@ import java.util.Date;
  *
  * @author Ander Arruza
  */
+
+@XmlRootElement
 public class Comment implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
 
     private Long id;
     /**
      * Identification field for the comment
      */
+
     private CommentId commentId;
     /**
      * The text of the comment
      */
+
     private String text;
     /**
      * The rating of the comment [1-5]
@@ -29,15 +35,18 @@ public class Comment implements Serializable {
     /**
      * Current time in which the comment was made
      */
+
     private Date commentDate;
     /**
      * Relational field containing the commenter who made it
 
      */ 
+
     private Guest commenter;
     /**
      * Relational field containing the relation between comment and the dwelling
      */
+
     private Dwelling dwelling;
 
     //GETTERS AND SETTERS
@@ -136,6 +145,8 @@ public class Comment implements Serializable {
      *
      * @return the dwelling to get
      */
+
+
     public Dwelling getDwelling() {
         return dwelling;
     }

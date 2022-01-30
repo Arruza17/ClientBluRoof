@@ -1,11 +1,15 @@
 package application;
 
+
 import factories.UserManagerFactory;
+
 import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+
 import view.controllers.OwnerWindowController;
+
 
 /**
  * Entry point for the java application

@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
 /**
  * Entity representing users. Contains basic personal data, identification
  *
@@ -224,6 +223,7 @@ public class User implements Serializable {
      *
      * @param status the status to set
      */
+
     public void setStatus(String status) {
         this.status.set(status);
     }
@@ -242,6 +242,7 @@ public class User implements Serializable {
      *
      * @param privilege the privilege to set
      */
+
     public void setPrivilege(String privilege) {
         this.privilege.set(privilege);
     }
@@ -327,7 +328,4 @@ public class User implements Serializable {
     public SimpleObjectProperty<Date> getBDateProperty() {
         return this.birthDate;
     }
-
-    
-
 }

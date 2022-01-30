@@ -19,7 +19,6 @@ public class Guest extends User implements Serializable {
     /**
      * Guest's state WORKER/STUDENT/BOTH/UNEMPLOYED.
      */
-
     private String actualState;
 
     /**
@@ -50,6 +49,7 @@ public class Guest extends User implements Serializable {
      *
      * @param actualState the actual state to be set
      */
+
     public void setActualState(String actualState) {
         this.actualState = actualState;
     }

@@ -2,7 +2,6 @@ package model;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -12,6 +11,7 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author Yeray Sampedro
  */
+
 @XmlRootElement
 public class LastSignIn implements Serializable {
 
@@ -24,12 +24,10 @@ public class LastSignIn implements Serializable {
     /**
      * The date of the last SignIn
      */
-
     private Date lastSignIn;
     /**
      * The user
      */
-
     private User user;
 
     /**
@@ -128,5 +126,5 @@ public class LastSignIn implements Serializable {
     public String toString() {
         return "entities.LastSignIn[ id=" + id + " ]";
     }
-
 }
+

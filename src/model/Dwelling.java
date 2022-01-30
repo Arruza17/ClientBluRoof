@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author Ander Arruza
  */
+
+
 @XmlRootElement
 public class Dwelling implements Serializable {
 
@@ -31,6 +33,7 @@ public class Dwelling implements Serializable {
     /**
      * Identification field for the dwelling
      */
+
     private SimpleLongProperty id;
     /**
      * Where the Dwelling is located, the structure should be: STREET,
@@ -46,9 +49,11 @@ public class Dwelling implements Serializable {
      */
     private SimpleDoubleProperty squareMeters;
 
+
     /**
      * Relational field containing Neighbourhood of the dwelling
      */
+
     private SimpleObjectProperty<Neighbourhood> neighbourhood;
     /**
      * Date in which the dwelling was made
@@ -58,10 +63,12 @@ public class Dwelling implements Serializable {
      * Relational field containing the host of the dwelling
      */
     private SimpleObjectProperty<Owner> host;
+
     /**
      * Rating of the dwelling. It is set the 0 when a new dwelling is created.
      * It will contain the average rating given by the users
      */
+
     private SimpleFloatProperty rating;
     /**
      * List of the comments made by the users about the dwelling.
@@ -97,6 +104,7 @@ public class Dwelling implements Serializable {
         this.comments = comments;
     }
 
+
     //GETTERS AND SETTERS
     /**
      * Returns the id
@@ -104,7 +112,9 @@ public class Dwelling implements Serializable {
      * @return the id to get
      */
     public Long getId() {
+
         return this.id.get();
+
     }
 
     /**
@@ -150,6 +160,7 @@ public class Dwelling implements Serializable {
      */
     public void setHasWiFi(Boolean hasWiFi) {
         this.hasWiFi.set(hasWiFi);
+
     }
 
     /**
@@ -305,6 +316,7 @@ public class Dwelling implements Serializable {
     public String toString() {
         return "Dwelling{" + "id=" + id + '}';
     }
+
 
     public String getMoreInfo() {
         return moreInfo.get();

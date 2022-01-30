@@ -7,6 +7,7 @@ import java.io.Serializable;
  *
  * @author Ander Arruza
  */
+
 public class CommentId implements Serializable {
 
     /**
