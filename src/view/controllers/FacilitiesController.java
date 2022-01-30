@@ -1,15 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view.controllers;
 
 import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 import exceptions.BusinessLogicException;
 import exceptions.FieldsEmptyException;
 import javafx.scene.input.MouseEvent;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
@@ -21,17 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -115,6 +106,7 @@ public class FacilitiesController {
     private ObservableList<Facility> myFacilities;
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     boolean adding = false;
+    boolean editing = false;
 
     /**
      * Initializes the controller class.
@@ -151,7 +143,7 @@ public class FacilitiesController {
 
                 } else {
 
-                    //The imgPrint will be disabled if there are not dwellings
+                    //The imgPrint will be disabled if there are no facilities
                     iv_print.setDisable(true);
                     iv_print.setOpacity(0.25);
                 }
@@ -185,45 +177,50 @@ public class FacilitiesController {
                     (CellEditEvent<Facility, String> t) -> {
                         try {
 
-                            if (t.getNewValue().isEmpty()) {
-                                LOGGER.warning("The field in the construction date is empty");
+                            if (t.getNewValue().isEmpty()){
+                                LOGGER.warning("The field in the facility adquisition date is empty");
                                 throw new FieldsEmptyException();
                             }
                             if (!t.getNewValue().matches(regexDate)) {
-                                LOGGER.severe("The field in the construction date has a not valid date");
-                                //throw new NotValidDateValueException("Not valid date");
+                                LOGGER.severe("The field in the construction date doesn't have a valid date");
+                                
                             }
 
                             ((Facility) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow())).setAdquisitionDate(
                                     formatter.parse(t.getNewValue())
                             );
-                            //SETS THE CONFIRM AND CANCEL BUTTONS TO CLICKABLE
-                            //imgConfirmNewDwelling.setDisable(false);
-                            //imgConfirmNewDwelling.setOpacity(1);
-                            //imgCancelNewDwelling.setDisable(false);
-                            //imgCancelNewDwelling.setOpacity(1);
+                            //Sets the check and cancel buttons to clickable
+                            iv_check.setDisable(false);
+                            iv_check.setOpacity(1);
+                            iv_cancel.setDisable(false);
+                            iv_cancel.setOpacity(1);
+                            iv_minus.setDisable(true);
+                            iv_minus.setOpacity(0.25);
+                            iv_add.setDisable(true);
+                            iv_add.setOpacity(0.25);
+                            editing=true;
                         } catch (FieldsEmptyException e) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Error");
                             alert.setHeaderText(e.getMessage());
                             alert.showAndWait();
-                            //SETS THE CONFIRM AND CANCEL BUTTONS TO NOT CLICKABLE
-                            //imgConfirmNewDwelling.setDisable(true);
-                            //imgConfirmNewDwelling.setOpacity(0.25);
-                            //imgCancelNewDwelling.setDisable(true);
-                            //imgCancelNewDwelling.setOpacity(0.25);
+                            //Sets the confirm and cancel buttons to not clickable
+                            iv_check.setDisable(true);
+                            iv_check.setOpacity(0.25);
+                            iv_cancel.setDisable(true);
+                            iv_cancel.setOpacity(0.25);
                         } catch (ParseException e) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Error");
                             alert.setHeaderText(e.getMessage());
                             alert.setContentText("Valid value:\ndd/MM/yyyy\nex. 17/11/2008");
                             alert.showAndWait();
-                            //SETS THE CONFIRM AND CANCEL BUTTONS TO NOT CLICKABLE
-                            //imgConfirmNewDwelling.setDisable(true);
-                            //imgConfirmNewDwelling.setOpacity(0.25);
-                            //imgCancelNewDwelling.setDisable(true);
-                            //imgCancelNewDwelling.setOpacity(0.25);
+                            //Sets the check and cancel buttons to not clickable
+                            iv_check.setDisable(true);
+                            iv_check.setOpacity(0.25);
+                            iv_cancel.setDisable(true);
+                            iv_cancel.setOpacity(0.25);
                         }
 
                     });
@@ -235,6 +232,16 @@ public class FacilitiesController {
                     (CellEditEvent<Facility, String> t) -> {
                         ((Facility) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setType(t.getNewValue());
+                         try {
+                        if(t.getNewValue().toString().equalsIgnoreCase("")){
+                           
+                                LOGGER.warning("The field in facility type is empty");
+                                throw new FieldsEmptyException();
+                        }
+                        
+                        } catch (FieldsEmptyException ex) {
+                                Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                     });
             tbl_facilities.setItems(myFacilities);
             stage.show();
@@ -451,7 +458,7 @@ public class FacilitiesController {
     }
 
     @FXML
-    void clickClose(MouseEvent action) {
+    void clickClose(MouseEvent action){
           Alert alert=new Alert(AlertType.INFORMATION);
         alert.setHeaderText(null);
                 alert.setTitle("Confirmation");
@@ -461,6 +468,25 @@ public class FacilitiesController {
                     if(adding){
                     myFacilities.remove(myFacilities.size()-1);
                     adding=false;
+                    iv_add.setDisable(false);
+                    iv_add.setOpacity(1);
+                    iv_minus.setDisable(false);
+                    iv_minus.setOpacity(1);
+                    iv_cancel.setDisable(true);
+                    iv_cancel.setOpacity(0.25);
+                    iv_check.setDisable(true);
+                    iv_check.setOpacity(0.25);
+                    }else if(editing){
+                    loadAll();
+                    editing=false;
+                    iv_add.setDisable(false);
+                    iv_add.setOpacity(1);
+                    iv_minus.setDisable(false);
+                    iv_minus.setOpacity(1);
+                    iv_cancel.setDisable(true);
+                    iv_cancel.setOpacity(0.25);
+                    iv_check.setDisable(true);
+                    iv_check.setOpacity(0.25);
                     }
     }else{}
     }
