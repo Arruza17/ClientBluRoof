@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e9b1977f-44b2-4230-ab4e-a0c7a6721a02">
+    <style name="Heading 1" fontSize="16" isBold="true"/>
+    <style name="Heading 2" fontSize="14" isBold="true" isItalic="true"/>
+    <field name="address" class="java.lang.String"/>
+    <field name="hasWiFi" class="java.lang.Boolean"/>
+    <field name="squareMeters" class="java.lang.Double"/>
+    <field name="constructionDate" class="java.util.Date"/>
+    <field name="rating" class="java.lang.Float"/>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="79" splitType="Stretch">
+            <staticText>
+                <reportElement style="Heading 1" x="0" y="0" width="555" height="79" uuid="67161267-608e-4d70-8d86-904d853a6c84"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[DWELLINGS]]></text>
+            </staticText>
+        </band>
+    </title>
+    <pageHeader>
+        <band height="35" splitType="Stretch">
+            <staticText>
+                <reportElement style="Heading 2" x="0" y="0" width="150" height="35" uuid="34997628-d57e-434b-87b2-dc0407c64536"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Address]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Heading 2" x="150" y="0" width="61" height="35" uuid="3a88fe73-1b76-43fb-845f-94704d54dd29"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[WiFi]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Heading 2" x="211" y="0" width="61" height="35" uuid="a068d7cc-adf9-47aa-b995-1d4b44d8e087"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[m²]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Heading 2" x="272" y="0" width="162" height="35" uuid="3b204b08-9349-4450-a6df-d8736d06d22a"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Construction date]]></text>
+            </staticText>
+            <staticText>
+                <reportElement style="Heading 2" x="434" y="0" width="121" height="35" uuid="1b66f3e9-92d1-4516-b80d-4395e94e4043"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <text><![CDATA[Rating]]></text>
+            </staticText>
+        </band>
+    </pageHeader>
+    <columnHeader>
+        <band height="61" splitType="Stretch">
+            <textField>
+                <reportElement x="0" y="0" width="150" height="20" uuid="d8a5a01f-0804-4f26-b71c-6f6a76483bea"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{address}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="150" y="0" width="61" height="20" uuid="dba56f1e-afab-4b72-9148-f53ea3dacc4e"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{hasWiFi}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="211" y="0" width="61" height="20" uuid="02f6d398-87a2-4729-9977-1829d0db2aa1"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{squareMeters}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="272" y="0" width="162" height="20" uuid="86e08527-a106-453b-89bb-a65803ed8d2b"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{constructionDate}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="434" y="0" width="121" height="20" uuid="a23039a5-0531-4fec-8b98-15c34760e8ef"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$F{rating}]]></textFieldExpression>
+            </textField>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="125" splitType="Stretch"/>
+    </detail>
+    <columnFooter>
+        <band height="45" splitType="Stretch"/>
+    </columnFooter>
+    <pageFooter>
+        <band height="54" splitType="Stretch"/>
+    </pageFooter>
+    <summary>
+        <band height="42" splitType="Stretch"/>
+    </summary>
+</jasperReport>

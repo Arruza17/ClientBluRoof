@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import view.controllers.SignInController;
+import view.controllers.OwnerWindowController;
 
 /**
  * Entry point for the java application
@@ -34,14 +34,15 @@ public class Application extends javafx.application.Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/SignIn.fxml"));
+        
+        /*FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/OwnerWindow.fxml"));
         Parent root = (Parent) fxmlLoader.load();
-        SignInController controller = ((SignInController) fxmlLoader.getController());
+        OwnerWindowController controller = ((OwnerWindowController) fxmlLoader.getController());
         controller.setStage(primaryStage);
-        controller.setUm(UserManagerFactory.createUsersManager(UserManagerFactory.REST_WEB_CLIENT_TYPE));
+        controller.set(UserManagerFactory.createUsersManager(UserManagerFactory.REST_WEB_CLIENT_TYPE));
         //Initialize stage
         LOGGER.info("Openning SignIn Window");
-        controller.initStage(root);
+        controller.initStage(root);*/
         
     }
 }
