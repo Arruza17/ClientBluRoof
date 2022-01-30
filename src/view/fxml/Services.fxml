@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.ServicesController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.ServicesController">
    <top>
       <HBox prefHeight="63.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
@@ -89,6 +89,14 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ImageView>
+                  <ImageView fx:id="imgPrint" fitHeight="31.0" fitWidth="27.0" onMousePressed="#handlePrintReport" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/fax.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
                </children>
                <VBox.margin>
                   <Insets bottom="5.0" left="15.0" top="10.0" />
@@ -102,17 +110,6 @@
                   <TableColumn fx:id="tcType" prefWidth="120.0" text="Type" />
               </columns>
             </TableView>
-            <ImageView fx:id="imgPrint" fitHeight="64.0" fitWidth="65.0" onMousePressed="#handlePrintReport" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../resources/img/fax.png" />
-               </image>
-               <VBox.margin>
-                  <Insets right="15.0" />
-               </VBox.margin>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ImageView>
          </children>
       </VBox>
    </center>

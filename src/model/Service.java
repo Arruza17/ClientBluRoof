@@ -6,25 +6,23 @@
 package model;
 
 import java.io.Serializable;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author 2dam
+ * @author Adrián 
  */
 @XmlRootElement
 public class Service implements Serializable {
 
-    private SimpleLongProperty id;
-    private SimpleStringProperty type;
-    private SimpleStringProperty address;
-    private SimpleStringProperty name;
-    private SimpleObjectProperty<Neighbourhood> neighbourhood;
+    private final SimpleLongProperty id;
+    private final SimpleStringProperty type;
+    private final SimpleStringProperty address;
+    private final SimpleStringProperty name;
+    private final SimpleObjectProperty<Neighbourhood> neighbourhood;
 
     public Service() {
 
@@ -32,19 +30,8 @@ public class Service implements Serializable {
         this.type = new SimpleStringProperty();
         this.address = new SimpleStringProperty();
         this.name = new SimpleStringProperty();
-        this.neighbourhood = new SimpleObjectProperty<Neighbourhood>();
+        this.neighbourhood = new SimpleObjectProperty<>();
     }
-
-    public Service(SimpleLongProperty id, SimpleStringProperty type, SimpleStringProperty address, SimpleStringProperty name, SimpleObjectProperty neighbourhood) {
-        this.id = id;
-        this.type = type;
-        this.address = address;
-        this.name = name;
-        this.neighbourhood = neighbourhood;
-
-    }
-    
-     
 
     /**
      *

@@ -115,8 +115,6 @@ public class ServicesController {
 
     private boolean committingDB;
 
-    private boolean deleting;
-
     private boolean searching;
 
     private boolean editing;
@@ -290,22 +288,37 @@ public class ServicesController {
 
         LOGGER.info("Adding new empty service to the table");
 
-        if (addingWithNullServices) {
+        if (services != null) {
+
+            Service s = new Service();
+            s.setId(Long.MIN_VALUE);
+            services.add(s);
+
+            tbvService.getSelectionModel().select(services.size() - 1);
+            tbvService.layout();
+            tbvService.getFocusModel().focus(services.size() - 1, tcAddress);
+            tbvService.edit(services.size() - 1, tcAddress);
+
+            addingService = true;
+
+            handleEditModeComponents();
+
+        } else {
+            addingWithNullServices = true;
             updateServicesTable();
+
+            Service s = new Service();
+            s.setId(Long.MIN_VALUE);
+            services.add(s);
+
+            tbvService.getSelectionModel().select(services.size() - 1);
+            tbvService.layout();
+            tbvService.getFocusModel().focus(services.size() - 1, tcAddress);
+            tbvService.edit(services.size() - 1, tcAddress);
+
+            addingService = true;
+
         }
-
-        Service s = new Service();
-        s.setId(Long.MIN_VALUE);
-        services.add(s);
-
-        tbvService.getSelectionModel().select(services.size() - 1);
-        tbvService.layout();
-        tbvService.getFocusModel().focus(services.size() - 1, tcAddress);
-        tbvService.edit(services.size() - 1, tcAddress);
-
-        addingService = true;
-
-        handleEditModeComponents();
 
     }
 
@@ -338,7 +351,8 @@ public class ServicesController {
 
                     try {
                         if (t.getNewValue().trim().isEmpty()) {
-                            //throw validation Error
+                            
+                            //throw validation Error                                                      
                             LOGGER.warning("The address field is empty");
                             throw new FieldsEmptyException();
                         }
@@ -360,8 +374,10 @@ public class ServicesController {
                             handleEditModeComponents();
 
                         } else {
-                            committing = true;
+                           
                             handleEditModeComponents();
+                            
+                            tbvService.edit(t.getTablePosition().getRow(), tcType);
                         }
                     } catch (FieldsEmptyException | MaxCharactersException ex) {
                         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -377,12 +393,10 @@ public class ServicesController {
                 });
 
         tcName.setOnEditCancel((CellEditEvent<Service, String> t) -> {
-            cancelling = true;
-            addingService = false;
-            committing = false;
-            editing = false;
-            handleEditModeComponents();
-            tbvService.refresh();
+
+            if (!cancelling) {
+                handleOnEditCancel();
+            }
 
         });
 
@@ -435,6 +449,7 @@ public class ServicesController {
                         } else {
                             committing = true;
                             handleEditModeComponents();
+                            tbvService.edit(t.getTablePosition().getRow(), tcType);
                         }
                     } catch (FieldsEmptyException | MaxCharactersException ex) {
                         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -451,12 +466,9 @@ public class ServicesController {
                 });
 
         tcAddress.setOnEditCancel((CellEditEvent<Service, String> t) -> {
-            cancelling = true;
-            addingService = false;
-            committing = false;
-            editing = false;
-            handleEditModeComponents();
-            tbvService.refresh();
+            if (!cancelling &&!committing) {
+                handleOnEditCancel();
+            }
 
         });
 
@@ -497,12 +509,9 @@ public class ServicesController {
                 });
 
         tcType.setOnEditCancel((CellEditEvent<Service, String> t) -> {
-            cancelling = true;
-            addingService = false;
-            committing = false;
-            editing = false;
-            handleEditModeComponents();
-            tbvService.refresh();
+            if (!cancelling) {
+                handleOnEditCancel();
+            }
 
         });
 
@@ -513,7 +522,7 @@ public class ServicesController {
 
         switch (cbService.getValue()) {
             case SELECT_ALL_SERVICES:
-
+                clearServicesTable();
                 cbServiceType.setPrefWidth(0);
                 cbServiceType.setPrefHeight(0);
                 cbServiceType.setVisible(false);
@@ -527,7 +536,7 @@ public class ServicesController {
 
                 break;
             case SELECT_BY_ADDRESS:
-
+                clearServicesTable();
                 cbServiceType.setPrefWidth(0);
                 cbServiceType.setPrefHeight(0);
                 cbServiceType.setVisible(false);
@@ -541,7 +550,7 @@ public class ServicesController {
 
                 break;
             case SELECT_BY_NAME:
-
+                clearServicesTable();
                 cbServiceType.setPrefWidth(0);
                 cbServiceType.setPrefHeight(0);
                 cbServiceType.setVisible(false);
@@ -552,23 +561,24 @@ public class ServicesController {
                 tfServices.setVisible(true);
                 tfServices.setPrefWidth(157);
                 tfServices.setPrefHeight(31);
-
+                clearServicesTable();
                 break;
 
             case SELECT_BY_TYPE:
-
+                clearServicesTable();
                 spinnerService.setDisable(true);
                 cbServiceType.setVisible(true);
                 cbServiceType.setDisable(false);
                 cbServiceType.setPrefWidth(157);
                 cbServiceType.setPrefHeight(31);
                 cbServiceType.setItems((ObservableList) types);
+                cbServiceType.getSelectionModel().select(0);
 
                 tfServices.setPrefWidth(0);
                 tfServices.setPrefHeight(0);
                 tfServices.setVisible(false);
                 tfServices.setDisable(true);
-
+                clearServicesTable();
                 break;
         }
     }
@@ -586,7 +596,6 @@ public class ServicesController {
     private ObservableList<Service> loadServicesByAddress() {
 
         ObservableList<Service> servicesTableBean = null;
-        addingWithNullServices = false;
 
         try {
 
@@ -597,7 +606,6 @@ public class ServicesController {
                 if (allServices.size() < 1) {
                     imgPrint.setDisable(true);
                     imgPrint.setOpacity(0.25);
-                    addingWithNullServices = true;
 
                 } else {
                     imgPrint.setDisable(false);
@@ -608,9 +616,10 @@ public class ServicesController {
                 }
             } else {
 
-                addingWithNullServices = true;
+                if (searching) {
+                    throw new FieldsEmptyException();
+                }
 
-                throw new FieldsEmptyException();
             }
 
         } catch (FieldsEmptyException ex) {
@@ -669,7 +678,6 @@ public class ServicesController {
                     imgPrint.setDisable(true);
                     imgPrint.setOpacity(0.25);
 
-                    addingWithNullServices = true;
                 } else {
                     imgPrint.setDisable(false);
                     imgPrint.setOpacity(1);
@@ -678,9 +686,10 @@ public class ServicesController {
 
             } else {
 
-                addingWithNullServices = true;
+                if (searching) {
+                    throw new FieldsEmptyException();
+                }
 
-                throw new FieldsEmptyException();
             }
 
         } catch (BusinessLogicException e) {
@@ -753,8 +762,6 @@ public class ServicesController {
                     imgPrint.setDisable(true);
                     imgPrint.setOpacity(0.25);
 
-                    addingWithNullServices = true;
-
                 } else {
                     servicesTableBean = FXCollections.observableArrayList(allServices);
 
@@ -766,9 +773,9 @@ public class ServicesController {
                 }
             } else {
 
-                addingWithNullServices = true;
-
-                throw new FieldsEmptyException();
+                if (searching) {
+                    throw new FieldsEmptyException();
+                }
 
             }
         } catch (BusinessLogicException e) {
@@ -803,7 +810,7 @@ public class ServicesController {
         if (result.get() == ButtonType.OK) {
             try {
                 serviceManager.deleteService(service.getId());
-                deleting = true;
+
                 updateServicesTable();
                 tbvService.refresh();
 
@@ -867,13 +874,12 @@ public class ServicesController {
 
                     break;
             }
-            cancelling = false;
-            deleting = false;
-            committingDB = false;
-            searching = false;
+
             //updates when a row is added
         }
-
+        cancelling = false;
+        searching = false;
+        committing = false;
         committingDB = false;
         searching = false;
     }
@@ -897,16 +903,12 @@ public class ServicesController {
         }
 
         //Control tableView upper Buttons when editing a cell and adding a service row
-        if (addingService) {
-
-            imgCancel.setDisable(false);
-            imgCancel.setOpacity(1);
-        }
-
         if (committing && addingService) {
 
             imgCommit.setDisable(false);
             imgCommit.setOpacity(1);
+            imgCancel.setDisable(false);
+            imgCancel.setOpacity(1);
 
         }
 
@@ -1061,6 +1063,44 @@ public class ServicesController {
             LOGGER.log(Level.SEVERE,
                     "Error printing report at printReport(): {0}",
                     ex.getMessage());
+        }
+    }
+
+    private void handleOnEditCancel() {
+        Service selectedService = tbvService.getSelectionModel().getSelectedItem();
+
+        Alert Cancelalert = new Alert(AlertType.CONFIRMATION);
+        Cancelalert.setHeaderText(null);
+        Cancelalert.setTitle("Confirmation");
+        if (addingService) {
+            Cancelalert.setContentText("Are you sure you want to cancel creating the last selected service?");
+        }
+        Cancelalert.setContentText("Are you sure you want to cancel editing the last selected service?");
+        Optional<ButtonType> result = Cancelalert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+
+            if (addingService) {
+                services.remove(services.size() - 1);
+                addingService = false;
+
+            }
+            cancelling = true;
+            editing = false;
+            committing = false;
+
+            updateServicesTable();
+
+            enableDefaultComponents();
+
+            tbvService.setItems(services);
+            tbvService.refresh();
+            tbvService.getSelectionModel().clearSelection(tbvService.getSelectionModel().getSelectedIndex());
+
+        } else {
+            if (addingService) {
+                LOGGER.info("commit cancelled");
+            }
+            LOGGER.info("update cancelled");
         }
     }
 }
