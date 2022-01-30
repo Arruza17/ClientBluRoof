@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import model.FacilityManagerImplementation;
+import logic.FacilityManagerImplementation;
 import view.controllers.SignInController;
 import view.controllers.FacilitiesController;
 

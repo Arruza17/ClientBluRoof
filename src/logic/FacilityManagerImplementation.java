@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package logic;
 
 import exceptions.BusinessLogicException;
 import java.text.SimpleDateFormat;
@@ -13,6 +13,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.GenericType;
+import model.BussinessLogicException;
+import model.Facility;
+import interfaces.FacilityManager;
 import restful.FacilityRestfulClient;
 
 /**

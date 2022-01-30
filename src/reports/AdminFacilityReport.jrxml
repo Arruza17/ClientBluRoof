@@ -5,7 +5,7 @@
 	<property name="ireport.y" value="0"/>
 	<field name="type" class="java.lang.String"/>
 	<field name="id" class="java.lang.Long"/>
-	<field name="adqDate" class="java.util.Date"/>
+	<field name="adquisitionDate" class="java.util.Date"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -24,7 +24,7 @@
 		<band height="51" splitType="Stretch">
 			<image>
 				<reportElement x="26" y="0" width="74" height="51" uuid="4e0bc4f1-81de-41ba-92f4-5c4acc86187e"/>
-				<imageExpression><![CDATA["C:\\Users\\2dam.HZ375749\\Documents\\NetBeansProjects\\ClientSignInUp\\ClientSignInUp\\src\\view\\resources\\img\\BluRoofLogo.jpg"]]></imageExpression>
+				<imageExpression><![CDATA["view/resources/img/BluRoofLogo.jpg"]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
@@ -57,7 +57,7 @@
 			<textField>
 				<reportElement x="100" y="0" width="100" height="20" uuid="6a8d5d2a-6a83-4eb5-a024-75fa4a0024b9"/>
 				<textElement textAlignment="Center"/>
-				<textFieldExpression><![CDATA[$F{adqDate}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{adquisitionDate}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="200" y="0" width="100" height="20" uuid="413a71f2-44f7-47a9-98c9-77e14a0fdc96"/>

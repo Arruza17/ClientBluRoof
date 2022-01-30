@@ -56,7 +56,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import model.BussinessLogicException;
 import model.Facility;
-import model.FacilityManager;
+import interfaces.FacilityManager;
+import java.lang.reflect.InvocationTargetException;
 import model.FacilityType;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -65,6 +66,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
+import sun.print.resources.serviceui;
 
 /**
  * FXML Controller class
@@ -109,78 +111,77 @@ public class FacilitiesController {
     private final String date = "Date";
     private final String type = "Type";
     private final String id = "Id";
+    private final String all = "All";
     private ObservableList<Facility> myFacilities;
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    boolean adding = false;
 
     /**
      * Initializes the controller class.
      */
     public void initStage(Parent root) {
-      
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.setTitle("Facilities Window");
-        cb_Type.setDisable(true);
-        dp_Facilities.setDisable(true);
-        tbl_facilities.setEditable(true);
-        iv_check.setDisable(true);
-        iv_check.setOpacity(0.25);
-        iv_cancel.setDisable(true);
-        iv_cancel.setOpacity(0.25);
-        iv_check.setDisable(true);
-        iv_check.setOpacity(0.25);
-        ObservableList<String> options
-                = FXCollections.observableArrayList(id, type, date);
-        cb_Facilities.setItems(options);
-        cb_Facilities.getSelectionModel().selectFirst();
-        tbl_facilities.getSelectionModel().selectedItemProperty()
-                .addListener(this::handleTableSelectionChanged);
-       
         try {
-            List<Facility> allFacilities = facMan.selectAll();
-            ObservableList<Facility> facilityTableBean
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Facilities Window");
+            cb_Type.setDisable(true);
+            dp_Facilities.setDisable(true);
+            sp_Facilities.setDisable(true);
+            tbl_facilities.setEditable(true);
+            iv_check.setDisable(true);
+            iv_check.setOpacity(0.25);
+            iv_cancel.setDisable(true);
+            iv_cancel.setOpacity(0.25);
+            iv_check.setDisable(true);
+            iv_check.setOpacity(0.25);
+            ObservableList<String> options
+                    = FXCollections.observableArrayList(all, id, type, date);
+            cb_Facilities.setItems(options);
+            cb_Facilities.getSelectionModel().selectFirst();
+            tbl_facilities.getSelectionModel().selectedItemProperty()
+                    .addListener(this::handleTableSelectionChanged);
+
+            try {
+                List<Facility> allFacilities = facMan.selectAll();
+                ObservableList<Facility> facilityTableBean
                         = FXCollections.observableArrayList(allFacilities);
                 myFacilities = facilityTableBean;
-                System.out.println(myFacilities.get(0).getId());
-                System.out.println(myFacilities.get(0).getAdquisitionDate());
-                System.out.println(myFacilities.get(0).getType());
-               
-            if (allFacilities.size() > 0) {
-        
-            } else {
-                
-                //The imgPrint will be disabled if there are not dwellings
-                iv_print.setDisable(true);
-                iv_print.setOpacity(0.25);
+
+                if (allFacilities.size() > 0) {
+
+                } else {
+
+                    //The imgPrint will be disabled if there are not dwellings
+                    iv_print.setDisable(true);
+                    iv_print.setOpacity(0.25);
+                }
+            } catch (BusinessLogicException ex) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("AYUDA");
+                alert.setHeaderText("Error");
+                alert.setContentText(ex.getMessage());
+                alert.showAndWait();
             }
-        } catch (BusinessLogicException ex) {
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("AYUDA");
-            alert.setHeaderText("Error");
-            alert.setContentText(ex.getMessage());
-            alert.showAndWait();
-        }
 
-        id_Column.setCellValueFactory(
-                new PropertyValueFactory<>("id"));
-        sp_Facilities.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
-        sp_Facilities.setEditable(true);
+            id_Column.setCellValueFactory(
+                    new PropertyValueFactory<>("id"));
+            sp_Facilities.setValueFactory(
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
+            sp_Facilities.setEditable(true);
 
-        EnumSet<FacilityType> ft = EnumSet.allOf(FacilityType.class);
-        ArrayList<String> facilTypeList = new ArrayList<>();
+            EnumSet<FacilityType> ft = EnumSet.allOf(FacilityType.class);
+            ArrayList<String> facilTypeList = new ArrayList<>();
 
-        for (FacilityType f : ft) {
-            facilTypeList.add(f.toString());
-        }
-        ObservableList<String> optionsType = FXCollections.observableArrayList(facilTypeList);
-        cb_Type.setItems(optionsType);
-        /*adq_column.setCellValueFactory(cellData
-                -> new SimpleObjectProperty(cellData.getValue().getAdqDate()));*/
-        adq_column.setCellValueFactory(cellData
-                -> new SimpleStringProperty(formatter.format(cellData.getValue().getAdquisitionDate())));
-        adq_column.setCellFactory(TextFieldTableCell.<Facility>forTableColumn());
-        adq_column.setOnEditCommit(
+            for (FacilityType f : ft) {
+                facilTypeList.add(f.toString());
+            }
+            ObservableList<String> optionsType = FXCollections.observableArrayList(facilTypeList);
+            cb_Type.setItems(optionsType);
+            cb_Type.getSelectionModel().selectFirst();
+            adq_column.setCellValueFactory(cellData
+                    -> new SimpleStringProperty(formatter.format(cellData.getValue().getAdquisitionDate())));
+            adq_column.setCellFactory(TextFieldTableCell.<Facility>forTableColumn());
+            adq_column.setOnEditCommit(
                     (CellEditEvent<Facility, String> t) -> {
                         try {
 
@@ -227,17 +228,26 @@ public class FacilitiesController {
 
                     });
 
-        type_column.setCellValueFactory(cellData
-                -> new SimpleStringProperty(cellData.getValue().getType()));
-        type_column.setCellFactory(ComboBoxTableCell.forTableColumn(optionsType));
-        type_column.setOnEditCommit(
-                (CellEditEvent<Facility, String> t) -> {
-                    ((Facility) t.getTableView().getItems().get(
-                            t.getTablePosition().getRow())).setType(t.getNewValue());
-                });
-        tbl_facilities.setItems(myFacilities);
-        stage.show();
-       
+            type_column.setCellValueFactory(cellData
+                    -> new SimpleStringProperty(cellData.getValue().getType()));
+            type_column.setCellFactory(ComboBoxTableCell.forTableColumn(optionsType));
+            type_column.setOnEditCommit(
+                    (CellEditEvent<Facility, String> t) -> {
+                        ((Facility) t.getTableView().getItems().get(
+                                t.getTablePosition().getRow())).setType(t.getNewValue());
+                    });
+            tbl_facilities.setItems(myFacilities);
+            stage.show();
+        } catch (Exception e) {
+            LOGGER.severe(e.getMessage());
+            LOGGER.severe("error while opening the window");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Couldn't open Facilities window");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+
+        }
     }
 
     public void setStage(Stage stage) {
@@ -263,6 +273,10 @@ public class FacilitiesController {
                 dp_Facilities.setDisable(false);
                 sp_Facilities.setDisable(true);
                 break;
+            case all:
+                cb_Type.setDisable(true);
+                dp_Facilities.setDisable(true);
+                sp_Facilities.setDisable(true);
 
         }
 
@@ -338,6 +352,10 @@ public class FacilitiesController {
 
                 }
                 break;
+            case all:
+                loadAll();
+                break;
+
         }
     }
 
@@ -351,13 +369,13 @@ public class FacilitiesController {
         iv_check.setOpacity(1);
         iv_cancel.setDisable(false);
         iv_cancel.setOpacity(1);
-        
+        adding=true;
         Facility ft = new Facility();
         ft.setId(Long.MIN_VALUE);
         ft.setAdquisitionDate(new Date());
         myFacilities.add(ft);
 
-       tbl_facilities.getSelectionModel().select(myFacilities.size() - 1);
+        tbl_facilities.getSelectionModel().select(myFacilities.size() - 1);
         tbl_facilities.layout();
         tbl_facilities.getFocusModel().focus(myFacilities.size() - 1, adq_column);
         tbl_facilities.edit(myFacilities.size() - 1, adq_column);
@@ -365,13 +383,9 @@ public class FacilitiesController {
     }
 
     @FXML
-    void pressComboBox(ActionEvent action) {
-    }
-
-    @FXML
     void clickPrint(MouseEvent action) {
         try {
-            
+
             JasperReport report
                     = JasperCompileManager.compileReport(getClass()
                             .getResourceAsStream("/reports/AdminFacilityReport.jrxml"));
@@ -387,7 +401,7 @@ public class FacilitiesController {
             JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
             jasperViewer.setVisible(true);
             // jasperViewer.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        } catch (JRException ex){
+        } catch (JRException ex) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setHeaderText("Error printing");
             alert.setContentText("There was an error printing the information, try again later");
@@ -399,7 +413,9 @@ public class FacilitiesController {
 
     @FXML
     void clickMinus(MouseEvent action) {
-        Facility facTBean = tbl_facilities.getSelectionModel().getSelectedItem();
+       Facility facTBean =null;
+        try{
+        facTBean = tbl_facilities.getSelectionModel().getSelectedItem();
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setHeaderText(null);
         alert.setTitle("Confirmation");
@@ -408,8 +424,7 @@ public class FacilitiesController {
         if (result.get() == ButtonType.OK) {
             try {
                 facMan.remove(facTBean.getId());
-                //TODO .remove(facTBean);
-                tbl_facilities.refresh();
+                loadAll();
             } catch (BussinessLogicException ex) {
                 Alert alert1 = new Alert(AlertType.ERROR);
                 alert1.setTitle("AYUDA");
@@ -424,13 +439,31 @@ public class FacilitiesController {
             alert2.setContentText("Content not deleted");
             alert2.showAndWait();
         }
+       }catch(Exception ex){
+       Alert alert2 = new Alert(AlertType.INFORMATION);
+            alert2.setTitle("Error while deleting");
+            alert2.setHeaderText(null);
+            alert2.setContentText("Couldn't delete, please \n select the desired row to delete in the table");
+            alert2.showAndWait();
+       }
+        
+       
     }
 
     @FXML
     void clickClose(MouseEvent action) {
-
+          Alert alert=new Alert(AlertType.INFORMATION);
+        alert.setHeaderText(null);
+                alert.setTitle("Confirmation");
+                alert.setContentText("Are you sure you want to stop creating/updatting?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    if(adding){
+                    myFacilities.remove(myFacilities.size()-1);
+                    adding=false;
+                    }
+    }else{}
     }
-
     @FXML
     void clickCheck(MouseEvent action) {
         Date date;
@@ -438,24 +471,63 @@ public class FacilitiesController {
         f = tbl_facilities.getSelectionModel().getSelectedItem();
         int pos = tbl_facilities.getSelectionModel().getSelectedIndex();
         try {
-              
+
             if (pos == myFacilities.size() - 1 && f.getId().equals(Long.MIN_VALUE)) {
-                facMan.create(f);
-                tbl_facilities.refresh();
-                
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setHeaderText(null);
+                alert.setTitle("Confirmation");
+                alert.setContentText("Are you sure you want to create\n this facility with the following type and date:" + f.getType() + f.getAdquisitionDate() + "?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    facMan.create(f);
+                    loadAll();
+                    iv_check.setDisable(true);
+                    iv_check.setOpacity(0.25);
+                    iv_cancel.setDisable(true);
+                    iv_cancel.setOpacity(0.25);
+                    iv_minus.setOpacity(1);
+                    iv_minus.setDisable(false);
+                    iv_add.setDisable(false);
+                    iv_add.setOpacity(1);
+                } else {
+                    Alert alert2 = new Alert(AlertType.INFORMATION);
+                    alert2.setTitle("Facility not created");
+                    alert2.setHeaderText(null);
+                    alert2.setContentText("Content not created");
+                    alert2.showAndWait();
+                }
             } else {
-                
-                facMan.update(f,f.getId());
-                tbl_facilities.refresh();
-               
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setHeaderText(null);
+                alert.setTitle("Confirmation");
+                alert.setContentText("Are you sure you want to update\n this facility with the following type and date:" + f.getType() + "  " + f.getAdquisitionDate() + "?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    facMan.update(f, f.getId());
+                    loadAll();
+                    iv_check.setDisable(true);
+                    iv_check.setOpacity(0.25);
+                    iv_cancel.setDisable(true);
+                    iv_cancel.setOpacity(0.25);
+                    iv_minus.setOpacity(1);
+                    iv_minus.setDisable(false);
+                    iv_add.setDisable(false);
+                    iv_add.setOpacity(1);
+                } else {
+                    Alert alert2 = new Alert(AlertType.INFORMATION);
+                    alert2.setTitle("Facility not updated");
+                    alert2.setHeaderText(null);
+                    alert2.setContentText("Content not updated");
+                    alert2.showAndWait();
+                }
 
             }
         } catch (BusinessLogicException ex) {
             Alert excAlert = new Alert(AlertType.INFORMATION);
             excAlert.setTitle("Error");
-            excAlert.setContentText("There was an error with the edition of the service: " + ex.getMessage());
+            excAlert.setContentText("There was an error with the edition of the facility: " + ex.getMessage());
             excAlert.show();
-           
+
         }
     }
 
@@ -467,4 +539,20 @@ public class FacilitiesController {
 
     }
 
+    private ObservableList loadAll() {
+        ObservableList<Facility> facilityTableBean = null;
+
+        List<Facility> allFacilities;
+        try {
+            allFacilities = facMan.selectAll();
+            facilityTableBean = FXCollections.observableArrayList(allFacilities);
+            tbl_facilities.setItems(facilityTableBean);
+
+        } catch (BusinessLogicException ex) {
+            Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        tbl_facilities.refresh();
+        myFacilities = facilityTableBean;
+        return facilityTableBean;
+    }
 }

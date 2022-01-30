@@ -6,8 +6,8 @@
 package factories;
 
 import javax.naming.OperationNotSupportedException;
-import model.FacilityManager;
-import model.FacilityManagerImplementation;
+import interfaces.FacilityManager;
+import logic.FacilityManagerImplementation;
 
 /**
  *

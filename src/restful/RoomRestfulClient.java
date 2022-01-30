@@ -23,7 +23,7 @@ import javax.ws.rs.client.WebTarget;
  *
  * @author jorge
  */
-public class RoomRestfulClient implements RoomManager{
+public class RoomRestfulClient{
 
     private WebTarget webTarget;
     private Client client;

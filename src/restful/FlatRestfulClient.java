@@ -23,7 +23,7 @@ import javax.ws.rs.client.WebTarget;
  *
  * @author jorge
  */
-public class FlatRestfulClient implements FlatManager{
+public class FlatRestfulClient{
 
     private WebTarget webTarget;
     private Client client;
