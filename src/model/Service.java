@@ -1,75 +1,44 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package model;
 
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * Entity representing Services. Contains personal data, identification data and
- * relational data for accessing neighborhood data. data.
  *
- * @author Adrián
+ * @author Adrián 
  */
-@NamedQueries({
-    @NamedQuery(name = "findServiceByType", query = "SELECT s FROM Service s WHERE s .type=:serviceType")
-    ,
-      @NamedQuery(name = "findServiceByAddress", query = "SELECT s FROM Service s WHERE s.address=:serviceAddress")
-    ,
-      @NamedQuery(name = "findServiceByName", query = "SELECT s FROM Service s WHERE s.name=:serviceName")
-})
-
-@Entity
-@Table(schema = "bluroof")
 @XmlRootElement
 public class Service implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    /**
-     *  * Identification field for service
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    /**
-     * enumeration that contains different types of services.
-     */
-    @Enumerated(EnumType.STRING)
-    private ServiceType type;
-    /**
-     * Service address.
-     */
-    @NotNull
-    private String address;
-    /**
-     * Service name.
-     */
-    @NotNull
-    private String name;
-    /**
-     * Service neighborhood.
-     */
+    private final SimpleLongProperty id;
+    private final SimpleStringProperty type;
+    private final SimpleStringProperty address;
+    private final SimpleStringProperty name;
+    private final SimpleObjectProperty<Neighbourhood> neighbourhood;
 
-    @XmlTransient
-    @ManyToOne
-    private Neighbourhood neighbourhood;
+    public Service() {
+
+        this.id = new SimpleLongProperty();
+        this.type = new SimpleStringProperty();
+        this.address = new SimpleStringProperty();
+        this.name = new SimpleStringProperty();
+        this.neighbourhood = new SimpleObjectProperty<>();
+    }
 
     /**
      *
      * @return id of the service.
      */
     public Long getId() {
-        return id;
+        return this.id.get();
     }
 
     /**
@@ -77,23 +46,23 @@ public class Service implements Serializable {
      * @param id service id.
      */
     public void setId(Long id) {
-        this.id = id;
+        this.id.set(id);
     }
 
     /**
      *
      * @return type of service.
      */
-    public ServiceType getType() {
-        return type;
+    public String getType() {
+        return this.type.get();
     }
 
     /**
      *
      * @param type service type.
      */
-    public void setType(ServiceType type) {
-        this.type = type;
+    public void setType(String type) {
+        this.type.set(type);
     }
 
     /**
@@ -101,7 +70,7 @@ public class Service implements Serializable {
      * @return address of the service.
      */
     public String getAddress() {
-        return address;
+        return this.address.get();
     }
 
     /**
@@ -109,7 +78,7 @@ public class Service implements Serializable {
      * @param address service address.
      */
     public void setAddress(String address) {
-        this.address = address;
+        this.address.set(address);
     }
 
     /**
@@ -117,7 +86,7 @@ public class Service implements Serializable {
      * @return name of the service.
      */
     public String getName() {
-        return name;
+        return this.name.get();
     }
 
     /**
@@ -125,16 +94,15 @@ public class Service implements Serializable {
      * @param name service name.
      */
     public void setName(String name) {
-        this.name = name;
+        this.name.set(name);
     }
 
     /**
      *
      * @return the neighborhood of the service.
      */
-    @XmlTransient
     public Neighbourhood getNeighborhood() {
-        return neighbourhood;
+        return this.neighbourhood.get();
     }
 
     /**
@@ -142,7 +110,7 @@ public class Service implements Serializable {
      * @param neighborhood service neighborhood.
      */
     public void setNeighborhood(Neighbourhood neighborhood) {
-        this.neighbourhood = neighborhood;
+        this.neighbourhood.set(neighborhood);
     }
 
     /**
