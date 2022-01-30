@@ -5,7 +5,7 @@
  */
 package restful;
 
-import interfaces.FlatManager;
+
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
