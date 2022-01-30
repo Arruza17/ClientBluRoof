@@ -7,8 +7,11 @@ package exceptions;
 
 /**
  *
- * @author 2dam
+ * @author YERAY
  */
-public class BusinessLogicException extends Exception{
-    
+public class BusinessLogicException extends Exception {
+    public BusinessLogicException(String msg){
+        super(msg);
+    }
+
 }

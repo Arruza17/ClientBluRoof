@@ -1,13 +1,15 @@
 package application;
 
-import factories.FacilityManagerFactory;
+
+import factories.UserManagerFactory;
+
 import java.util.logging.Logger;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import logic.FacilityManagerImplementation;
-import view.controllers.SignInController;
-import view.controllers.FacilitiesController;
+
+import view.controllers.OwnerWindowController;
+
 
 /**
  * Entry point for the java application
@@ -15,7 +17,7 @@ import view.controllers.FacilitiesController;
  * @author BluRoof
  */
 public class Application extends javafx.application.Application {
-
+    
     private static final Logger LOGGER = Logger.getLogger(Application.class.getName());
 
     /**
@@ -36,14 +38,15 @@ public class Application extends javafx.application.Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/Facilities.fxml"));
+        
+        /*FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/OwnerWindow.fxml"));
         Parent root = (Parent) fxmlLoader.load();
-        FacilitiesController controller = ((FacilitiesController) fxmlLoader.getController());
+        OwnerWindowController controller = ((OwnerWindowController) fxmlLoader.getController());
         controller.setStage(primaryStage);
-        controller.setFacMan(FacilityManagerFactory.createFacilityManager(FacilityManagerFactory.REST_WEB_CLIENT_TYPE));
+        controller.set(UserManagerFactory.createUsersManager(UserManagerFactory.REST_WEB_CLIENT_TYPE));
         //Initialize stage
         LOGGER.info("Openning SignIn Window");
-        controller.initStage(root);
-
+        controller.initStage(root);*/
+        
     }
 }

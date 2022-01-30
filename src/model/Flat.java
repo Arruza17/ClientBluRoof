@@ -72,5 +72,6 @@ public class Flat extends Dwelling  implements Serializable {
     public String toString() {
         return super.toString() + " Flat{" + "nRooms=" + nRooms + ", nBathrooms=" + nBathrooms + ", facilityList=" + facilityList + '}';
     }
+
     
 }

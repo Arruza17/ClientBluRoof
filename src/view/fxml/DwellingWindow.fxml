@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dwellingfxml.DwellingController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox>
+               <children>
+                  <ImageView fx:id="imgDwellingType" fitHeight="55.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/dwelling/flat.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets left="15.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Label fx:id="lblTitle" text="Dwelling">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label text="-">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="lblDwellingType" text="Flat">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Separator>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <HBox BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets left="20.0" top="50.0" />
+         </BorderPane.margin>
+         <children>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <ImageView fx:id="imgDwelling" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/dwelling/flat.jpeg" />
+                     </image>
+                  </ImageView>
+                  <HBox>
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/owner.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="lblOwner" prefHeight="30.0" text="Elon Musk">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox>
+                     <VBox.margin>
+                        <Insets top="50.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label text="Comments">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox spacing="15.0">
+                     <children>
+                        <ImageView fx:id="imgCreateComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleAddComment" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/add.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets top="5.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <ImageView fx:id="imgConfirmComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleConfirmComment" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/check.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <ImageView fx:id="imgCancelComment" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleCancelComment" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/cancel.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </HBox.margin>
+                        </ImageView>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="5.0" top="10.0" />
+               </HBox.margin>
+            </Separator>
+            <VBox HBox.hgrow="NEVER">
+               <children>
+                  <HBox>
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/buzon.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="lblAdress" prefHeight="30.0" text="Calle Febrero 23" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Separator>
+                  <HBox>
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                           <image>
+                              <Image url="@../resources/img/dwelling/medida.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="lblsquareMeters" prefHeight="30.0" text="30m²">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Separator>
+                  <HBox>
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                           <image>
+                              <Image url="@../resources/img/dwelling/pala.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </ImageView>
+                        <Label fx:id="lblConstructionDate" prefHeight="30.0" text="10/09/1956">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </VBox>
+            <Separator orientation="VERTICAL">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="5.0" top="10.0" />
+               </HBox.margin>
+            </Separator>
+            <VBox>
+               <children>
+                  <HBox>
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/wifi.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="lblWifi" prefHeight="30.0" text="Yes">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="15.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Separator prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Separator>
+                  <VBox>
+                     <children>
+                        <Label prefHeight="30.0" text="Rating">
+                           <VBox.margin>
+                              <Insets left="5.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <ImageView fx:id="imgRating" fitHeight="75.0" fitWidth="75.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/rating4.png" />
+                           </image>
+                           <VBox.margin>
+                              <Insets left="5.0" top="-30.0" />
+                           </VBox.margin>
+                        </ImageView>
+                     </children>
+                  </VBox>
+               </children>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="5.0" top="10.0" />
+               </HBox.margin></Separator>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox>
+                     <children>
+                        <ImageView fx:id="imgLight_or_Room" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/nRooms.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="lblLight_or_Room" prefHeight="30.0" text="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <Separator prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Separator>
+                  <HBox>
+                     <children>
+                        <ImageView fx:id="imgOutlets_or_Bathrooms" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/dwelling/toilet.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="lblOutlets_or_Bathrooms" prefHeight="30.0" text="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Separator fx:id="separatorFacilities" prefWidth="200.0">
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Separator>
+                  <Hyperlink fx:id="hlFacilities" onAction="#handleViewFacilities" text="View facilities">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Hyperlink>
+                  <VBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS">
+                     <padding>
+                        <Insets bottom="5.0" right="10.0" />
+                     </padding>
+                     <children>
+                        <ImageView fx:id="imgPrint" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#handlePrintComments" pickOnBounds="true" preserveRatio="true">
+                           <VBox.margin>
+                              <Insets bottom="5.0" right="5.0" />
+                           </VBox.margin>
+                           <image>
+                              <Image url="@../resources/img/dwelling/imprimir.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </VBox>
+               </children>
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </VBox>
+         </children>
+      </HBox>
+   </center>
+   <bottom>
+      <TableView fx:id="tblComments" BorderPane.alignment="CENTER">
+         <columns>
+            <TableColumn fx:id="colUser" maxWidth="150.0" prefWidth="100.0" text="User" />
+            <TableColumn fx:id="colComment" maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="750.0" text="Comment" />
+            <TableColumn fx:id="colRating" maxWidth="150.0" minWidth="-1.0" prefWidth="75.0" text="Rating" />
+         </columns></TableView>
+   </bottom>
+</BorderPane>

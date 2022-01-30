@@ -1,50 +1,19 @@
 package model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
-import static javax.persistence.CascadeType.ALL;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.Pattern;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-
 /**
  * Entity representing users. Contains basic personal data, identification
  *
  * @author Yeray Sampedro
  */
-@NamedQueries({
-    @NamedQuery(
-            name = "logInUser", query = "SELECT u FROM User u WHERE u.login= :login and u.password= :password")
-    ,
-    @NamedQuery(
-            name = "changePassword", query = "UPDATE User u SET u.password=:newPass, u.lastPasswordChange = current_time() WHERE u.login= :login"),
-     @NamedQuery(
-            name = "findByLogin", query = "SELECT u FROM User u WHERE u.login= :login")
-    ,
-}
-)
-
-@Entity
-@Table(schema = "bluroof")
-@Inheritance(strategy = InheritanceType.JOINED)
 @XmlRootElement
 public class User implements Serializable {
 
@@ -52,53 +21,75 @@ public class User implements Serializable {
     /**
      * Identification field for user.
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private Long id;
 
-    @Column(unique = true)
-    private String login;
+    private SimpleStringProperty login;
     /**
      * User's full name.
      */
-    private String fullName;
+    private SimpleStringProperty fullName;
     /**
      * User's password.
      */
 
-    private String password;
+    private SimpleStringProperty password;
     /**
      * User's email.
      */
-    private String email;
+    private SimpleStringProperty email;
     /**
      * User's birth date.
      */
-    @Temporal(TemporalType.DATE)
-    private Date birthDate;
+
+    private SimpleObjectProperty<Date> birthDate;
     /**
      * User's status ENABLED/DISABLED.
      */
-    @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    private SimpleStringProperty status;
 
     /**
      * User's privileges ADMIN/HOST/GUEST.
      */
-    @Enumerated(EnumType.STRING)
-    private UserPrivilege privilege;
+    private SimpleStringProperty privilege;
     /**
      * User's last date of password change.
      */
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastPasswordChange;
+    private SimpleObjectProperty<Date> lastPasswordChange;
     /**
      * User's phone number.
      */
-    private String phoneNumber;
+    private SimpleStringProperty phoneNumber;
 
-    @OneToMany(cascade = ALL, mappedBy = "user", fetch = FetchType.EAGER)
     private List<LastSignIn> lastSignIns;
+
+    public User(Long id, SimpleStringProperty login, SimpleStringProperty fullName, SimpleStringProperty password, SimpleStringProperty email, SimpleObjectProperty<Date> birthDate, SimpleStringProperty status, SimpleStringProperty privilege, SimpleObjectProperty<Date> lastPasswordChange, SimpleStringProperty phoneNumber, List<LastSignIn> lastSignIns) {
+        this.id = id;
+        this.login = login;
+        this.fullName = fullName;
+        this.password = password;
+        this.email = email;
+        this.birthDate = birthDate;
+        this.status = status;
+        this.privilege = privilege;
+        this.lastPasswordChange = lastPasswordChange;
+        this.phoneNumber = phoneNumber;
+        this.lastSignIns = lastSignIns;
+    }
+
+    public User() {
+        this.id = null;
+        this.login = new SimpleStringProperty();
+        this.fullName = new SimpleStringProperty();
+        this.password = new SimpleStringProperty();
+        this.email = new SimpleStringProperty();
+        this.birthDate = new SimpleObjectProperty();
+        this.status = new SimpleStringProperty();
+        this.privilege = new SimpleStringProperty();
+        this.lastPasswordChange = new SimpleObjectProperty();
+        this.phoneNumber = new SimpleStringProperty();;
+        this.lastSignIns = new ArrayList<LastSignIn>();
+    }
 
     @XmlTransient
     public List<LastSignIn> getLastSignIns() {
@@ -115,7 +106,7 @@ public class User implements Serializable {
      * @return id the identification number
      */
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     /**
@@ -133,7 +124,7 @@ public class User implements Serializable {
      * @return login the user's login
      */
     public String getLogin() {
-        return login;
+        return this.login.get();
     }
 
     /**
@@ -142,7 +133,7 @@ public class User implements Serializable {
      * @param login the user's login
      */
     public void setLogin(String login) {
-        this.login = login;
+        this.login.set(login);
     }
 
     /**
@@ -151,7 +142,7 @@ public class User implements Serializable {
      * @return fullName the user's full name
      */
     public String getFullName() {
-        return fullName;
+        return this.fullName.get();
     }
 
     /**
@@ -160,7 +151,7 @@ public class User implements Serializable {
      * @param fullName the full name to be set
      */
     public void setFullName(String fullName) {
-        this.fullName = fullName;
+        this.fullName.set(fullName);
     }
 
     /**
@@ -170,7 +161,7 @@ public class User implements Serializable {
      */
     @XmlTransient
     public String getPassword() {
-        return password;
+        return this.password.get();
     }
 
     /**
@@ -179,7 +170,7 @@ public class User implements Serializable {
      * @param password the password to be set
      */
     public void setPassword(String password) {
-        this.password = password;
+        this.password.set(password);
     }
 
     /**
@@ -188,7 +179,7 @@ public class User implements Serializable {
      * @return email the email to get
      */
     public String getEmail() {
-        return email;
+        return this.email.get();
     }
 
     /**
@@ -197,7 +188,7 @@ public class User implements Serializable {
      * @param email the email to set
      */
     public void setEmail(String email) {
-        this.email = email;
+        this.email.set(email);
     }
 
     /**
@@ -206,7 +197,7 @@ public class User implements Serializable {
      * @return birthdate the birthdate of the user
      */
     public Date getBirthDate() {
-        return birthDate;
+        return this.birthDate.get();
     }
 
     /**
@@ -215,7 +206,7 @@ public class User implements Serializable {
      * @param birthDate the birthdate to set
      */
     public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
+        this.birthDate.set(birthDate);
     }
 
     /**
@@ -223,8 +214,8 @@ public class User implements Serializable {
      *
      * @return status the user status to get
      */
-    public UserStatus getStatus() {
-        return status;
+    public String getStatus() {
+        return this.status.get();
     }
 
     /**
@@ -232,8 +223,9 @@ public class User implements Serializable {
      *
      * @param status the status to set
      */
-    public void setStatus(UserStatus status) {
-        this.status = status;
+
+    public void setStatus(String status) {
+        this.status.set(status);
     }
 
     /**
@@ -241,8 +233,8 @@ public class User implements Serializable {
      *
      * @return privilege the privilege to get
      */
-    public UserPrivilege getPrivilege() {
-        return privilege;
+    public String getPrivilege() {
+        return this.privilege.get();
     }
 
     /**
@@ -250,8 +242,9 @@ public class User implements Serializable {
      *
      * @param privilege the privilege to set
      */
-    public void setPrivilege(UserPrivilege privilege) {
-        this.privilege = privilege;
+
+    public void setPrivilege(String privilege) {
+        this.privilege.set(privilege);
     }
 
     /**
@@ -260,7 +253,7 @@ public class User implements Serializable {
      * @return lastPasswordChange the last time the password was changed
      */
     public Date getLastPasswordChange() {
-        return lastPasswordChange;
+        return this.lastPasswordChange.get();
     }
 
     /**
@@ -269,7 +262,7 @@ public class User implements Serializable {
      * @param lastPasswordChange the time the last password was changed
      */
     public void setLastPasswordChange(Date lastPasswordChange) {
-        this.lastPasswordChange = lastPasswordChange;
+        this.lastPasswordChange.set(lastPasswordChange);
     }
 
     /**
@@ -278,7 +271,7 @@ public class User implements Serializable {
      * @return phoneNumber the phone number to get
      */
     public String getPhoneNumber() {
-        return phoneNumber;
+        return this.phoneNumber.get();
     }
 
     /**
@@ -287,7 +280,7 @@ public class User implements Serializable {
      * @param phoneNumber the phone number of the user
      */
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber.set(phoneNumber);
     }
 
     /**
@@ -332,4 +325,7 @@ public class User implements Serializable {
         return "entities.User[ id=" + id + " ]";
     }
 
+    public SimpleObjectProperty<Date> getBDateProperty() {
+        return this.birthDate;
+    }
 }

@@ -5,9 +5,13 @@
  */
 package restful;
 
+import interfaces.DwellingManager;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 
 /**
  * Jersey REST client generated for REST resource:DwellingFacadeREST
@@ -26,20 +30,32 @@ public class DwellingRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:22083/ServerBluRoof/webresources";
+    private static final Logger LOGGER = Logger.getLogger("DwellingRestfulClient");
+    private ResourceBundle resourceBundle = ResourceBundle.getBundle("resources.config");
+    private static String BASE_URI;
 
+    /**
+     * Construct a DwellingRestfulClient. It creates a RESTful web client and
+     * establishes the path of the WebTarget object associated to the client.
+     */
     public DwellingRestfulClient() {
+        BASE_URI = resourceBundle.getString("BASE_URI");
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("entities.dwelling");
     }
 
+    /**
+     *
+     * @return @throws ClientErrorException
+     */
     public String countREST() throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path("count");
         return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(String.class);
     }
 
-    public <T> T findByMinConstructionDate(Class<T> responseType, String date) throws ClientErrorException {
+    public <T> T findByMinConstructionDate(GenericType<T> responseType, String date) throws ClientErrorException {
+        LOGGER.info("GETTING ALL DWELLINGS DATA BY MIN CONSTRUCTION DATE");
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("minConstructionDate/{0}", new Object[]{date}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -49,7 +65,8 @@ public class DwellingRestfulClient {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findByMinRating(Class<T> responseType, String rate) throws ClientErrorException {
+    public <T> T findByMinRating(GenericType<T> responseType, String rate) throws ClientErrorException {
+        LOGGER.info("GETTING ALL DWELLINGS DATA BY MIN RATING");
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("minRate/{0}", new Object[]{rate}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -71,17 +88,18 @@ public class DwellingRestfulClient {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findAll(Class<T> responseType) throws ClientErrorException {
+    public <T> T findAll_XML(GenericType<T> responseType) throws ClientErrorException {
+        LOGGER.info("GETTING ALL DWELLINGS DATA");
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public void remove(String id) throws ClientErrorException {
+    public void remove(Long id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
     public void close() {
         client.close();
     }
-    
+
 }

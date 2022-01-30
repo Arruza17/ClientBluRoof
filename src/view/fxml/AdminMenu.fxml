@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" spacing="15.0" styleClass="menuBar" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.AdminMenuController">
+   <children>
+      <HBox fx:id="menuProfile" alignment="CENTER" onMouseClicked="#handleProfile" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Your profile" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </HBox>
+      <HBox fx:id="menuAdminCrud" alignment="CENTER" onMouseClicked="#handleAdminCrud" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Admin CRUD" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </HBox>
+      <HBox fx:id="menuServiceCrud" alignment="CENTER" onMouseClicked="#handleServiceCrud" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Service CRUD" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </HBox>
+      <HBox fx:id="menuFacilitiesCrud" alignment="CENTER" onMouseClicked="#handleFacilitiesCrud" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Facilities CRUD" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </HBox>
+      <HBox fx:id="menuSignOut" alignment="CENTER" onMouseClicked="#handleSignOut" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Sign Out" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </HBox>
+      <HBox alignment="CENTER" onMouseClicked="#handleExit" VBox.vgrow="ALWAYS">
+         <children>
+            <Label fx:id="menuExit" text="Exit" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </HBox>
+   </children>
+</VBox>

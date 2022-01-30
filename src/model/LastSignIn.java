@@ -2,17 +2,6 @@ package model;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -22,14 +11,7 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author Yeray Sampedro
  */
-@NamedQueries({
-    @NamedQuery(
-            name = "findByUserLogin", query = "SELECT l FROM LastSignIn l WHERE l.user =:user ORDER BY l.lastSignIn ASC")
-}
-)
 
-@Entity
-@Table(schema = "bluroof")
 @XmlRootElement
 public class LastSignIn implements Serializable {
 
@@ -37,18 +19,15 @@ public class LastSignIn implements Serializable {
     /**
      * Identification field for teh last signIn.
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     private Long id;
     /**
      * The date of the last SignIn
      */
-    @Temporal(TemporalType.TIMESTAMP)
     private Date lastSignIn;
     /**
      * The user
      */
-    @ManyToOne
     private User user;
 
     /**
@@ -147,5 +126,5 @@ public class LastSignIn implements Serializable {
     public String toString() {
         return "entities.LastSignIn[ id=" + id + " ]";
     }
-
 }
+

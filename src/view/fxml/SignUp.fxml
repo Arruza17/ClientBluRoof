@@ -1,41 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="1080.0" maxWidth="1920.0" minHeight="400.0" minWidth="640.0" prefHeight="768.0" prefWidth="1024.0" styleClass="bgimg" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.SignUpController">
+<BorderPane maxHeight="1080.0" maxWidth="1920.0" minHeight="400.0" minWidth="640.0" prefHeight="768.0" prefWidth="1024.0" styleClass="bgimg" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.SignUpController">
     <center>
-        <BorderPane prefHeight="200.0" prefWidth="200.0" styleClass="loginPanel" BorderPane.alignment="CENTER">
-            <left>
-                <Pane prefHeight="200.0" prefWidth="200.0" visible="false" BorderPane.alignment="CENTER" />
-            </left>
-            <right>
-                <Pane prefHeight="200.0" prefWidth="200.0" visible="false" BorderPane.alignment="CENTER" />
-            </right>
-            <top>
-                <Pane prefHeight="102.0" prefWidth="800.0" visible="false" BorderPane.alignment="CENTER">
-                    <children>
-                        <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" />
-                    </children>
-                </Pane>
-            </top>
-            <bottom>
-                <Pane prefHeight="74.0" prefWidth="806.0" visible="false" BorderPane.alignment="CENTER" />
-            </bottom>
+        <BorderPane styleClass="loginPanel" BorderPane.alignment="CENTER">
             <center>
-                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" BorderPane.alignment="CENTER">
                     <children>
                         <HBox prefHeight="100.0" prefWidth="200.0">
                             <children>
@@ -51,7 +39,7 @@
                                                 <Font size="16.0" />
                                             </font>
                                             <tooltip>
-                                                <Tooltip fx:id="tooltipUser" text="Enter the user" />
+                                                <Tooltip text="Enter the user" />
                                             </tooltip>
                                         </TextField>
                                     </children>
@@ -69,7 +57,7 @@
                                                 <Font size="16.0" />
                                             </font>
                                             <tooltip>
-                                                <Tooltip fx:id="tooltipFullName" text="Enter the name and surname" />
+                                                <Tooltip text="Enter the name and surname" />
                                             </tooltip>
                                         </TextField>
                                     </children>
@@ -90,9 +78,9 @@
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
-                                            <tooltip>
-                                                <Tooltip fx:id="tooltipRptPass" text="Repeat the password" />
-                                            </tooltip>
+                                 <tooltip>
+                                                <Tooltip text="Enter the password" />
+                                 </tooltip>
                                         </PasswordField>
                                     </children>
                                 </VBox>
@@ -108,9 +96,9 @@
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
-                                            <tooltip>
-                                                <Tooltip fx:id="tooltipPass" text="Enter the password" />
-                                            </tooltip>
+                                 <tooltip>
+                                                <Tooltip text="Repeat the password" />
+                                 </tooltip>
                                         </PasswordField>
                                     </children>
                                 </VBox>
@@ -124,41 +112,122 @@
                                         <Font size="16.0" />
                                     </font>
                                     <tooltip>
-                                        <Tooltip fx:id="tooltipEmail" text="Enter the email (example@domain.com)" />
+                                        <Tooltip text="Enter the email (example@domain.com)" />
                                     </tooltip>
                                 </TextField>
                             </children>
                         </VBox>
-                        <HBox alignment="CENTER" prefHeight="132.0" prefWidth="400.0">
-                            <children>
-                                <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../resources/img/BluRoofLogo.png" />
-                                    </image>
-                                </ImageView>
-                                <ButtonBar prefHeight="40.0" prefWidth="200.0">
-                                    <buttons>
-                                        <Button fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleCancelAction" styleClass="cancelButton" text="Cancel" />
-                                        <Button fx:id="btnSignUp" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignUpAction" styleClass="primaryButton" text="Sign Up" />
-                                    </buttons>
-                                </ButtonBar>
-                            </children>
-                        </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Phone Number">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="tfPhoneNo" prefHeight="32.0" prefWidth="360.0" promptText="Phone no">
+                                 <tooltip>
+                                    <Tooltip text="Input your phone number, country code included" />
+                                 </tooltip>
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
+                        <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Birth Date">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <DatePicker fx:id="dpBdate" editable="false" prefHeight="32.0" prefWidth="360.0" VBox.vgrow="ALWAYS">
+                                 <tooltip>
+                                    <Tooltip text="Put the date in the current format DD/MM/YYYY" />
+                                 </tooltip>
+                              </DatePicker>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Type">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <HBox spacing="15.0">
+                                 <children>
+                                    <RadioButton mnemonicParsing="false" text="Owner" HBox.hgrow="ALWAYS">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="userType" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton mnemonicParsing="false" text="Guest" toggleGroup="$userType" HBox.hgrow="ALWAYS">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </RadioButton>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
+                        <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox fx:id="hbChange" alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <CheckBox fx:id="cbReside" mnemonicParsing="false" text="Are you going to reside?">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children></HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
                     </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <BorderPane.margin>
+                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+               </BorderPane.margin>
                 </VBox>
             </center>
+         <padding>
+            <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+         </padding>
+         <BorderPane.margin>
+            <Insets bottom="75.0" left="75.0" right="75.0" top="75.0" />
+         </BorderPane.margin>
+         <bottom>
+                  <HBox alignment="CENTER" prefHeight="132.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+                      <children>
+                          <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../resources/img/BluRoofLogo.png" />
+                              </image>
+                          </ImageView>
+                          <ButtonBar prefHeight="40.0" prefWidth="200.0">
+                              <buttons>
+                                  <Button fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleCancelAction" styleClass="cancelButton" text="Cancel" />
+                                  <Button fx:id="btnSignUp" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleSignUpAction" styleClass="primaryButton" text="Sign Up" />
+                              </buttons>
+                          </ButtonBar>
+                      </children>
+                  </HBox>
+         </bottom>
         </BorderPane>
     </center>
-    <top>
-        <Pane disable="true" prefHeight="100.0" prefWidth="200.0" visible="false" BorderPane.alignment="CENTER" />
-    </top>
-    <left>
-        <Pane disable="true" prefHeight="200.0" prefWidth="400.0" visible="false" BorderPane.alignment="CENTER" />
-    </left>
-    <bottom>
-        <Pane disable="true" prefHeight="100.0" prefWidth="200.0" visible="false" BorderPane.alignment="CENTER" />
-    </bottom>
-    <right>
-        <Pane id="bluRoofLogo" disable="true" prefHeight="200.0" prefWidth="400.0" visible="false" BorderPane.alignment="CENTER" />
-    </right>
 </BorderPane>

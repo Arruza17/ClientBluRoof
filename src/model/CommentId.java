@@ -1,14 +1,13 @@
 package model;
 
 import java.io.Serializable;
-import javax.persistence.Embeddable;
 
 /**
  * This class contains the embedded ids
  *
  * @author Ander Arruza
  */
-@Embeddable
+
 public class CommentId implements Serializable {
 
     /**

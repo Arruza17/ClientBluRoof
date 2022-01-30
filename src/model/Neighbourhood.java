@@ -1,3 +1,4 @@
+
 package model;
 
 import java.io.Serializable;
@@ -190,5 +191,4 @@ public class Neighbourhood implements Serializable {
     public String toString() {
         return "Neighborhood{" + "id=" + id + ", name=" + name + ", postCode=" + postCode + ", dwellings=" + dwellings + ", services=" + services + '}';
     }
-
 }
