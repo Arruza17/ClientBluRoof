@@ -14,8 +14,11 @@ import exceptions.PassNotEqualException;
 import exceptions.PhoneFormatException;
 import factories.GuestManagerFactory;
 import factories.OwnerManagerFactory;
+import factories.UserManagerFactory;
 import interfaces.GuestManager;
 import interfaces.OwnerManager;
+import interfaces.UserManager;
+import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -53,6 +56,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javax.naming.OperationNotSupportedException;
+import javax.ws.rs.NotSupportedException;
 import model.Guest;
 import model.Owner;
 import model.User;
@@ -100,7 +104,7 @@ public class SignUpController {
     @FXML
     private ToggleGroup userType;
     @FXML
-    private HBox hbChange;
+    private CheckBox cbReside;
 
     /**
      * This method is used to initialize the stage
@@ -126,32 +130,6 @@ public class SignUpController {
         stage.setTitle("SignUp");
         //Sets the window not resizable
         stage.setResizable(false);
-        userType.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-                RadioButton selectedRadioButton = (RadioButton) newValue;
-                hbChange.getChildren().clear();
-                VBox vbox;
-                Label label;
-                if (selectedRadioButton.getText().equalsIgnoreCase("Owner")) {
-                    label = new Label("Are you going to reside in the house?");
-                    CheckBox cb = new CheckBox();
-                    vbox = new VBox(label, cb);
-                } else {
-                    label = new Label("What is your actual situation? ");
-                    ArrayList<String> values = new ArrayList<>();
-                    for (int i = 0; i < ActualState.values().length; i++) {
-                        values.add(ActualState.values()[i].name());
-                    }
-                    ObservableList<String> list = FXCollections.observableArrayList(values);
-                    ComboBox<String> cb = new ComboBox(list);
-                    cb.getSelectionModel().selectFirst();
-                    vbox = new VBox(label, cb);
-
-                }
-                hbChange.getChildren().add(vbox);
-            }
-        });
 
         stage.show();
         LOGGER.info("SignUp Open Window");
@@ -248,6 +226,10 @@ public class SignUpController {
     @FXML
     private void handleSignUpAction(javafx.event.ActionEvent event) {
         try {
+            RadioButton rdb = (RadioButton) userType.getSelectedToggle();
+            if (rdb.getText().equals("Guest")) {
+                throw new NotSupportedException("The guest register is not yet implemented");
+            }
             if (checkFields()) {
                 LOGGER.info("All the fields are OK");
                 //New Alert in order to ask the user if
@@ -256,36 +238,18 @@ public class SignUpController {
                 alert.setTitle("Sign Up CONFIRMATION");
                 alert.setHeaderText("Are you sure you want to add?");
                 //Create's an user with the params
-                RadioButton selectedRadioButton = (RadioButton) userType.getSelectedToggle();
-                User user;
 
-                if (selectedRadioButton.getText().equals("Owner")) {
-                    user = new Owner();
-                    ObservableList<Node> obs = hbChange.getChildren();
-                    VBox vb = (VBox) obs.get(0);
-                    ObservableList<Node> children = vb.getChildren();
-                    CheckBox cb = (CheckBox) children.get(children.size() - 1);
-                    ((Owner) user).setIsResident(cb.isSelected());
-
-                } else {
-                    user = new Guest();
-                    ObservableList<Node> obs = hbChange.getChildren();
-                    VBox vb = (VBox) obs.get(0);
-                    ObservableList<Node> children = vb.getChildren();
-                    ComboBox<String> cb = (ComboBox) children.get(children.size() - 1);
-                    ((Guest) user).setActualState(cb.getSelectionModel().getSelectedItem());
-
-                }
+                User user = new Owner();
                 user.setLogin(tfUser.getText().trim());
                 user.setFullName(tfFullName.getText().trim());
-                Cipher cipher = new Cipher();
-                user.setPassword(cipher.cipher(passField.getText().trim().getBytes()));
+               
                 user.setEmail(tfEmail.getText().trim());
-                user.setPrivilege(selectedRadioButton.getText());
+                user.setPrivilege(UserPrivilege.HOST.name());
                 user.setStatus(UserStatus.ENABLED.name());
+                user.setPhoneNumber(tfPhoneNo.getText().trim());
                 user.setLastPasswordChange(new Date());
                 user.setBirthDate(Date.from(dpBdate.getValue().atStartOfDay().toInstant(OffsetDateTime.now().getOffset())));
-
+                ((Owner) user).setIsResident(cbReside.isSelected());
                 String content = "UserName = " + user.getLogin()
                         + "\nFullName = " + user.getFullName()
                         + "\nEmail = " + user.getEmail();
@@ -294,27 +258,23 @@ public class SignUpController {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     //ADDING THE USER TO THE DATABASE
-                    if (user instanceof Guest) {
-                        GuestManager gm = GuestManagerFactory.createGuestManager(GuestManagerFactory.REST_WEB_CLIENT_TYPE);
-                        gm.register((Guest) user);
-                    } else if (user instanceof Guest) {
-                        OwnerManager om = OwnerManagerFactory.createOwnerManager(GuestManagerFactory.REST_WEB_CLIENT_TYPE);
-                        om.register((Owner) user);
-                    }
-
+                    OwnerManager om = OwnerManagerFactory.createOwnerManager(GuestManagerFactory.REST_WEB_CLIENT_TYPE);
+                    om.register((Owner) user);
+                    UserManager um = UserManagerFactory.createUsersManager(UserManagerFactory.REST_WEB_CLIENT_TYPE);
+                    um.changePassword(user.getLogin(), passField.getText().trim());
                     //TELLING THE USER THAT EVERYTHING HAD WORK
                     LOGGER.info("New User succesfully added");
                 }
-                Alert alert1 = new Alert(AlertType.INFORMATION);
-                alert1.setTitle("New User");
-                alert1.setContentText("User corretly added");
-                alert1.showAndWait();
+
                 //LOGGER.info("Closing SignUp Window");
                 //Stage stage = (Stage) btnCancel.getScene().getWindow();
                 // Close current window 
                 stage.close();
-
             }
+            Alert alert1 = new Alert(AlertType.INFORMATION);
+            alert1.setTitle("New User");
+            alert1.setContentText("User corretly added");
+            alert1.showAndWait();
         } catch (OperationNotSupportedException ex) {
             Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
@@ -323,7 +283,6 @@ public class SignUpController {
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at signUp method");
-
         }
 
     }

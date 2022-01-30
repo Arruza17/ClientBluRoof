@@ -29,7 +29,7 @@ public class OwnerRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-     private static final String BASE_URI = ResourceBundle.getBundle("resources.config").getString("URL");
+    private static final String BASE_URI = ResourceBundle.getBundle("resources.config").getString("URL");
 
     public OwnerRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -65,7 +65,9 @@ public class OwnerRestfulClient {
     }
 
     public void create(Owner requestEntity) throws ClientErrorException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML)
+                .post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), new GenericType<Owner>() {
+                });
     }
 
     public <T> T findAll(Class<T> responseType) throws ClientErrorException {
@@ -80,5 +82,5 @@ public class OwnerRestfulClient {
     public void close() {
         client.close();
     }
-    
+
 }

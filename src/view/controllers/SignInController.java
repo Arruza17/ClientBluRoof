@@ -25,6 +25,7 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.ws.rs.ClientErrorException;
 import model.User;
 
 /**
@@ -147,11 +148,16 @@ public class SignInController {
             alert.setContentText(ex.getMessage());
             alert.show();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
-
-        } catch (Exception ex) {
+        } catch (ClientErrorException ex) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("Could not log in");
             alert.setContentText(ex.getMessage());
+            alert.show();
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
+        } catch (Exception ex) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Could not log in");
+            alert.setContentText("There was a problem with the connection with the server, try again later");
             alert.show();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
         }
