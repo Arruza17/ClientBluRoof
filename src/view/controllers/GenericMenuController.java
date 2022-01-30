@@ -17,7 +17,7 @@ public class GenericMenuController {
 
     private Stage stage;
 
-    //The border pane of welcom window in which we stablish the views
+    //The border pane of welcome window in which we stablish the views
     private BorderPane border;
 
     /**

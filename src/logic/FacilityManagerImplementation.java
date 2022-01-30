@@ -94,7 +94,7 @@ public class FacilityManagerImplementation implements FacilityManager {
          try {
             frc.create(f);
         } catch (ClientErrorException e) {
-            throw new BusinessLogicException();
+            throw new BusinessLogicException(e.getMessage());
         }
     }
 
@@ -103,7 +103,7 @@ public class FacilityManagerImplementation implements FacilityManager {
         try {
             frc.edit(f, id.toString());
         } catch (ClientErrorException e) {
-            throw new BusinessLogicException();
+            throw new BusinessLogicException(e.getMessage());
         }
     }
 }

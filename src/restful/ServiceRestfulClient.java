@@ -28,18 +28,16 @@ public class ServiceRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    
-    private ResourceBundle resourceBundle=ResourceBundle.getBundle("resources.config");
-    private static String BASE_URI;
+
+    private ResourceBundle resourceBundle = ResourceBundle.getBundle("resources.config");
+      private static final String BASE_URI = ResourceBundle.getBundle("resources.config").getString("BASE_URI");
 
     public ServiceRestfulClient() {
-        BASE_URI=resourceBundle.getString("BASE_URI");
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("entities.service");
     }
-    
-    
-     public <T> T findServiceById(GenericType<T> responseType, Long id ) throws ClientErrorException {
+
+    public <T> T findServiceById(GenericType<T> responseType, Long id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("id/{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -101,5 +99,5 @@ public class ServiceRestfulClient {
     public void close() {
         client.close();
     }
-    
+
 }

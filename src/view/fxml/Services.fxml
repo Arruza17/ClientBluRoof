@@ -14,44 +14,42 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.ServicesController">
+<BorderPane styleClass="loginPanel" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.ServicesController">
    <top>
-      <HBox prefHeight="63.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <VBox BorderPane.alignment="CENTER">
          <children>
-            <Label prefHeight="21.0" prefWidth="76.0" text="Services">
-               <HBox.margin>
-                  <Insets left="15.0" top="30.0" />
-               </HBox.margin>
-            </Label>
-            <ComboBox fx:id="cbService" onAction="#handleChangeComponents" prefHeight="31.0" prefWidth="180.0">
-               <HBox.margin>
-                  <Insets left="25.0" right="25.0" top="25.0" />
-               </HBox.margin>
-            </ComboBox>
-            <TextField fx:id="tfServices" disable="true" minHeight="0.0" minWidth="0.0" prefHeight="31.0" prefWidth="157.0">
-               <HBox.margin>
-                  <Insets top="25.0" />
-               </HBox.margin>
-            </TextField>
-            <ComboBox fx:id="cbServiceType" disable="true" minHeight="0.0" minWidth="0.0" prefHeight="25.0" prefWidth="0.0" visible="false">
-               <HBox.margin>
-                  <Insets top="25.0" />
-               </HBox.margin>
-            </ComboBox>
-            <Button fx:id="btnSearchService" mnemonicParsing="false" onAction="#handleButtonSearch" prefHeight="31.0" prefWidth="113.0" text="Search">
-               <HBox.margin>
-                  <Insets left="25.0" right="26.0" top="25.0" />
-               </HBox.margin>
-            </Button>
-         </children>
-      </HBox>
-   </top>
-   <center>
-      <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-         <children>
-            <HBox prefHeight="0.0" prefWidth="600.0" spacing="25.0">
+            <HBox>
                <children>
-                  <ImageView fx:id="imgAdd" fitHeight="23.0" fitWidth="22.0" onMousePressed="#handleServiceCreation" pickOnBounds="true" preserveRatio="true">
+                  <Label text="Services" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets left="15.0" top="30.0" />
+                     </HBox.margin>
+                  </Label>
+                  <ComboBox fx:id="cbService" onAction="#handleChangeComponents" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets left="25.0" right="25.0" top="25.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                  <TextField fx:id="tfServices" disable="true" minHeight="0.0" minWidth="0.0" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets top="25.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <ComboBox fx:id="cbServiceType" disable="true" minHeight="0.0" minWidth="0.0" visible="false" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets top="25.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                  <Button fx:id="btnSearchService" mnemonicParsing="false" onAction="#handleButtonSearch" text="Search" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets left="25.0" right="26.0" top="25.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox prefHeight="0.0" prefWidth="600.0" spacing="25.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <ImageView fx:id="imgAdd" fitHeight="23.0" fitWidth="22.0" onMousePressed="#handleServiceCreation" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
                      <image>
                         <Image url="@../resources/img/add.png" />
                      </image>
@@ -59,7 +57,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ImageView>
-                  <ImageView fx:id="imgDelete" fitHeight="22.0" fitWidth="25.0" onMousePressed="#handleDeleteRow" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgDelete" fitHeight="22.0" fitWidth="25.0" onMousePressed="#handleDeleteRow" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
                      <image>
                         <Image url="@../resources/img/minus.png" />
                      </image>
@@ -67,7 +65,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ImageView>
-                  <ImageView fx:id="imgCommit" fitHeight="22.0" fitWidth="27.0" onMousePressed="#handleServiceCommit" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgCommit" fitHeight="22.0" fitWidth="27.0" onMousePressed="#handleServiceCommit" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
                      <image>
                         <Image url="@../resources/img/check.png" />
                      </image>
@@ -75,7 +73,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ImageView>
-                  <ImageView fx:id="imgCancel" fitHeight="22.0" fitWidth="31.0" onMousePressed="#handleCancelCommit" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgCancel" fitHeight="22.0" fitWidth="31.0" onMousePressed="#handleCancelCommit" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
                      <image>
                         <Image url="@../resources/img/cancel.png" />
                      </image>
@@ -83,7 +81,7 @@
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </ImageView>
-                  <ImageView fx:id="imgPrint" fitHeight="31.0" fitWidth="27.0" onMousePressed="#handlePrintReport" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgPrint" fitHeight="31.0" fitWidth="27.0" onMousePressed="#handlePrintReport" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
                      <image>
                         <Image url="@../resources/img/fax.png" />
                      </image>
@@ -96,21 +94,16 @@
                   <Insets bottom="5.0" left="15.0" top="10.0" />
                </VBox.margin>
             </HBox>
-            <TableView fx:id="tbvService" prefHeight="208.0" prefWidth="600.0">
-              <columns>
-                <TableColumn fx:id="tcAddress" maxWidth="350.0" minWidth="40.0" prefWidth="285.0" text="Address" />
-                  <TableColumn fx:id="tcName" prefWidth="167.0" text="Name" />
-                  <TableColumn fx:id="tcType" prefWidth="142.0" text="Type" />
-              </columns>
-            </TableView>
          </children>
       </VBox>
+   </top>
+   <center>
+      <TableView fx:id="tbvService" BorderPane.alignment="CENTER">
+        <columns>
+          <TableColumn fx:id="tcAddress" maxWidth="350.0" minWidth="40.0" prefWidth="285.0" text="Address" />
+            <TableColumn fx:id="tcName" prefWidth="167.0" text="Name" />
+            <TableColumn fx:id="tcType" prefWidth="142.0" text="Type" />
+        </columns>
+      </TableView>
    </center>
-   <bottom>
-      <Button fx:id="btnBack" mnemonicParsing="false" text="Back" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets bottom="10.0" top="10.0" />
-         </BorderPane.margin>
-      </Button>
-   </bottom>
 </BorderPane>

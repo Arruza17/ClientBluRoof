@@ -30,7 +30,7 @@ public class MenuFactory {
                 fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/AdminMenu.fxml"));
                 break;
             case "HOST":
-                fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/HostMenu.fxml"));
+                fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/OwnerMenu.fxml"));
                 break;
             case "GUEST":
                 fxmlLoader = new FXMLLoader(getClass().getResource("/view/fxml/GuestMenu.fxml"));

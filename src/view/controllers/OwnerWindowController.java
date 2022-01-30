@@ -5,7 +5,9 @@ import exceptions.BussinessLogicException;
 import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
 import exceptions.NotValidSquareMetersValueException;
+import factories.OwnerManagerFactory;
 import interfaces.DwellingManager;
+import interfaces.OwnerManager;
 import java.net.ConnectException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,6 +50,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import logic.OwnerManagerImplementation;
 import model.Dwelling;
 import model.Owner;
 import model.User;
@@ -106,8 +109,6 @@ public class OwnerWindowController {
 
     private User user;
 
-    private Stage stage;
-
     private DwellingManager dwellingManager;
 
     private final String SELECT_ALL_DWELLINGS = "All my dwellings";
@@ -133,18 +134,12 @@ public class OwnerWindowController {
      *
      * @param root The Parent object representing root node of view graph.
      */
-    public void initStage(Parent root) {
+    public void initStage() {
         try {
+            OwnerManager om = OwnerManagerFactory.createOwnerManager(OwnerManagerFactory.REST_WEB_CLIENT_TYPE);
+            user = om.findById(String.valueOf(user.getId()));
             LOGGER.info("Initializing Owner/Guest-Window stage");
-            //Creation of a new Scene
-            Scene scene = new Scene(root);
-            stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
-            //Sets the scene to the stage
-            stage.setScene(scene);
-            //Sets the Title of the Window
-            stage.setTitle("DwellingWindow");
-            //Sets the window not resizable
-            stage.setResizable(false);
+            //Creation of a new Scene     
             //Sets the column RATING & SQUARE METERS ro center-right
             colRating.setStyle("-fx-alignment: CENTER-RIGHT;");
             colConstructionDate.setStyle("-fx-alignment: CENTER;");
@@ -355,8 +350,7 @@ public class OwnerWindowController {
                             })
             );
             tableDwelling.setItems(dwellingsCollectionTable);
-            //Shows the stage
-            stage.show();
+
             LOGGER.info("Owner/Guest-Window Open");
         } catch (Exception e) {
             LOGGER.severe(e.getMessage());
@@ -731,15 +725,6 @@ public class OwnerWindowController {
             alert.showAndWait();
         }
 
-    }
-
-    /**
-     * Method that sets the stage
-     *
-     * @param primaryStage the stage to set
-     */
-    public void setStage(Stage primaryStage) {
-        this.stage = primaryStage;
     }
 
     /**

@@ -29,7 +29,7 @@ public class OwnerRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = ResourceBundle.getBundle("resources.config").getString("URL");
+    private static final String BASE_URI = ResourceBundle.getBundle("resources.config").getString("BASE_URI");
 
     public OwnerRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();

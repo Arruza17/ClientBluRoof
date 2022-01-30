@@ -5,6 +5,7 @@
  */
 package restful;
 
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -25,10 +26,11 @@ import org.glassfish.hk2.utilities.reflection.Logger;
  * @author Ander Arruza
  */
 public class FacilityRestfulClient {
-    private Logger log=Logger.getLogger();
+
+    private Logger log = Logger.getLogger();
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:8080/ServerBluRoof/webresources";
+    private static final String BASE_URI = ResourceBundle.getBundle("resources.config").getString("BASE_URI");
 
     public FacilityRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -85,5 +87,5 @@ public class FacilityRestfulClient {
     public void close() {
         client.close();
     }
-    
+
 }

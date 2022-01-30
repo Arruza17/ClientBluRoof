@@ -7,6 +7,8 @@ package view.controllers;
 
 import application.Application;
 import exceptions.BusinessLogicException;
+import factories.FacilityManagerFactory;
+import factories.ServiceManagerFactory;
 import factories.UserManagerFactory;
 import java.io.IOException;
 import java.util.Optional;
@@ -80,6 +82,19 @@ public class AdminMenuController extends GenericMenuController {
      */
     @FXML
     private void handleServiceCrud(MouseEvent event) {
+         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/Services.fxml"));
+            BorderPane node = loader.load();
+            ServicesController controller = loader.getController();           
+            controller.setServiceManager(ServiceManagerFactory.createServiceManager(ServiceManagerFactory.REST_WEB_CLIENT_TYPE));
+            getBorder().setCenter(node);
+            controller.initStage();
+
+        } catch (IOException ex) {
+            Logger.getLogger(AdminMenuController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (OperationNotSupportedException ex) {
+            Logger.getLogger(AdminMenuController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
       /**
@@ -88,6 +103,19 @@ public class AdminMenuController extends GenericMenuController {
      */
     @FXML
     private void handleFacilitiesCrud(MouseEvent event) {
+          try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/Facilities.fxml"));
+            BorderPane node = loader.load();
+            FacilitiesController controller = loader.getController();           
+            controller.setFacMan(FacilityManagerFactory.createFacilityManager(FacilityManagerFactory.REST_WEB_CLIENT_TYPE));
+            getBorder().setCenter(node);
+            controller.initStage();
+
+        } catch (IOException ex) {
+            Logger.getLogger(AdminMenuController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (OperationNotSupportedException ex) {
+            Logger.getLogger(AdminMenuController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
