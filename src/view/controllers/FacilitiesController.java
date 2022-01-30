@@ -111,11 +111,9 @@ public class FacilitiesController {
     /**
      * Initializes the controller class.
      */
-    public void initStage(Parent root) {
+    public void initStage() {
         try {
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle("Facilities Window");
+            
             cb_Type.setDisable(true);
             dp_Facilities.setDisable(true);
             sp_Facilities.setDisable(true);
@@ -177,13 +175,13 @@ public class FacilitiesController {
                     (CellEditEvent<Facility, String> t) -> {
                         try {
 
-                            if (t.getNewValue().isEmpty()){
+                            if (t.getNewValue().isEmpty()) {
                                 LOGGER.warning("The field in the facility adquisition date is empty");
                                 throw new FieldsEmptyException();
                             }
                             if (!t.getNewValue().matches(regexDate)) {
                                 LOGGER.severe("The field in the construction date doesn't have a valid date");
-                                
+
                             }
 
                             ((Facility) t.getTableView().getItems().get(
@@ -199,7 +197,7 @@ public class FacilitiesController {
                             iv_minus.setOpacity(0.25);
                             iv_add.setDisable(true);
                             iv_add.setOpacity(0.25);
-                            editing=true;
+                            editing = true;
                         } catch (FieldsEmptyException e) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Error");
@@ -232,28 +230,27 @@ public class FacilitiesController {
                     (CellEditEvent<Facility, String> t) -> {
                         ((Facility) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())).setType(t.getNewValue());
-                         try {
-                        if(t.getNewValue().toString().equalsIgnoreCase("")){
-                           
+                        try {
+                            if (t.getNewValue().toString().equalsIgnoreCase("")) {
+
                                 LOGGER.warning("The field in facility type is empty");
                                 throw new FieldsEmptyException();
-                        }
-                        
-                        } catch (FieldsEmptyException ex) {
-                                Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
                             }
+
+                        } catch (FieldsEmptyException ex) {
+                            Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     });
             tbl_facilities.setItems(myFacilities);
-            stage.show();
         } catch (Exception e) {
             LOGGER.severe(e.getMessage());
-            LOGGER.severe("error while opening the window");
+            LOGGER.severe("Error while opening the window");
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Couldn't open Facilities window");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
-
+      
         }
     }
 
@@ -376,7 +373,7 @@ public class FacilitiesController {
         iv_check.setOpacity(1);
         iv_cancel.setDisable(false);
         iv_cancel.setOpacity(1);
-        adding=true;
+        adding = true;
         Facility ft = new Facility();
         ft.setId(Long.MIN_VALUE);
         ft.setAdquisitionDate(new Date());
@@ -420,76 +417,77 @@ public class FacilitiesController {
 
     @FXML
     void clickMinus(MouseEvent action) {
-       Facility facTBean =null;
-        try{
-        facTBean = tbl_facilities.getSelectionModel().getSelectedItem();
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setHeaderText(null);
-        alert.setTitle("Confirmation");
-        alert.setContentText("Are you sure you want to delete\n this facility with the following ID:" + facTBean.getId() + "?");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            try {
-                facMan.remove(facTBean.getId());
-                loadAll();
-            } catch (BussinessLogicException ex) {
-                Alert alert1 = new Alert(AlertType.ERROR);
-                alert1.setTitle("AYUDA");
-                alert1.setHeaderText("Error");
-                alert1.setContentText(ex.getMessage());
-                alert1.showAndWait();
+        Facility facTBean = null;
+        try {
+            facTBean = tbl_facilities.getSelectionModel().getSelectedItem();
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setHeaderText(null);
+            alert.setTitle("Confirmation");
+            alert.setContentText("Are you sure you want to delete\n this facility with the following ID:" + facTBean.getId() + "?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                try {
+                    facMan.remove(facTBean.getId());
+                    loadAll();
+                } catch (BussinessLogicException ex) {
+                    Alert alert1 = new Alert(AlertType.ERROR);
+                    alert1.setTitle("AYUDA");
+                    alert1.setHeaderText("Error");
+                    alert1.setContentText(ex.getMessage());
+                    alert1.showAndWait();
+                }
+            } else {
+                Alert alert2 = new Alert(AlertType.INFORMATION);
+                alert2.setTitle("Facility not deleted");
+                alert2.setHeaderText(null);
+                alert2.setContentText("Content not deleted");
+                alert2.showAndWait();
             }
-        } else {
+        } catch (Exception ex) {
             Alert alert2 = new Alert(AlertType.INFORMATION);
-            alert2.setTitle("Facility not deleted");
-            alert2.setHeaderText(null);
-            alert2.setContentText("Content not deleted");
-            alert2.showAndWait();
-        }
-       }catch(Exception ex){
-       Alert alert2 = new Alert(AlertType.INFORMATION);
             alert2.setTitle("Error while deleting");
             alert2.setHeaderText(null);
             alert2.setContentText("Couldn't delete, please \n select the desired row to delete in the table");
             alert2.showAndWait();
-       }
-        
-       
+        }
+
     }
 
     @FXML
-    void clickClose(MouseEvent action){
-          Alert alert=new Alert(AlertType.INFORMATION);
+    void clickClose(MouseEvent action) {
+        Alert alert = new Alert(AlertType.INFORMATION);
         alert.setHeaderText(null);
-                alert.setTitle("Confirmation");
-                alert.setContentText("Are you sure you want to stop creating/updatting?");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    if(adding){
-                    myFacilities.remove(myFacilities.size()-1);
-                    adding=false;
-                    iv_add.setDisable(false);
-                    iv_add.setOpacity(1);
-                    iv_minus.setDisable(false);
-                    iv_minus.setOpacity(1);
-                    iv_cancel.setDisable(true);
-                    iv_cancel.setOpacity(0.25);
-                    iv_check.setDisable(true);
-                    iv_check.setOpacity(0.25);
-                    }else if(editing){
-                    loadAll();
-                    editing=false;
-                    iv_add.setDisable(false);
-                    iv_add.setOpacity(1);
-                    iv_minus.setDisable(false);
-                    iv_minus.setOpacity(1);
-                    iv_cancel.setDisable(true);
-                    iv_cancel.setOpacity(0.25);
-                    iv_check.setDisable(true);
-                    iv_check.setOpacity(0.25);
-                    }
-    }else{}
+        alert.setTitle("Confirmation");
+        alert.setContentText("Are you sure you want to stop creating/updatting?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            if (adding) {
+                myFacilities.remove(myFacilities.size() - 1);
+                adding = false;
+                iv_add.setDisable(false);
+                iv_add.setOpacity(1);
+                iv_minus.setDisable(false);
+                iv_minus.setOpacity(1);
+                iv_cancel.setDisable(true);
+                iv_cancel.setOpacity(0.25);
+                iv_check.setDisable(true);
+                iv_check.setOpacity(0.25);
+            } else if (editing) {
+                loadAll();
+                editing = false;
+                iv_add.setDisable(false);
+                iv_add.setOpacity(1);
+                iv_minus.setDisable(false);
+                iv_minus.setOpacity(1);
+                iv_cancel.setDisable(true);
+                iv_cancel.setOpacity(0.25);
+                iv_check.setDisable(true);
+                iv_check.setOpacity(0.25);
+            }
+        } else {
+        }
     }
+
     @FXML
     void clickCheck(MouseEvent action) {
         Date date;

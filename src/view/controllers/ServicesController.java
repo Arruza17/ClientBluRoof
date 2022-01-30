@@ -80,8 +80,7 @@ public class ServicesController {
     private TextField tfServices;
     @FXML
     private Button btnSearchService;
-    @FXML
-    private Button btnBack;
+
     @FXML
     private ImageView imgAdd;
     @FXML
@@ -145,11 +144,11 @@ public class ServicesController {
 
     private Integer selectedRow;
 
-    public void initStage(Parent root) {
+    public void initStage() {
         try {
             LOGGER.info("Initializing ServiceWindow stage");
             //Creation of a new Scene
-            Scene scene = new Scene(root);
+
             /*
         //Save the route of the .css file
         String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
@@ -157,14 +156,6 @@ public class ServicesController {
         scene.getStylesheets().add(css);
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
              */
-            //Sets the scene to the stage
-            stage.setScene(scene);
-            //Sets the Title of the Window
-            stage.setTitle("ServiceWindow");
-            //Sets the window not resizable
-            stage.setResizable(false);
-            //Shows the stage
-            stage.show();
             LOGGER.info("ServiceWindow Open");
 
             //Sets the confirm & cancel imgs to not clickable
@@ -226,7 +217,6 @@ public class ServicesController {
             //Loads all the services in the table
             services = loadAllServices();
 
-            stage.show();
         } catch (Exception e) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Attention");
@@ -234,7 +224,6 @@ public class ServicesController {
             alert.setContentText("database error.");
             alert.showAndWait();
 
-            stage.close();
         }
     }
 
@@ -936,7 +925,6 @@ public class ServicesController {
             cbService.setDisable(true);
             cbServiceType.setDisable(true);
             btnSearchService.setDisable(true);
-            btnBack.setDisable(true);
 
             tfServices.setDisable(true);
 
@@ -1045,7 +1033,7 @@ public class ServicesController {
             imgAdd.setOpacity(1);
 
             btnSearchService.setDisable(false);
-            btnBack.setDisable(false);
+
             cbService.setDisable(false);
             cbServiceType.setDisable(false);
 
@@ -1063,7 +1051,7 @@ public class ServicesController {
             imgAdd.setOpacity(1);
 
             btnSearchService.setDisable(false);
-            btnBack.setDisable(false);
+
             cbService.setDisable(false);
             cbServiceType.setDisable(false);
 

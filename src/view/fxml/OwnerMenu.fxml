@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" spacing="15.0" styleClass="menuBar" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.OwnerMenuController">
+   <children>
+      <HBox fx:id="menuProfile" alignment="CENTER" onMouseClicked="#handleProfile" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Profile" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </HBox>
+      <HBox fx:id="menuDwellings" alignment="CENTER" onMouseClicked="#handleDwellings" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="My Dwellings" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </HBox>
+      <HBox fx:id="menuSignOut" alignment="CENTER" onMouseClicked="#handleSignOut" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Sign Out" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </HBox>
+      <HBox fx:id="menuExit" alignment="CENTER" onMouseClicked="#handleExit" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Exit" textFill="WHITE">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets left="25.0" right="25.0" />
+         </padding>
+      </HBox>
+   </children>
+</VBox>

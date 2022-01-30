@@ -5,6 +5,7 @@
  */
 package restful;
 
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -26,7 +27,7 @@ public class NeighbourhoodRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:22083/ServerBluRoof/webresources";
+        private static final String BASE_URI = ResourceBundle.getBundle("resources.config").getString("BASE_URI");
 
     public NeighbourhoodRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
