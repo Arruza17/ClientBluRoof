@@ -288,10 +288,10 @@ public class ServicesController {
                 imgDelete.setDisable(true);
                 imgDelete.setOpacity(0.25);
             }
-            
-            if(tableCommitting){
+
+            if (tableCommitting) {
                 imgDelete.setDisable(true);
-            imgDelete.setOpacity(0.25);
+                imgDelete.setOpacity(0.25);
             }
 
         } else {
@@ -1179,16 +1179,14 @@ public class ServicesController {
 
         if (newAddress != null && newName != null && newType != null) {
 
-            if (!newAddress.equals("") && !newName.equals("") && !newType.equals("")) {
-                tableCommitting = true;
+            tableCommitting = true;
 
-                newAddress = null;
-                newName = null;
-                newType = null;
+            newAddress = null;
+            newName = null;
+            newType = null;
 
-                commitingBetweenCells = false;
+            commitingBetweenCells = false;
 
-            }
         }
     }
 
