@@ -1,11 +1,12 @@
 package view.controllers;
 
+import exceptions.BusinessLogicException;
 import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
-import exceptions.ServerDownException;
-import interfaces.Connectable;
+import interfaces.UserManager;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,14 +17,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.PasswordField;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import logic.ConnectableFactory;
-import model.DataEncapsulator;
+import javax.ws.rs.ClientErrorException;
 import model.User;
 
 /**
@@ -33,12 +35,9 @@ import model.User;
  */
 public class SignInController {
 
-    private Connectable connectable;
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
-    private final int MAX_WIDTH = 1920;
-    private final int MAX_HEIGHT = 1024;
-    private final int MIN_WIDTH = 1024;
-    private final int MIN_HEIGHT = 768;
+
+    private UserManager um;
 
     @FXML
     private TextField tfUser;
@@ -46,17 +45,11 @@ public class SignInController {
     private TextField tfPassword;
     private Stage stage;
     @FXML
-    private PasswordField passField;
+    private Button btnSignIn;
     @FXML
-    private TextField tfFullName;
+    private Hyperlink hlSignUp;
     @FXML
-    private PasswordField rptPassword;
-    @FXML
-    private TextField tfEmail;
-    @FXML
-    private Button btnCancel;
-    @FXML
-    private Button btnSignUp;
+    private Hyperlink hlPass;
 
     /**
      * Method used to load all stage settings when creating the stage.
@@ -71,12 +64,14 @@ public class SignInController {
         String css = this.getClass().getResource("/view/resources/styles/CSSLogin.css").toExternalForm();
         scene.getStylesheets().add(css);
         //Stage dimension setters
-        stage.setMaxWidth(MAX_WIDTH);
-        stage.setMinWidth(MIN_WIDTH);
-        stage.setMaxHeight(MAX_HEIGHT);
-        stage.setMinHeight(MIN_HEIGHT);
-        //Sets the window not resizable
+        Screen screen = Screen.getPrimary();
+        javafx.geometry.Rectangle2D bound = screen.getVisualBounds();
+        stage.setX(bound.getMinX());
+        stage.setY(bound.getMinY());
+        stage.setWidth(bound.getWidth());
+        stage.setHeight(bound.getHeight());
         stage.setResizable(false);
+        stage.setMaximized(true);
         stage.setTitle("BluRoof SignIn Page");
         //Gets the icon of the window.
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
@@ -94,6 +89,7 @@ public class SignInController {
      * @param action action event that triggers when sign up hyperlink is
      * pressed.
      */
+    @FXML
     public void signUp(ActionEvent action) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/fxml/SignUp.fxml"));
@@ -120,26 +116,49 @@ public class SignInController {
      *
      * @param action action event that triggers when sign in button is pressed.
      */
+    @FXML
     public void signIn(ActionEvent action) {
+        User user;
         try {
-            LOGGER.info("SignIn method");
             checkEmptyFields();
-            DataEncapsulator de = signIn(tfUser.getText().trim(), tfPassword.getText().trim());
-            if (de.getException() != null) {
-                if (de.getException().getMessage().equalsIgnoreCase("OK")) {
-                    welcomeWindow(de.getUser());
-                } else {
-                    throw de.getException();
-                }
+            user = um.login(tfUser.getText(), tfPassword.getText().trim());
+            if (user != null) {
+                Parent root;
+                FXMLLoader loader = null;
+                loader = new FXMLLoader(getClass().getResource("/view/fxml/Welcome.fxml"));
+                root = (Parent) loader.load();
+                Stage stageWelcome = new Stage();
+                WelcomeController controller = ((WelcomeController) loader.getController());
+                controller.setStage(stageWelcome);
+                controller.setUm(um);
+                controller.setUser(user);
+                this.stage.close();
+                LOGGER.info("Initializing Welcome window and closing SignIn window");
+                controller.initStage(root);
             }
-        } catch (Exception ex) {
-            //Depending on the Exception thrown by the server:
-            // 1.- User Limit passed
-            // 2.- User not found
+        } catch (IOException ex) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("Error");
-            alert.setContentText(ex.getMessage());
+            alert.setContentText("There was a problem creating the window, try again later");
             alert.showAndWait();
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
+        } catch (FieldsEmptyException | MaxCharactersException ex) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("There was an issue with the fields");
+            alert.setContentText(ex.getMessage());
+            alert.show();
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
+        } catch (ClientErrorException ex) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Could not log in");
+            alert.setContentText(ex.getMessage());
+            alert.show();
+            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
+        } catch (Exception ex) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Could not log in");
+            alert.setContentText("There was a problem with the connection with the server, try again later");
+            alert.show();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
         }
     }
@@ -153,7 +172,6 @@ public class SignInController {
      * exception is thrown.
      */
     private void checkEmptyFields() throws FieldsEmptyException, MaxCharactersException {
-
         //if one or more fields are empty , this method throws a FieldsEmptyException.
         if (tfUser.getText().trim().isEmpty() || tfPassword.getText().trim().isEmpty()) {
             LOGGER.warning("Fields empty");
@@ -164,36 +182,6 @@ public class SignInController {
             LOGGER.warning("Max character length reached");
             throw new MaxCharactersException();
         }
-    }
-
-    /**
-     * This method is executed when the user wants to sign In
-     *
-     * @param login the username to set
-     * @param pass the password to set
-     * @return the DataEncapsulator object
-     * @throws Exception if there is an error
-     */
-    private DataEncapsulator signIn(String login, String pass) throws Exception {
-        try {
-            openSocket();
-            User user = User.getUser();
-            user.setLogin(login);
-            user.setPassword(pass);
-            DataEncapsulator de = connectable.signIn(user);
-            if (de.getException() != null && !de.getException().getMessage().equalsIgnoreCase("OK")) {
-                LOGGER.warning(de.getException().getClass().getSimpleName() + " exception thrown at SignIn");
-                throw de.getException();
-            } else {
-                LOGGER.info(user.getLogin() + " signed in");
-                return de;
-            }
-        } catch (Exception ex) {
-            LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
-            throw ex;
-
-        }
-
     }
 
     /**
@@ -218,44 +206,39 @@ public class SignInController {
 
     }
 
-    /**
-     * This method is executed when the user gets Logged in
-     *
-     * @param user The user
-     */
-    private void welcomeWindow(User user) {
-        Parent root;
-        FXMLLoader loader = null;
-        try {
-            loader = new FXMLLoader(getClass().getResource("/view/fxml/Welcome.fxml"));
-            root = (Parent) loader.load();
-            Stage stageWelcome = new Stage();
-            WelcomeController controller = ((WelcomeController) loader.getController());
-            controller.setUser(user);
-            controller.setStage(stageWelcome);
-            this.stage.close();
-            LOGGER.info("Initializing Welcome window and closing SignIn window");
+    @FXML
+    private void retrievePassword(ActionEvent event) {
+        //Create a textInputDialog to ask the user the login
+        TextInputDialog txi = new TextInputDialog();
+        txi.setHeaderText("Password reset");
+        txi.setContentText("Type the username of the account you would like to reset the password from.\n In case it exists, you will receive an email with your new resetted password");
+        txi.showAndWait();
+        String login = txi.getEditor().getText();
+        if (!login.isEmpty()) {
+            try {
+                //Call business logic to reset the password
+                um.resetPassword(login);
 
-            controller.initStage(root);
-        } catch (Exception ex) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Password reset");
+                alert.setContentText("The password was successfully resetted");
+                alert.showAndWait();
+            } catch (BusinessLogicException e) {
+                //Exception catched if there's any issue with the business logic
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Error with the reset");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+                LOGGER.log(Level.SEVERE, "SignInController --> retrievePassword():{0}", e.getLocalizedMessage());
+            }
+        } else {
+            //If the user doesn't input a login show an error
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Error generating the window");
+            Exception ex = new FieldsEmptyException();
+            alert.setHeaderText("Input error");
             alert.setContentText(ex.getMessage());
-        }
-    }
-
-    /**
-     * This method opens the socket
-     *
-     * @throws ServerDownException if Server is down
-     */
-    private void openSocket() throws ServerDownException {
-        try {
-            LOGGER.info("Opening connection to the server");
-            connectable = ConnectableFactory.getConnectable();
-        } catch (ServerDownException ex) {
-            LOGGER.info(ex.getMessage());
-            throw ex;
+            alert.showAndWait();
+            LOGGER.log(Level.SEVERE, "SignInController --> retrievePassword():{0}", ex.getLocalizedMessage());
         }
     }
 
@@ -279,12 +262,21 @@ public class SignInController {
     }
 
     /**
-     * Sets the connectable
+     * Method that gets the Implementation of user manager
      *
-     * @param connectable the connectable to set
+     * @return um the user manager
      */
-    public void setConnectable(Connectable connectable) {
-        this.connectable = connectable;
+    public UserManager getUm() {
+        return um;
+    }
+
+    /**
+     * Method that sets the UserManager impoementation gotten with the factory
+     *
+     * @param um
+     */
+    public void setUm(UserManager um) {
+        this.um = um;
     }
 
 }

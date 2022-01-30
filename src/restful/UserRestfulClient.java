@@ -1,42 +1,42 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package restful;
 
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
+import model.User;
 
 /**
  * Jersey REST client generated for REST resource:UserFacadeREST
  * [entities.user]<br>
  * USAGE:
  * <pre>
- *        UserRestfulClient client = new UserRestfulClient();
+ *        UserRESTClient client = new UserRESTClient();
  *        Object response = client.XXX(...);
  *        // do whatever with response
  *        client.close();
  * </pre>
  *
- * @author Ander Arruza
+ * @author Yeray Sampedro
  */
 public class UserRestfulClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:22083/ServerBluRoof/webresources";
+    private static final String BASE_URI = ResourceBundle.getBundle("resources.config").getString("URL");
 
     public UserRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("entities.user");
     }
 
-    public <T> T resetPassword(Class<T> responseType, String user) throws ClientErrorException {
+    public <T> T resetPassword(GenericType<T> responseType, String user) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("reset/{0}", new Object[]{user}));
-        return resource.get(responseType);
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+
     }
 
     public String countREST() throws ClientErrorException {
@@ -62,32 +62,52 @@ public class UserRestfulClient {
     }
 
     public void create(Object requestEntity) throws ClientErrorException {
-        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML)
+                .post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML), new GenericType<User>() {
+                });
+
     }
 
-    public <T> T findAll(Class<T> responseType) throws ClientErrorException {
+    public <T> T findAll_XML(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
+        //Make request and return data from the response
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
     public void remove(String id) throws ClientErrorException {
-        webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
+        WebTarget resource = webTarget;
+        //Make request
+        resource.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
-    public <T> T logInUser(Class<T> responseType, String login, String password) throws ClientErrorException {
+    public <T> T logInUser(GenericType<T> responseType, String login, String password) throws ClientErrorException {
         WebTarget resource = webTarget;
+        //Make request
         resource = resource.path(java.text.MessageFormat.format("login/{0}/password/{1}", new Object[]{login, password}));
+        //Return data from the response
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T changePassword(Class<T> responseType, String user, String pass) throws ClientErrorException {
+    public <T> T changePassword(GenericType<T> responseType, String user, String pass) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("update/{0}/password/{1}", new Object[]{user, pass}));
-        return resource.get(responseType);
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T findAllAdmins(GenericType<T> responseType) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path("admin");
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T findAllAdminsByLogin(GenericType<T> responseType, String login) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("admin/{0}", new Object[]{login}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
     public void close() {
         client.close();
     }
-    
+
 }

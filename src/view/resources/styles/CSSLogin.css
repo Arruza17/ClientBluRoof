@@ -7,7 +7,6 @@
 .loginPanel{
     -fx-background-color: rgba(255,255,255,0.8);
     -fx-size: cover;
-
 }
 
 
@@ -15,7 +14,7 @@
     -fx-pref-width: 100px;
     -fx-background-color: #0099ff;
     -fx-text-fill: white;
-    -fx-font-size: 16px;
+
 }
 
 #primaryButton:hover{
@@ -32,14 +31,19 @@
     -fx-width: 120px;
     -fx-background-color: white;
     -fx-text-fill: #0099ff;
-    -fx-font-size: 16px;
-}
-
-.label{
-    -fx-font-size: 16px;
 
 }
 
-.hyperlink{
+.label, .hyperlink, .button, #primaryButton{
     -fx-font-size: 16px;   
 }
+
+.topMenu, .selectedMenuItem{
+    -fx-background-color: rgba(0,33,77,0.8);
+}
+
+.menuBar{
+    -fx-background-color: rgba(51,153,255,0.8);
+
+}
+

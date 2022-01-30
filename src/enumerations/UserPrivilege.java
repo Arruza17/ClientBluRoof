@@ -20,4 +20,3 @@ package enumerations;
      */
     HOST
     }
-

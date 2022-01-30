@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="loginPanel" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.AdminController">
+   <padding>
+      <Insets top="10.0" />
+   </padding>
+   <center>
+      <TableView fx:id="tblAdmin" editable="true" nodeOrientation="LEFT_TO_RIGHT" tableMenuButtonVisible="true" BorderPane.alignment="CENTER">
+        <columns>
+          <TableColumn fx:id="colFullName" maxWidth="300.0" minWidth="150.0" prefWidth="-1.0" resizable="false" text="Full Name" />
+            <TableColumn fx:id="colLogin" maxWidth="300.0" minWidth="150.0" prefWidth="-1.0" resizable="false" text="Login" />
+            <TableColumn fx:id="colEmail" maxWidth="300.0" minWidth="255.0" prefWidth="-1.0" resizable="false" text="Email" />
+          <TableColumn fx:id="colBirthDate" maxWidth="300.0" minWidth="150.0" prefWidth="-1.0" resizable="false" text="Birth Date" />
+            <TableColumn fx:id="colPhone" maxWidth="300.0" minWidth="150.0" prefWidth="-1.0" resizable="false" text="Phone Number" />
+        </columns>
+         <BorderPane.margin>
+            <Insets top="10.0" />
+         </BorderPane.margin>
+      </TableView>
+   </center>
+   <top>
+      <VBox alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Login" VBox.vgrow="ALWAYS" />
+                        <TextField fx:id="tfSearch" />
+                     </children>
+                  </VBox>
+                  <Separator orientation="VERTICAL" />
+                  <VBox alignment="CENTER" fillWidth="false">
+                     <children>
+                        <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#searchByLogin" text="Search">
+                           <VBox.margin>
+                              <Insets right="10.0" />
+                           </VBox.margin>
+                        </Button>
+                     </children>
+                  </VBox>
+                  <Separator orientation="VERTICAL" />
+                  <VBox alignment="CENTER" fillWidth="false">
+                     <children>
+                        <ImageView fx:id="imgPrint" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#printReport" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/img/general/print.png" />
+                           </image>
+                           <VBox.margin>
+                              <Insets right="10.0" />
+                           </VBox.margin>
+                        </ImageView>
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </HBox>
+            <HBox spacing="15.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <ImageView fx:id="imgAdd" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleTableAdd" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/general/add.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imgDel" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleTableDelete" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/general/minus.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imgCommit" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleTableCommit" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/general/check.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imgCancel" fitHeight="25.0" fitWidth="25.0" onMouseClicked="#handleTableCancel" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/img/general/cancel.png" />
+                     </image>
+                  </ImageView>
+               </children>
+               <VBox.margin>
+                  <Insets left="10.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" />
+         </padding>
+      </VBox>
+   </top>
+</BorderPane>
