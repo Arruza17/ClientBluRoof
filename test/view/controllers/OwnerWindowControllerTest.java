@@ -9,11 +9,15 @@ import java.util.concurrent.TimeUnit;
 import static org.testfx.matcher.base.NodeMatchers.*;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumnBase;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import model.Dwelling;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -53,9 +57,10 @@ public class OwnerWindowControllerTest extends ApplicationTest {
 
     private ImageView imgPrint;
 
+    private ObservableList<Dwelling> dwellingsCollectionTable;
+
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
-    private String username;
 
     /*
         @Override
@@ -97,8 +102,22 @@ public class OwnerWindowControllerTest extends ApplicationTest {
         eraseText(1);
         write("17/11/1997");
         press(KeyCode.ENTER);
-        
+        dwellingsCollectionTable = table.getItems();
+        //The column that I want to edit
+        TableColumn tc = (TableColumn) table.getColumns().get(2);
+        table.getSelectionModel().select(dwellingsCollectionTable.size() - 1, tc);
+        type(KeyCode.ENTER);
+        //table.getFocusModel().focus(dwellingsCollectionTable.size() - 1, tc);
+        //table.requestFocus();
 
+        write("25.5");
+        //press(KeyCode.ENTER);
+
+    }
+
+    @Test
+    public void test03_delete() {
+            
     }
 
 }

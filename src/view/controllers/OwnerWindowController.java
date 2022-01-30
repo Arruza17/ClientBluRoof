@@ -440,6 +440,21 @@ public class OwnerWindowController {
                     break;
             }
             //Set the items to the table & refres the table
+            dwellingsCollectionTable.forEach(
+                    d -> d.hasWiFiProperty()
+                            .addListener((observable, oldValue, newValue) -> {
+                                LOGGER.log(Level.INFO,
+                                        "Status property changed.newvalue {0}",
+                                        newValue.toString());
+                                LOGGER.log(Level.INFO,
+                                        "User modified: {0}",
+                                        d.getHasWiFi());
+                                imgConfirmNewDwelling.setDisable(false);
+                                imgConfirmNewDwelling.setOpacity(1);
+                                imgCancelNewDwelling.setDisable(false);
+                                imgCancelNewDwelling.setOpacity(1);
+                            })
+            );
             tableDwelling.setItems(dwellingsCollectionTable);
             tableDwelling.refresh();
             if (dwellingsCollectionTable.isEmpty()) {
@@ -453,7 +468,7 @@ public class OwnerWindowController {
                 alert1.setContentText("No dwellings have been found");
                 alert1.showAndWait();
             } else {
-                LOGGER.warning("No dwelling have been found");
+                LOGGER.warning("Dwellings have been found");
                 //The imgPrint will be enabled if there are dwellings
                 imgPrint.setDisable(false);
                 imgPrint.setOpacity(1);
@@ -646,6 +661,12 @@ public class OwnerWindowController {
         LOGGER.info("Confirm button clicked");
         int pos = tableDwelling.getSelectionModel().getSelectedIndex();
         try {
+            Dwelling dwelling1 = tableDwelling.getSelectionModel().getSelectedItem();
+            if (dwelling1.getAddress() == null) {
+                //If the user didn't wrote anything in the address
+                throw new FieldsEmptyException();
+            }
+
             if (pos == dwellingsCollectionTable.size() - 1 && dwellingsCollectionTable.get(pos).getId() == Long.MIN_VALUE) {
 
                 Dwelling dwelling = new Dwelling();
@@ -688,18 +709,24 @@ public class OwnerWindowController {
             imgCreateNewDwelling.setDisable(false);
             imgCreateNewDwelling.setOpacity(1);
         } catch (ParseException ex) {
-            LOGGER.severe("Error while parseing the date");
+            LOGGER.warning("Error while parseing the date");
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText(ex.getMessage());
+            alert.setHeaderText("Error");
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
         } catch (BussinessLogicException ex) {
-            LOGGER.severe("ERROR WITH THE SERVER SIDE");
             LOGGER.severe("Error with the server side");
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Error with the server");
+            alert.setContentText(ex.getMessage());
+            alert.showAndWait();
+        } catch (FieldsEmptyException ex) {
+            LOGGER.severe("Error address field is empty");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Address is empty");
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
         }
@@ -731,5 +758,9 @@ public class OwnerWindowController {
      */
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public ObservableList<Dwelling> getDwellingsCollectionTable() {
+        return dwellingsCollectionTable;
     }
 }
