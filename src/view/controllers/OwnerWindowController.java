@@ -6,6 +6,7 @@ import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
 import exceptions.NotValidSquareMetersValueException;
 import interfaces.DwellingManager;
+import java.net.ConnectException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
@@ -361,9 +362,9 @@ public class OwnerWindowController {
             LOGGER.severe(e.getMessage());
             LOGGER.severe("ERROR");
             Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("ERROR");
-            alert.setHeaderText(null);
-            alert.setContentText(e.getMessage());
+            alert.setTitle("Error");
+            alert.setHeaderText("Connection down");
+            alert.setContentText("Error while connecting to the server\nTry again later");
             alert.showAndWait();
         }
     }
@@ -408,7 +409,7 @@ public class OwnerWindowController {
     private void handleFilterSearch(MouseEvent event) {
         try {
 
-            if (tableDwelling.getItems().size() > 1) {
+            if (tableDwelling.getItems().size() >= 1) {
                 dwellingsCollectionTable.clear();
             }
 
@@ -481,6 +482,8 @@ public class OwnerWindowController {
     private void handleNewDwelling(MouseEvent event) {
         LOGGER.info("Adding a new row to the table");
         //A new line with blank fields will be added
+        imgCreateNewDwelling.setDisable(true);
+        imgCreateNewDwelling.setOpacity(0.25);
         imgConfirmNewDwelling.setDisable(false);
         imgConfirmNewDwelling.setOpacity(1);
         imgCancelNewDwelling.setDisable(false);
@@ -628,6 +631,8 @@ public class OwnerWindowController {
             LOGGER.info("Refreshing the table");
             tableDwelling.refresh();
             tableDwelling.getSelectionModel().clearSelection(tableDwelling.getSelectionModel().getSelectedIndex());
+            imgCreateNewDwelling.setDisable(false);
+            imgCreateNewDwelling.setOpacity(1);
         }
     }
 
@@ -680,6 +685,8 @@ public class OwnerWindowController {
             tableDwelling.setItems(dwellingsCollectionTable);
             tableDwelling.refresh();
             tableDwelling.getSelectionModel().clearSelection(tableDwelling.getSelectionModel().getSelectedIndex());
+            imgCreateNewDwelling.setDisable(false);
+            imgCreateNewDwelling.setOpacity(1);
         } catch (ParseException ex) {
             LOGGER.severe("Error while parseing the date");
             Alert alert = new Alert(AlertType.ERROR);
