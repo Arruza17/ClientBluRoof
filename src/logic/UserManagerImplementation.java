@@ -8,16 +8,20 @@ package logic;
 import cipher.Cipher;
 import interfaces.UserManager;
 import exceptions.BusinessLogicException;
+import exceptions.ExceptionGenerator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
 import model.User;
 import restful.UserRestfulClient;
 
 /**
  * Implementation of the user manager for a restful client
+ *
  * @author Yeray Sampedro
  */
 public class UserManagerImplementation implements UserManager {
@@ -31,8 +35,9 @@ public class UserManagerImplementation implements UserManager {
 
     /**
      * Method used to find all the users of the database
+     *
      * @return List with all the users
-     * @throws BusinessLogicException 
+     * @throws BusinessLogicException
      */
     @Override
     public List<User> findAllUsers() throws BusinessLogicException {
@@ -43,19 +48,22 @@ public class UserManagerImplementation implements UserManager {
             users = webClient.findAll_XML(new GenericType<List<User>>() {
             });
         } catch (ClientErrorException ex) {
-            LOGGER.log(Level.SEVERE,
-                    "UsersManager: Exception finding all users, {0}",
-                    ex.getMessage());
-            throw new BusinessLogicException("Error finding all users:\n" + ex.getMessage());
+            if (ex.getResponse().equals(409)) {
+                LOGGER.log(Level.SEVERE,
+                        "UsersManager: Exception finding all users, {0}",
+                        ex.getMessage());
+            }
+            throw new BusinessLogicException("Error finding all users:\n"
+                    + ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
         }
         return users;
     }
 
-    
     /**
      * Method used to find all the admins containing a string in their name
+     *
      * @return List with all the admins
-     * @throws BusinessLogicException 
+     * @throws BusinessLogicException
      */
     @Override
     public List<User> findAllAdminsByLogin(String login) throws BusinessLogicException {
@@ -69,16 +77,17 @@ public class UserManagerImplementation implements UserManager {
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception finding all admins with login, {0}",
                     ex.getMessage());
-            throw new BusinessLogicException("Error finding all admins with that login:\n" + ex.getMessage());
+            throw new BusinessLogicException("Error finding all admins with that login:\n"
+                    + ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
         }
         return users;
     }
 
-    
     /**
      * Method used to find all the admins of the database
+     *
      * @return List with all the admins
-     * @throws BusinessLogicException 
+     * @throws BusinessLogicException
      */
     @Override
     public List<User> findAllAdmins() throws BusinessLogicException {
@@ -93,7 +102,8 @@ public class UserManagerImplementation implements UserManager {
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception finding all admins, {0}",
                     ex.getMessage());
-            throw new BusinessLogicException("Error finding all admins:\n" + ex.getMessage());
+            throw new BusinessLogicException("Error finding all admins:\n"
+                    + ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
         }
         return admins;
     }
@@ -114,8 +124,16 @@ public class UserManagerImplementation implements UserManager {
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception updating user, {0}",
                     ex.getMessage());
-            throw new BusinessLogicException("Error updating user:\n" + ex.getMessage());
+            throw new BusinessLogicException("Error updating user:\n"
+                    + ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
+        }   catch (ServerErrorException ex) {
+            LOGGER.log(Level.SEVERE,
+                    "UsersManager: Exception updating user, {0}",
+                    ex.getMessage());
+            throw new BusinessLogicException("Error updating user:\n"
+                    + ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
         }
+        
     }
 
     /**
@@ -135,7 +153,7 @@ public class UserManagerImplementation implements UserManager {
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception creating user, {0}",
                     ex.getMessage());
-            throw new BusinessLogicException("Error creating user:\n" + ex.getMessage());
+            throw new BusinessLogicException(ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
         }
     }
 
@@ -155,16 +173,18 @@ public class UserManagerImplementation implements UserManager {
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception deleting user, {0}",
                     ex.getMessage());
-            throw new BusinessLogicException("Error deleting user:\n" + ex.getMessage());
+            throw new BusinessLogicException("There was a problem with the deletion of the user:\n"
+                    + ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
         }
     }
 
     /**
      * Method used to login a user
+     *
      * @param login the login of the user
      * @param password the password of the user
-     * @return user, the user that has logged in 
-     * @throws BusinessLogicException 
+     * @return user, the user that has logged in
+     * @throws BusinessLogicException
      */
     @Override
     public User login(String login, String password) throws BusinessLogicException {
@@ -177,38 +197,42 @@ public class UserManagerImplementation implements UserManager {
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception logging user, {0}",
                     ex.getMessage());
-            throw new BusinessLogicException("Error logging user:\n" + ex.getMessage());
+            throw new BusinessLogicException("Error logging user:\n"
+                    + ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
         }
         return user;
     }
 
-     /**
+    /**
      * Method used to change the password a user
+     *
      * @param login the login of the user
      * @param password the password to change
-     * @return user, the user 
-     * @throws BusinessLogicException 
+     * @return user, the user
+     * @throws BusinessLogicException
      */
     @Override
     public User changePassword(String user, String pass) throws BusinessLogicException {
         User changedUser = null;
         try {
             LOGGER.log(Level.INFO, "UsersManager: Changing {0}'s password ", user);
-            webClient.changePassword( new GenericType<User>() {
+            webClient.changePassword(new GenericType<User>() {
             }, user, new Cipher().cipher(pass.getBytes()));
         } catch (ClientErrorException ex) {
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception changing password, {0}",
                     ex.getMessage());
-            throw new BusinessLogicException("Error changing password:\n" + ex.getMessage());
+            throw new BusinessLogicException("There was a problem updating the password:\n"
+                    + ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
         }
         return changedUser;
     }
 
     /**
      * Method used to reset the password of a user
+     *
      * @param user the login of the user to reset the password from
-     * @throws BusinessLogicException 
+     * @throws BusinessLogicException
      */
     @Override
     public void resetPassword(String user) throws BusinessLogicException {
@@ -220,7 +244,8 @@ public class UserManagerImplementation implements UserManager {
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception ressetting password, {0}",
                     ex.getMessage());
-            throw new BusinessLogicException("Error ressetting password:\n" + ex.getMessage());
+            throw new BusinessLogicException("There was an error updating the password:\n"
+                    + ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
         }
 
     }

@@ -480,6 +480,12 @@ public class AdminController {
                 excAlert.setTitle("Error");
                 excAlert.setContentText("There was an error with the deletion of the user: " + ex.getMessage());
                 excAlert.show();
+            } catch (Exception ex) {
+                Alert excAlert = new Alert(AlertType.INFORMATION);
+                excAlert.setTitle("Error");
+                excAlert.setContentText("There was an error with the connection of the server");
+                excAlert.show();
+                LOGGER.log(Level.SEVERE, ex.getClass().getSimpleName() + " thrown at handleTableCommit(): {0}", ex.getMessage());
             }
         }
 
@@ -537,7 +543,7 @@ public class AdminController {
         } catch (BusinessLogicException ex) {
             Alert excAlert = new Alert(AlertType.INFORMATION);
             excAlert.setTitle("Error");
-            excAlert.setContentText("There was an error with the edition of the user: " + ex.getMessage());
+            excAlert.setContentText(ex.getMessage());
             excAlert.show();
             LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at handleTableCommit(): {0}", ex.getMessage());
         } catch (FieldsEmptyException ex) {
@@ -546,6 +552,12 @@ public class AdminController {
             excAlert.setContentText(ex.getMessage());
             excAlert.show();
             LOGGER.log(Level.SEVERE, "FieldsEmptyException thrown at handleTableCommit(): {0}", ex.getMessage());
+        } catch (Exception ex) {
+            Alert excAlert = new Alert(AlertType.INFORMATION);
+            excAlert.setTitle("Error");
+            excAlert.setContentText("There was an error with the connection of the server");
+            excAlert.show();
+            LOGGER.log(Level.SEVERE, ex.getClass().getSimpleName() + " thrown at handleTableCommit(): {0}", ex.getMessage());
         } finally {
             tblAdmin.getSelectionModel().clearSelection();
         }

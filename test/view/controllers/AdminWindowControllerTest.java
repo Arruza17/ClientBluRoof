@@ -1,28 +1,26 @@
 package view.controllers;
 
 import application.Application;
+import exceptions.ExceptionGenerator;
 import java.util.Random;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Node;
-import javafx.scene.control.DatePicker;
 
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import static org.testfx.api.FxAssert.verifyThat;
 import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit.ApplicationTest;
-import static org.testfx.matcher.base.NodeMatchers.isEnabled;
 
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
@@ -58,7 +56,7 @@ public class AdminWindowControllerTest extends ApplicationTest {
     public static void setUpClass() throws TimeoutException {
         FxToolkit.registerPrimaryStage();
         FxToolkit.setupApplication(Application.class);
-        adminLogin += new Random().nextInt();
+
     }
 
     @Test
@@ -136,7 +134,30 @@ public class AdminWindowControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test02_editAdmin() {
+    public void test02_lookForAdmin() {
+        try {
+            TextField tf = lookup("#tfSearch").query();
+            clickOn(tf);
+            write("test");
+            Thread.sleep(100);
+            clickOn("Search");
+            Thread.sleep(200);
+            verifyThat(adminLogin, isVisible());
+            int rows = table.getItems().size();
+            doubleClickOn(tf);
+            Thread.sleep(100);
+            press(KeyCode.DELETE);
+            Thread.sleep(100);
+            clickOn("Search");
+            assertNotEquals(rows, table.getItems().size());
+        } catch (InterruptedException ex) {
+            Logger.getLogger(AdminWindowControllerTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    @Test
+    public void test03_editAdmin() {
         try {
             clickOn("Search");
             Thread.sleep(200);
@@ -207,5 +228,61 @@ public class AdminWindowControllerTest extends ApplicationTest {
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminWindowControllerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    @Test
+    public void test05_addExistingAdmin() {
+        try {
+            int rows = table.getItems().size();
+            addButton = lookup("#imgAdd").query();
+            confirmButton = lookup("#imgCommit").query();
+            cancelButton = lookup("#imgCancel").query();
+            deleteButton = lookup("#imgDel").query();
+            Thread.sleep(100);
+            clickOn(addButton);
+
+            write("Admin Test");
+            //Go to the next cell
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+            write("admin");
+            //Go to the next cell
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+            write("admintest@gmail.com");
+            //Go to the next cell
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+            //Select the datepicker
+            press(KeyCode.TAB).release(KeyCode.TAB);
+            Thread.sleep(100);
+            //Open the datepicker
+            press(KeyCode.F4).release(KeyCode.F4);
+            Thread.sleep(100);
+            //Select the date
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+            Thread.sleep(100);
+            //Confirm the date
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            //Go to the next cell
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+
+            write("+34666666666");
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            clickOn(confirmButton);          
+            verifyThat(ExceptionGenerator.exceptionGenerator(409), isVisible());
+            Thread.sleep(300);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(AdminWindowControllerTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 }
