@@ -1,6 +1,5 @@
 package view.controllers;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 import exceptions.BusinessLogicException;
 import exceptions.FieldsEmptyException;
 import javafx.scene.input.MouseEvent;
@@ -65,7 +64,7 @@ import sun.print.resources.serviceui;
  * @author jorge
  */
 public class FacilitiesController {
-
+    private static final Logger LOGGER = Logger.getLogger(FacilitiesController.class.getName());
     private Stage stage;
     @FXML
     private ComboBox<String> cb_Facilities;
@@ -400,6 +399,7 @@ public class FacilitiesController {
             //Create and show the report window. The second parameter false value makes 
             //report window not to close app.
             JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+            jasperViewer.setTitle("FacilitiesJasper");
             jasperViewer.setVisible(true);
             // jasperViewer.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         } catch (JRException ex) {
@@ -411,7 +411,6 @@ public class FacilitiesController {
                     ex.getMessage());
         }
     }
-
     @FXML
     void clickMinus(MouseEvent action) {
         Facility facTBean = null;
