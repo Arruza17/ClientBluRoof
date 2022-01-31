@@ -1,6 +1,5 @@
 package view.controllers;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 import exceptions.BusinessLogicException;
 import exceptions.FieldsEmptyException;
 import javafx.scene.input.MouseEvent;
@@ -57,7 +56,9 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
+import java.util.logging.Logger;
 import sun.print.resources.serviceui;
+
 
 /**
  * FXML Controller class
@@ -176,11 +177,11 @@ public class FacilitiesController {
                         try {
 
                             if (t.getNewValue().isEmpty()) {
-                                LOGGER.warning("The field in the facility adquisition date is empty");
+                                //LOGGER.warning("The field in the facility adquisition date is empty");
                                 throw new FieldsEmptyException();
                             }
                             if (!t.getNewValue().matches(regexDate)) {
-                                LOGGER.severe("The field in the construction date doesn't have a valid date");
+                                //LOGGER.severe("The field in the construction date doesn't have a valid date");
 
                             }
 
@@ -233,7 +234,7 @@ public class FacilitiesController {
                         try {
                             if (t.getNewValue().toString().equalsIgnoreCase("")) {
 
-                                LOGGER.warning("The field in facility type is empty");
+                                //LOGGER.warning("The field in facility type is empty");
                                 throw new FieldsEmptyException();
                             }
 
@@ -243,8 +244,8 @@ public class FacilitiesController {
                     });
             tbl_facilities.setItems(myFacilities);
         } catch (Exception e) {
-            LOGGER.severe(e.getMessage());
-            LOGGER.severe("Error while opening the window");
+            //LOGGER.severe(e.getMessage());
+            //LOGGER.severe("Error while opening the window");
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Couldn't open Facilities window");
@@ -409,9 +410,9 @@ public class FacilitiesController {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setHeaderText("Error printing");
             alert.setContentText("There was an error printing the information, try again later");
-            LOGGER.log(Level.SEVERE,
-                    "Error printing report at printReport(): {0}",
-                    ex.getMessage());
+            //LOGGER.log(Level.SEVERE,
+                   // "Error printing report at printReport(): {0}",
+                   // ex.getMessage());
         }
     }
 

@@ -1,17 +1,19 @@
 package view.controllers;
 
 import application.Application;
+import exceptions.FieldsEmptyException;
+import exceptions.MaxCharactersException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import static org.testfx.matcher.base.NodeMatchers.*;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumnBase;
 import javafx.scene.control.TableView;
@@ -28,8 +30,8 @@ import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit.ApplicationTest;
 
 /**
- * Testing class for SignUp view and controller. Tests SignUp view behavior
- * using TestFX framework
+ * Testing class for OwnerWindowController view and controller. Tests
+ * ownerWindow view behavio using TestFX framework
  *
  * @author Ander Arruza
  */
@@ -55,11 +57,15 @@ public class OwnerWindowControllerTest extends ApplicationTest {
 
     private final ComboBox comboFilter = lookup("#cbDwellings").queryComboBox();
 
+    private final Spinner spinner = lookup("#spRating").query();
+
     private ImageView imgPrint;
 
     private ObservableList<Dwelling> dwellingsCollectionTable;
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+
+    private static String newDwellingAddress;
 
 
     /*
@@ -76,48 +82,117 @@ public class OwnerWindowControllerTest extends ApplicationTest {
     public static void setUpClass() throws TimeoutException {
         FxToolkit.registerPrimaryStage();
         FxToolkit.setupApplication(Application.class);
-    }
-
-    @Test
-    public void test01_verifyButtons() {
-        verifyThat(newButton, isEnabled());
-        verifyThat(confirmButton, isDisabled());
-        verifyThat(cancelButton, isDisabled());
 
     }
 
     @Test
-    public void test02_create() throws ParseException {
+    public void test01_verifyButtons() throws InterruptedException {
+        clickOn("#tfUser");
+        write("OwnerTest");
+        clickOn("#tfPassword");
+        write("abcd*1234");
+        clickOn("Sign In");
+        clickOn("My Dwellings");
+        //verifyThat(newButton, isEnabled());
+        //verifyThat(confirmButton, isDisabled());
+        //verifyThat(cancelButton, isDisabled());
+        //verifyThat(dpConstructionDate, isDisabled());
+        //verifyThat(spinner, isDisabled());
+    }
+
+    @Test
+    public void test02_filterByMinDate() throws InterruptedException {
+        ComboBox cb = lookup("#cbDwellings").queryComboBox();
+        DatePicker datePicker = lookup("#dpConstructionDate").query();
+        ImageView search = lookup("#imgSearch").query();
+        clickOn(cb);
+        clickOn("Min construction date");
+        clickOn(datePicker);
+        press(KeyCode.F4).release(KeyCode.F4);
+        //Select the date
+        press(KeyCode.UP).release(KeyCode.UP);
+        press(KeyCode.UP).release(KeyCode.UP);
+        press(KeyCode.UP).release(KeyCode.UP);
+        press(KeyCode.UP).release(KeyCode.UP);
+        press(KeyCode.UP).release(KeyCode.UP);
+        press(KeyCode.UP).release(KeyCode.UP);
+        //Confirm the date
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn(search);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+    }
+        @Test
+    public void test03_filterByMinRating() throws InterruptedException {
+        ComboBox cb = lookup("#cbDwellings").queryComboBox();
+        Spinner spinner = lookup("#spRating").query();
+        ImageView search = lookup("#imgSearch").query();
+        clickOn(cb);
+        clickOn("Min rating");
+        clickOn(spinner);
+        
+        clickOn(search);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+    }
+    
+
+    @Ignore
+    @Test
+    public void test03_create() throws ParseException {
         clickOn(newButton);
-        String newDwellingTitle = "Tartanga test " + new Random().nextInt();
-        write(newDwellingTitle);
-        press(KeyCode.TAB);
+        newDwellingAddress = "Tartanga test " + new Random().nextInt();
+        write(newDwellingAddress);
+        press(KeyCode.TAB).release(KeyCode.TAB);
         press(KeyCode.SPACE).release(KeyCode.SPACE);
-        clickOn(newDwellingTitle);
-        press(KeyCode.ENTER);
-        String today = dateFormatter.format(new Date());
-        doubleClickOn(today);
+        clickOn(newDwellingAddress);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        write("25.5");
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
         press(KeyCode.CONTROL);
         press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
         eraseText(1);
         write("17/11/1997");
-        press(KeyCode.ENTER);
-        dwellingsCollectionTable = table.getItems();
-        //The column that I want to edit
-        TableColumn tc = (TableColumn) table.getColumns().get(2);
-        table.getSelectionModel().select(dwellingsCollectionTable.size() - 1, tc);
-        type(KeyCode.ENTER);
-        //table.getFocusModel().focus(dwellingsCollectionTable.size() - 1, tc);
-        //table.requestFocus();
-
-        write("25.5");
-        //press(KeyCode.ENTER);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn(confirmButton);
 
     }
 
+    @Ignore
     @Test
-    public void test03_delete() {
-            
+    public void test03_modidyAddress() {
+        doubleClickOn(newDwellingAddress);
+        newDwellingAddress = "Tartanga test " + new Random().nextInt();
+        write(newDwellingAddress);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn(confirmButton);
+    }
+
+    @Ignore
+    @Test
+    public void test04_modidyAddressEmpty() throws InterruptedException {
+        doubleClickOn(newDwellingAddress);
+        press(KeyCode.CONTROL);
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+        eraseText(1);
+        write("");
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        verifyThat(new FieldsEmptyException().getMessage(), isVisible());
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+    }
+
+    @Ignore
+    @Test
+    public void test05_modidyAddress_255() throws InterruptedException {
+        doubleClickOn(newDwellingAddress);
+        press(KeyCode.CONTROL);
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+        eraseText(1);
+        write(MAX_CHARACTERS_EXAMPLE);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        verifyThat(new MaxCharactersException().getMessage(), isVisible());
+        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+
     }
 
 }

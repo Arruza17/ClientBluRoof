@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.OwnerWindowController">
+<BorderPane styleClass="loginPanel" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.controllers.OwnerWindowController">
    <center>
       <TableView fx:id="tableDwelling" BorderPane.alignment="CENTER">
          <columns>
@@ -43,9 +43,9 @@
                               <Image url="@../resources/img/dwelling/dwelling.png" />
                            </image>
                         </ImageView>
-                        <Label fx:id="lblTitle" text="My Dwellings">
+                        <Label fx:id="lblTitle" prefHeight="55.0" text="My Dwellings">
                            <font>
-                              <Font size="36.0" />
+                              <Font size="48.0" />
                            </font>
                            <HBox.margin>
                               <Insets left="5.0" />

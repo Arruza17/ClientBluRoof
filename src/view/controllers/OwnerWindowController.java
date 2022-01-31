@@ -193,6 +193,8 @@ public class OwnerWindowController {
 
                                 ((Dwelling) t.getTableView().getItems().get(
                                         t.getTablePosition().getRow())).setAddress(t.getNewValue());
+                                tableDwelling.getSelectionModel().select(dwellingsCollectionTable.size() - 1, colSquareMeters);
+                                tableDwelling.edit(dwellingsCollectionTable.size() - 1, colSquareMeters);
                                 //SETS THE CONFIRM AND CANCEL BUTTONS TO CLICKABLE
                                 imgConfirmNewDwelling.setDisable(false);
                                 imgConfirmNewDwelling.setOpacity(1);
@@ -231,6 +233,8 @@ public class OwnerWindowController {
                             }
                             ((Dwelling) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow())).setSquareMeters(Double.valueOf(t.getNewValue()));
+                            tableDwelling.getSelectionModel().select(dwellingsCollectionTable.size() - 1, colConstructionDate);
+                            tableDwelling.edit(dwellingsCollectionTable.size() - 1, colConstructionDate);
                             //SETS THE CONFIRM AND CANCEL BUTTONS TO CLICKABLE
                             imgConfirmNewDwelling.setDisable(false);
                             imgConfirmNewDwelling.setOpacity(1);
@@ -553,9 +557,9 @@ public class OwnerWindowController {
     }
 
     /**
-     * Method that is executed when the imgView print is clicked
-     *
-     * @param event
+     * Action event handler for print button. It shows a JFrame containing a report.
+     * This JFrame allows to print the report.
+     * @param event event The ActionEvent object for the event.
      */
     @FXML
     private void handlePrintDwellings(MouseEvent event) {
@@ -566,6 +570,7 @@ public class OwnerWindowController {
                             .getResourceAsStream("/reports/dwellingReportFinal.jrxml"));
             //Data for the report: a collection of UserBean passed as a JRDataSource 
             //implementation 
+            System.out.println(this.tableDwelling.getItems().size());
             JRBeanCollectionDataSource dataItems
                     = new JRBeanCollectionDataSource((Collection<Dwelling>) this.tableDwelling.getItems());
             //Map of parameter to be passed to the report
