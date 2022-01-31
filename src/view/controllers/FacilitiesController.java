@@ -1,6 +1,5 @@
 package view.controllers;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 import exceptions.BusinessLogicException;
 import exceptions.FieldsEmptyException;
 import javafx.scene.input.MouseEvent;
@@ -23,8 +22,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -33,7 +30,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -58,6 +54,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 import sun.print.resources.serviceui;
+import java.util.logging.Logger;
 
 /**
  * FXML Controller class
@@ -66,6 +63,7 @@ import sun.print.resources.serviceui;
  */
 public class FacilitiesController {
 
+    private static final Logger LOGGER = Logger.getLogger(FacilitiesController.class.getName());
     private Stage stage;
     @FXML
     private ComboBox<String> cb_Facilities;
@@ -113,7 +111,7 @@ public class FacilitiesController {
      */
     public void initStage() {
         try {
-            
+
             cb_Type.setDisable(true);
             dp_Facilities.setDisable(true);
             sp_Facilities.setDisable(true);
@@ -250,7 +248,7 @@ public class FacilitiesController {
             alert.setHeaderText("Couldn't open Facilities window");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
-      
+
         }
     }
 
