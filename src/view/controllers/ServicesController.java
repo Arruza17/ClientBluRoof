@@ -307,6 +307,10 @@ public class ServicesController {
                         tbvService.refresh();
                     }
 
+                }else{
+                    newValue=services.get(lastCommittedRow);
+                    tbvService.refresh();
+                    
                 }
             }
 
