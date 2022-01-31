@@ -87,8 +87,6 @@ public class FacilitiesController {
     @FXML
     private TableColumn<Facility, String> type_column;
     @FXML
-    private TableColumn<Facility, String> more_Info_Column;
-    @FXML
     private ImageView iv_add;
     @FXML
     private ImageView iv_check;
@@ -113,7 +111,6 @@ public class FacilitiesController {
      */
     public void initStage() {
         try {
-            
             cb_Type.setDisable(true);
             dp_Facilities.setDisable(true);
             sp_Facilities.setDisable(true);
@@ -298,7 +295,7 @@ public class FacilitiesController {
                         List<Facility> fs = facMan.selectByDate(simpleDateFormat.format(date).toString());
                         if (fs.size() > 0) {
                             for (Facility f : fs) {
-                                facilities.add(new Facility());
+                                facilities.add(f);
                             }
                             ObservableList<Facility> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
@@ -317,14 +314,14 @@ public class FacilitiesController {
                 }
                 break;
             case type:
-                if (cb_Type.getValue() != null) {
+                if (cb_Type.getValue() != null){
                     try {
 
                         List<Facility> facilities = new ArrayList<>();
                         List<Facility> fs = facMan.selectByType(cb_Type.getValue());
                         if (fs.size() > 0) {
                             for (Facility f : fs) {
-                                facilities.add(new Facility());
+                                facilities.add(f);
                             }
                             ObservableList<Facility> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
