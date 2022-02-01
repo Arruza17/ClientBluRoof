@@ -3,6 +3,7 @@ package view.controllers;
 import application.Application;
 import exceptions.FieldsEmptyException;
 import exceptions.MaxCharactersException;
+import exceptions.NotValidSquareMetersValueException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,32 +39,7 @@ import org.testfx.framework.junit.ApplicationTest;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class OwnerWindowControllerTest extends ApplicationTest {
 
-    private final String MAX_CHARACTERS_EXAMPLE = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
     private static final Logger LOGGER = Logger.getLogger(OwnerWindowControllerTest.class.getName());
-    /**
-     * Needed variable to test if a username in the BD already exists
-     */
-    private final ImageView newButton = lookup("#imgCreateNewDwelling").query();
-
-    private final ImageView confirmButton = lookup("#imgConfirmNewDwelling").query();
-
-    private final ImageView cancelButton = lookup("#imgCancelNewDwelling").query();
-
-    private final ImageView deleteButton = lookup("#imgDeleteDwelling").query();
-
-    private final DatePicker dpConstructionDate = lookup("#dpConstructionDate").query();
-
-    private final TableView table = lookup("#tableDwelling").queryTableView();
-
-    private final ComboBox comboFilter = lookup("#cbDwellings").queryComboBox();
-
-    private final Spinner spinner = lookup("#spRating").query();
-
-    private ImageView imgPrint;
-
-    private ObservableList<Dwelling> dwellingsCollectionTable;
-
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
     private static String newDwellingAddress;
 
@@ -86,27 +62,40 @@ public class OwnerWindowControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test01_verifyButtons() throws InterruptedException {
+    public void test00_enterInWindow() throws InterruptedException {
         clickOn("#tfUser");
         write("OwnerTest");
         clickOn("#tfPassword");
         write("abcd*1234");
         clickOn("Sign In");
         clickOn("My Dwellings");
-        //verifyThat(newButton, isEnabled());
-        //verifyThat(confirmButton, isDisabled());
-        //verifyThat(cancelButton, isDisabled());
-        //verifyThat(dpConstructionDate, isDisabled());
-        //verifyThat(spinner, isDisabled());
+    }
+
+    @Test
+    public void test01_verifyButtons() throws InterruptedException {
+        ImageView newButton = lookup("#imgCreateNewDwelling").query();
+        ImageView confirmButton = lookup("#imgConfirmNewDwelling").query();
+        ImageView cancelButton = lookup("#imgCancelNewDwelling").query();
+        ImageView deleteButton = lookup("#imgDeleteDwelling").query();
+        DatePicker dpConstructionDate = lookup("#dpConstructionDate").query();
+        Spinner spinner = lookup("#spRating").query();
+        verifyThat(newButton, isEnabled());
+        verifyThat(confirmButton, isDisabled());
+        verifyThat(cancelButton, isDisabled());
+        verifyThat(dpConstructionDate, isDisabled());
+        verifyThat(deleteButton, isDisabled());
+        verifyThat(spinner, isDisabled());
     }
 
     @Test
     public void test02_filterByMinDate() throws InterruptedException {
         ComboBox cb = lookup("#cbDwellings").queryComboBox();
         DatePicker datePicker = lookup("#dpConstructionDate").query();
+        Spinner spinner = lookup("#spRating").query();
         ImageView search = lookup("#imgSearch").query();
         clickOn(cb);
         clickOn("Min construction date");
+        verifyThat(spinner, isDisabled());
         clickOn(datePicker);
         press(KeyCode.F4).release(KeyCode.F4);
         //Select the date
@@ -116,28 +105,55 @@ public class OwnerWindowControllerTest extends ApplicationTest {
         press(KeyCode.UP).release(KeyCode.UP);
         press(KeyCode.UP).release(KeyCode.UP);
         press(KeyCode.UP).release(KeyCode.UP);
+        press(KeyCode.UP).release(KeyCode.UP);
+        press(KeyCode.UP).release(KeyCode.UP);
+        press(KeyCode.UP).release(KeyCode.UP);
+        press(KeyCode.UP).release(KeyCode.UP);
+        press(KeyCode.UP).release(KeyCode.UP);
         //Confirm the date
         press(KeyCode.ENTER).release(KeyCode.ENTER);
         clickOn(search);
+        verifyThat("Dwellings have been found", isVisible());
         press(KeyCode.ENTER).release(KeyCode.ENTER);
     }
-        @Test
+
+    @Test
     public void test03_filterByMinRating() throws InterruptedException {
         ComboBox cb = lookup("#cbDwellings").queryComboBox();
         Spinner spinner = lookup("#spRating").query();
+        DatePicker datePicker = lookup("#dpConstructionDate").query();
         ImageView search = lookup("#imgSearch").query();
         clickOn(cb);
         clickOn("Min rating");
+        verifyThat(datePicker, isDisabled());
         clickOn(spinner);
-        
+        press(KeyCode.UP).release(KeyCode.UP);
+        press(KeyCode.UP).release(KeyCode.UP);
         clickOn(search);
+        verifyThat("Dwellings have been found", isVisible());
         press(KeyCode.ENTER).release(KeyCode.ENTER);
     }
-    
 
-    @Ignore
     @Test
-    public void test03_create() throws ParseException {
+    public void test04_filterAll() throws InterruptedException {
+        ComboBox cb = lookup("#cbDwellings").queryComboBox();
+        Spinner spinner = lookup("#spRating").query();
+        DatePicker datePicker = lookup("#dpConstructionDate").query();
+        ImageView search = lookup("#imgSearch").query();
+        clickOn(cb);
+        clickOn("All my dwellings");
+        verifyThat(datePicker, isDisabled());
+        verifyThat(spinner, isDisabled());
+        clickOn(search);
+        verifyThat("Dwellings have been found", isVisible());
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+    }
+
+    @Test
+    public void test05_create() throws ParseException {
+
+        ImageView newButton = lookup("#imgCreateNewDwelling").query();
+        ImageView confirmButton = lookup("#imgConfirmNewDwelling").query();
         clickOn(newButton);
         newDwellingAddress = "Tartanga test " + new Random().nextInt();
         write(newDwellingAddress);
@@ -158,41 +174,51 @@ public class OwnerWindowControllerTest extends ApplicationTest {
 
     }
 
-    @Ignore
     @Test
-    public void test03_modidyAddress() {
+    public void test06_badSquareMetersFormat() throws InterruptedException {
         doubleClickOn(newDwellingAddress);
-        newDwellingAddress = "Tartanga test " + new Random().nextInt();
-        write(newDwellingAddress);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
-        clickOn(confirmButton);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        write("vabyweiubyeoa");
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        verifyThat("The squareMeter value is not valid", isVisible());
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
     }
 
-    @Ignore
     @Test
-    public void test04_modidyAddressEmpty() throws InterruptedException {
+    public void test07_badDateFormat() throws InterruptedException {
         doubleClickOn(newDwellingAddress);
-        press(KeyCode.CONTROL);
-        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
-        eraseText(1);
-        write("");
         press(KeyCode.ENTER).release(KeyCode.ENTER);
-        verifyThat(new FieldsEmptyException().getMessage(), isVisible());
-        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        write("vabyweiubyeoa");
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        verifyThat("Not valid date", isVisible());
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
     }
 
-    @Ignore
     @Test
-    public void test05_modidyAddress_255() throws InterruptedException {
-        doubleClickOn(newDwellingAddress);
-        press(KeyCode.CONTROL);
-        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
-        eraseText(1);
-        write(MAX_CHARACTERS_EXAMPLE);
+    public void test08_deleteCancell() throws InterruptedException {
+        ImageView deleteButton = lookup("#imgDeleteDwelling").query();
+        clickOn(newDwellingAddress);
+        clickOn(deleteButton);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
-        verifyThat(new MaxCharactersException().getMessage(), isVisible());
-        press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+    }
 
+    @Test
+    public void test09_deleteConfirm() throws InterruptedException {
+        ImageView deleteButton = lookup("#imgDeleteDwelling").query();
+        clickOn(newDwellingAddress);
+        clickOn(deleteButton);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+    }
+
+    @Test
+    public void test99_serverDown() throws InterruptedException {
+        ImageView search = lookup("#imgSearch").query();
+        clickOn(search);
+        verifyThat("Error with the server", isVisible());
     }
 
 }

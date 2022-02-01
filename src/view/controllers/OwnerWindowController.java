@@ -107,7 +107,7 @@ public class OwnerWindowController {
     //MY OBJECTS
     private static final Logger LOGGER = Logger.getLogger(DwellingController.class.getSimpleName());
 
-    private User user;
+    private Owner user;
 
     private DwellingManager dwellingManager;
 
@@ -129,6 +129,8 @@ public class OwnerWindowController {
      */
     private final String regexDate = "^(((0[1-9]|[12]\\d|3[01])\\/(0[13578]|1[02])\\/((19|[2-9]\\d)\\d{2}))|((0[1-9]|[12]\\d|30)\\/(0[13456789]|1[012])\\/((19|[2-9]\\d)\\d{2}))|((0[1-9]|1\\d|2[0-8])\\/02\\/((19|[2-9]\\d)\\d{2}))|(29\\/02\\/((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$";
 
+    private Long userId;
+
     /**
      * Method for initializing OwnerWindowController Stage.
      *
@@ -137,7 +139,7 @@ public class OwnerWindowController {
     public void initStage() {
         try {
             OwnerManager om = OwnerManagerFactory.createOwnerManager(OwnerManagerFactory.REST_WEB_CLIENT_TYPE);
-            user = om.findById(String.valueOf(user.getId()));
+            user = om.findById(String.valueOf(userId));
             LOGGER.info("Initializing Owner/Guest-Window stage");
             //Creation of a new Scene     
             //Sets the column RATING & SQUARE METERS ro center-right
@@ -167,9 +169,7 @@ public class OwnerWindowController {
             //Add listener to the rows selected
             tableDwelling.getSelectionModel().selectedItemProperty()
                     .addListener(this::handleTableSelectionChanged);
-
-            //if logged as an owner
-            lblTitle.setText("My Dwellings");
+            lblTitle.setText("Dwellings");
             //Select the first comboBox item by default
             cbDwellings.getSelectionModel().selectFirst();
             //Add the editable table
@@ -504,6 +504,7 @@ public class OwnerWindowController {
         Dwelling dwelling = new Dwelling();
         dwelling.setConstructionDate(new Date());
         dwelling.setId(Long.MIN_VALUE);
+        dwelling.setHost(user);
         dwellingsCollectionTable.add(dwelling);
         tableDwelling.getSelectionModel().select(dwellingsCollectionTable.size() - 1);
         tableDwelling.layout();
@@ -557,8 +558,9 @@ public class OwnerWindowController {
     }
 
     /**
-     * Action event handler for print button. It shows a JFrame containing a report.
-     * This JFrame allows to print the report.
+     * Action event handler for print button. It shows a JFrame containing a
+     * report. This JFrame allows to print the report.
+     *
      * @param event event The ActionEvent object for the event.
      */
     @FXML
@@ -665,33 +667,14 @@ public class OwnerWindowController {
                 //If the user didn't wrote anything in the address
                 throw new FieldsEmptyException();
             }
-
+            Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateFormatter.format(dwelling1.getConstructionDate()));
+            dwelling1.setConstructionDate(date1);
             if (pos == dwellingsCollectionTable.size() - 1 && dwellingsCollectionTable.get(pos).getId() == Long.MIN_VALUE) {
-
-                Dwelling dwelling = new Dwelling();
-                Dwelling dtb = dwellingsCollectionTable.get(pos);
-                dwelling.setAddress(dtb.getAddress());
-                Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateFormatter.format(dtb.getConstructionDate()));
-                dwelling.setConstructionDate(date1);
-                dwelling.setHasWiFi(dtb.getHasWiFi());
-                dwelling.setHost((Owner) user);
-                dwelling.setId(0L);
-                dwelling.setRating(Float.valueOf(0));
-                dwelling.setSquareMeters(dtb.getSquareMeters());
-                dwellingManager.add(dwelling);
-
+                //create
+                dwellingManager.add(dwelling1);
             } else {
-                Dwelling dwelling = new Dwelling();
-                Dwelling dtb = dwellingsCollectionTable.get(pos);
-                dwelling.setAddress(dtb.getAddress());
-                Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateFormatter.format(dtb.getConstructionDate()));
-                dwelling.setConstructionDate(date1);
-                dwelling.setHasWiFi(dtb.getHasWiFi());
-                dwelling.setHost((Owner) user);
-                dwelling.setId(dtb.getId());
-                dwelling.setRating(Float.valueOf(0));
-                dwelling.setSquareMeters(dtb.getSquareMeters());
-                dwellingManager.update(dwelling);
+                //update
+               dwellingManager.update(dwelling1);
 
             }
             imgConfirmNewDwelling.setDisable(true);
@@ -746,11 +729,16 @@ public class OwnerWindowController {
      *
      * @param user the user to set
      */
-    public void setUser(User user) {
+    public void setUser(Owner user) {
         this.user = user;
     }
 
     public ObservableList<Dwelling> getDwellingsCollectionTable() {
         return dwellingsCollectionTable;
     }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
 }
