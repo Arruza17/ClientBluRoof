@@ -212,7 +212,6 @@ public class AdminController {
         //Disable the commit and cancel buttons if the user cancels
         colFullName.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
-            disableEdition();
         });
 
         //Make login column editable
@@ -262,7 +261,6 @@ public class AdminController {
         //Disable the commit and cancel buttons if the user cancels
         colLogin.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
-            disableEdition();
         });
 
         //Make email column editable
@@ -327,7 +325,6 @@ public class AdminController {
         //Disable the commit and cancel buttons if the user cancels
         colEmail.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
-            disableEdition();
         });
 
         //Make phone column editable
@@ -380,7 +377,6 @@ public class AdminController {
         //Disable the commit and cancel buttons if the user cancels
         colPhone.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
-            disableEdition();
         });
 
         //Make birthdate column editable   
@@ -405,7 +401,6 @@ public class AdminController {
         //Disable the commit and cancel buttons if the user cancels
         colBirthDate.setOnEditCancel((CellEditEvent<User, Date> t) -> {
             tblAdmin.refresh();
-            disableEdition();
 
         });
 
@@ -577,24 +572,36 @@ public class AdminController {
         alert.setContentText("You are about to stop the edition\nAre you sure?");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            //Remove the data if called an addition
-            if (pos == admin.size() - 1 && admin.get(pos).getId() == Long.MIN_VALUE) {
-                LOGGER.info("Cancel creation");
-                admin.remove(admin.size() - 1);
-            } else {
-                LOGGER.info("Cancel update");
+            try {
+                //Remove the data if called an addition
+                if (pos == admin.size() - 1 && admin.get(pos).getId() == Long.MIN_VALUE) {
+                    LOGGER.info("Cancel creation");
+                    admin.remove(admin.size() - 1);
+                } else {
+                    LOGGER.info("Cancel update");
+                }
+                imgCommit.setDisable(true);
+                imgCommit.setOpacity(0.25);
+                imgCancel.setDisable(true);
+                imgCancel.setOpacity(0.25);
+                imgAdd.setDisable(false);
+                imgAdd.setOpacity(1);
+                imgDel.setDisable(true);
+                imgDel.setOpacity(0.25);
+                tblAdmin.getItems().clear();
+                admin = FXCollections.observableArrayList(userManager.findAllAdmins());
+                tblAdmin.setItems(admin);
+                tblAdmin.refresh();
+                tblAdmin.getSelectionModel().clearSelection(tblAdmin.getSelectionModel().getSelectedIndex());
+            } catch (BusinessLogicException ex) {
+                alert = new Alert(AlertType.INFORMATION);
+                alert.setHeaderText("Error with the cancel");
+                alert.setContentText("There was an error updating the information, try again later");
+                LOGGER.log(Level.SEVERE,
+                        "Error updating the table at handleTableCancel(): {0}",
+                        ex.getMessage());
+                Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            imgCommit.setDisable(true);
-            imgCommit.setOpacity(0.25);
-            imgCancel.setDisable(true);
-            imgCancel.setOpacity(0.25);
-            imgAdd.setDisable(false);
-            imgAdd.setOpacity(1);
-            imgDel.setDisable(true);
-            imgDel.setOpacity(0.25);
-            tblAdmin.setItems(admin);
-            tblAdmin.refresh();
-            tblAdmin.getSelectionModel().clearSelection(tblAdmin.getSelectionModel().getSelectedIndex());
         }
     }
 

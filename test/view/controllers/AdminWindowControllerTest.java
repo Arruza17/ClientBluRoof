@@ -16,6 +16,7 @@ import javafx.scene.layout.BorderPane;
 import static org.junit.Assert.assertNotEquals;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import static org.testfx.api.FxAssert.verifyThat;
@@ -32,15 +33,6 @@ import static org.testfx.matcher.base.NodeMatchers.isVisible;
 public class AdminWindowControllerTest extends ApplicationTest {
 
     private static String adminLogin = "AdminTest";
-
-    private static final String MAX_CHAR = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-            + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-            + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-            + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-            + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-            + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-            + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-            + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 
     private static ImageView addButton;
 
@@ -215,29 +207,37 @@ public class AdminWindowControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test04_deleteAdmin() {
+    public void test05_editExistingAdmin() {
         try {
             int rows = table.getItems().size();
-            Node row = lookup(".table-row-cell").nth(table.getItems().size() - 1).query();
-            clickOn(row);
+
             Thread.sleep(100);
-            clickOn(deleteButton);
-            Thread.sleep(100);
+            doubleClickOn("updateAdmin");
+            press(KeyCode.DELETE).release(KeyCode.DELETE);
+            write("admin");
+            //Go to the next cell
             press(KeyCode.ENTER).release(KeyCode.ENTER);
-            assertNotEquals("Row deleted", rows, table.getItems().size());
+            Thread.sleep(100);
+            clickOn(confirmButton);
+            Thread.sleep(100);
+            verifyThat("Error", isVisible());
+            Thread.sleep(5000);
+            clickOn("Aceptar");
+            Thread.sleep(300);
+            clickOn("Search");
+            Thread.sleep(300);
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminWindowControllerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
-    
+
+    @Ignore
     @Test
-    public void test05_addExistingAdmin() {
+    public void test06_addExistingAdmin() {
         try {
             int rows = table.getItems().size();
             addButton = lookup("#imgAdd").query();
-            confirmButton = lookup("#imgCommit").query();
-            cancelButton = lookup("#imgCancel").query();
-            deleteButton = lookup("#imgDel").query();
             Thread.sleep(100);
             clickOn(addButton);
 
@@ -277,12 +277,35 @@ public class AdminWindowControllerTest extends ApplicationTest {
             write("+34666666666");
             press(KeyCode.ENTER).release(KeyCode.ENTER);
             Thread.sleep(100);
-            clickOn(confirmButton);          
+            clickOn(confirmButton);
             verifyThat(ExceptionGenerator.exceptionGenerator(409), isVisible());
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(300);
+            Node row = lookup(".table-row-cell").nth(table.getItems().size() - 1).query();
+            clickOn(row);
+            clickOn(cancelButton);
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
             Thread.sleep(300);
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminWindowControllerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
+
+    @Test
+    public void test99_deleteAdmin() {
+        try {
+            int rows = table.getItems().size();
+            Node row = lookup(".table-row-cell").nth(table.getItems().size() - 1).query();
+            clickOn(row);
+            Thread.sleep(100);
+            clickOn(deleteButton);
+            Thread.sleep(100);
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            assertNotEquals("Row deleted", rows, table.getItems().size());
+        } catch (InterruptedException ex) {
+            Logger.getLogger(AdminWindowControllerTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 }
