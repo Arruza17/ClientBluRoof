@@ -388,17 +388,20 @@ public class ServicesController {
                             if (oldAddress != null) {
 
                                 services.get(lastCommittedRow).setAddress(oldAddress);
+                                oldAddress = null;
                                 tbvService.getSelectionModel().clearSelection();
                                 tbvService.refresh();
                             }
                             if (oldName != null) {
                                 services.get(lastCommittedRow).setName(oldName);
+                                oldName = null;
                                 tbvService.getSelectionModel().clearSelection();
                                 tbvService.refresh();
                             }
 
                             if (oldServiceType != null) {
                                 services.get(lastCommittedRow).setType(oldServiceType);
+                                oldServiceType = null;
                                 tbvService.getSelectionModel().clearSelection();
                                 tbvService.refresh();
                             }
@@ -411,15 +414,15 @@ public class ServicesController {
                         }
 
                     } else {
-                        oldName=null;
+                        oldName = null;
                         selectedRow = t.getTablePosition().getRow();
 
                         if (!addingService) {
-                            
-                            if(t.getOldValue()!=null){
-                            
-                            oldName = t.getOldValue();
-                            editing = true;
+
+                            if (t.getOldValue() != null) {
+
+                                oldName = t.getOldValue();
+                                editing = true;
                             }
                         }
                         if (addingService && addComittingRow != null) {
@@ -523,7 +526,7 @@ public class ServicesController {
                 imgCommit.setOpacity(0.25);
                 imgCancel.setDisable(true);
                 imgCancel.setOpacity(0.25);
-                
+
             }
         });
 
@@ -555,24 +558,27 @@ public class ServicesController {
                         alert.setContentText("Do you want to cancel the last commit? \n if not press cancel and press commit button.");
                         Optional<ButtonType> result = alert.showAndWait();
                         if (result.get() == ButtonType.OK) {
-                            tableCommitting = false;
                             editing = false;
+                            tableCommitting = false;
                             enableDefaultComponents();
 
                             if (oldAddress != null) {
 
                                 services.get(lastCommittedRow).setAddress(oldAddress);
+                                oldAddress = null;
                                 tbvService.getSelectionModel().clearSelection();
                                 tbvService.refresh();
                             }
                             if (oldName != null) {
                                 services.get(lastCommittedRow).setName(oldName);
+                                oldName = null;
                                 tbvService.getSelectionModel().clearSelection();
                                 tbvService.refresh();
                             }
 
                             if (oldServiceType != null) {
                                 services.get(lastCommittedRow).setType(oldServiceType);
+                                oldServiceType = null;
                                 tbvService.getSelectionModel().clearSelection();
                                 tbvService.refresh();
                             }
@@ -590,11 +596,11 @@ public class ServicesController {
                         selectedRow = t.getTablePosition().getRow();
                         if (!addingService) {
                             editing = true;
-                            
-                            if(t.getOldValue()!=null){
-                                                           
-                            oldAddress = t.getOldValue();
-                
+
+                            if (t.getOldValue() != null) {
+
+                                oldAddress = t.getOldValue();
+
                             }
                         }
 
@@ -739,17 +745,20 @@ public class ServicesController {
                             if (oldAddress != null) {
 
                                 services.get(lastCommittedRow).setAddress(oldAddress);
+                                oldAddress = null;
                                 tbvService.getSelectionModel().clearSelection();
                                 tbvService.refresh();
                             }
                             if (oldName != null) {
                                 services.get(lastCommittedRow).setName(oldName);
+                                oldName = null;
                                 tbvService.getSelectionModel().clearSelection();
                                 tbvService.refresh();
                             }
 
                             if (oldServiceType != null) {
                                 services.get(lastCommittedRow).setType(oldServiceType);
+                                oldServiceType = null;
                                 tbvService.getSelectionModel().clearSelection();
                                 tbvService.refresh();
                             }
@@ -763,15 +772,15 @@ public class ServicesController {
 
                     } else {
 
-                        oldServiceType=null;
+                        oldServiceType = null;
                         selectedRow = t.getTablePosition().getRow();
 
                         if (!addingService) {
-                            
-                            if(t.getOldValue()!=null){
-                            
-                            oldServiceType = t.getOldValue();
-                            editing = true;
+
+                            if (t.getOldValue() != null) {
+
+                                oldServiceType = t.getOldValue();
+                                editing = true;
                             }
                         }
                         if (addingService && addComittingRow != null) {
