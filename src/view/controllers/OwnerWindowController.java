@@ -8,34 +8,25 @@ import exceptions.NotValidSquareMetersValueException;
 import factories.OwnerManagerFactory;
 import interfaces.DwellingManager;
 import interfaces.OwnerManager;
-import java.net.ConnectException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -46,14 +37,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
-import logic.OwnerManagerImplementation;
 import model.Dwelling;
 import model.Owner;
-import model.User;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -134,7 +121,6 @@ public class OwnerWindowController {
     /**
      * Method for initializing OwnerWindowController Stage.
      *
-     * @param root The Parent object representing root node of view graph.
      */
     public void initStage() {
         try {
@@ -275,7 +261,7 @@ public class OwnerWindowController {
                                 throw new FieldsEmptyException();
                             }
                             if (!t.getNewValue().matches(regexDate)) {
-                                LOGGER.severe("The field in the construction date has a not valid date");
+                                LOGGER.warning("The field in the construction date has a not valid date");
                                 throw new NotValidDateValueException("Not valid date");
                             }
 
@@ -399,7 +385,7 @@ public class OwnerWindowController {
 
     /**
      * Method that takes the filter values to load the data calling the logical
-     * part
+     * part. Is throw when the search imgView is clicked
      *
      * @param event the mouse event
      */
@@ -413,11 +399,13 @@ public class OwnerWindowController {
 
             switch (cbDwellings.getValue()) {
                 case SELECT_ALL_DWELLINGS:
+                    LOGGER.info("Filtering by all dwellings");
                     dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.loadAllDwellings());
 
                     break;
                 case SELECT_BY_MIN_CONSTRUCTION_DATE:
                     if (dpConstructionDate.getValue() != null) {
+                        LOGGER.info("Filtering by min Construction Date");
                         Date date = Date.from(dpConstructionDate.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.findByDate(simpleDateFormat.format(date).toString()));
@@ -432,6 +420,7 @@ public class OwnerWindowController {
                     }
                     break;
                 case SELECT_BY_MIN_RATING:
+                    LOGGER.info("Filtering by min rating");
                     dwellingsCollectionTable = FXCollections.observableArrayList(dwellingManager.findByRating(spRating.getValue()));
                     break;
                 default:
@@ -534,7 +523,7 @@ public class OwnerWindowController {
                 dwellingManager.remove(selectedDwelling.getId());
                 dwellingsCollectionTable.remove(selectedDwelling);
                 LOGGER.info("A Dwelling have been removed");
-                tableDwelling.refresh();    
+                tableDwelling.refresh();
             } catch (BussinessLogicException ex) {
                 LOGGER.severe("Error with the server side");
                 Alert alert1 = new Alert(AlertType.ERROR);
@@ -547,9 +536,10 @@ public class OwnerWindowController {
             imgConfirmNewDwelling.setOpacity(0.25);
             imgCancelNewDwelling.setDisable(true);
             imgCancelNewDwelling.setOpacity(0.25);
-        } else {
+            
             imgCreateNewDwelling.setDisable(false);
             imgCreateNewDwelling.setOpacity(1);
+        } else {
             LOGGER.info("Dwelling finally not removed by the user");
             Alert alert3 = new Alert(AlertType.INFORMATION);
             alert3.setTitle("Dwelling not deleted");
@@ -673,10 +663,12 @@ public class OwnerWindowController {
             dwelling1.setConstructionDate(date1);
             if (pos == dwellingsCollectionTable.size() - 1 && dwellingsCollectionTable.get(pos).getId() == Long.MIN_VALUE) {
                 //create
+                LOGGER.info("New Dwelling adding to the BD");
                 dwellingManager.add(dwelling1);
             } else {
                 //update
-               dwellingManager.update(dwelling1);
+                LOGGER.info("Update Dwelling to the BD");
+                dwellingManager.update(dwelling1);
 
             }
             imgConfirmNewDwelling.setDisable(true);
@@ -707,7 +699,7 @@ public class OwnerWindowController {
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
         } catch (FieldsEmptyException ex) {
-            LOGGER.severe("Error address field is empty");
+            LOGGER.warning("Error address field is empty");
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Address is empty");
@@ -735,10 +727,20 @@ public class OwnerWindowController {
         this.user = user;
     }
 
+    /**
+     * Returns the dwellings
+     *
+     * @return the observable list of dwellings
+     */
     public ObservableList<Dwelling> getDwellingsCollectionTable() {
         return dwellingsCollectionTable;
     }
 
+    /**
+     * Sets the user
+     *
+     * @param userId the id of the user to set
+     */
     public void setUserId(Long userId) {
         this.userId = userId;
     }

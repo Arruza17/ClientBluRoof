@@ -1,26 +1,16 @@
 package view.controllers;
 
 import application.Application;
-import exceptions.FieldsEmptyException;
-import exceptions.MaxCharactersException;
-import exceptions.NotValidSquareMetersValueException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Random;
 import static org.testfx.matcher.base.NodeMatchers.*;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
-import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumnBase;
-import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import model.Dwelling;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -151,7 +141,6 @@ public class OwnerWindowControllerTest extends ApplicationTest {
 
     @Test
     public void test05_create() throws ParseException {
-
         ImageView newButton = lookup("#imgCreateNewDwelling").query();
         ImageView confirmButton = lookup("#imgConfirmNewDwelling").query();
         clickOn(newButton);
@@ -197,7 +186,7 @@ public class OwnerWindowControllerTest extends ApplicationTest {
         verifyThat("Not valid date", isVisible());
         press(KeyCode.ENTER).release(KeyCode.ENTER);
     }
-
+    @Ignore
     @Test
     public void test08_deleteCancel() throws InterruptedException {
         ImageView deleteButton = lookup("#imgDeleteDwelling").query();
@@ -205,17 +194,9 @@ public class OwnerWindowControllerTest extends ApplicationTest {
         clickOn(deleteButton);
         clickOn("Cancel");
         press(KeyCode.ENTER).release(KeyCode.ENTER);
-        
+
     }
-    /*
-    @Test
-    public void test09_print() throws InterruptedException {
-        ImageView printButton = lookup("#imgPrint").query();
-        clickOn(printButton);
-        verifyThat("Error generating the report", isInvisible());
-        closeCurrentWindow();
-    }
-    */
+
     @Test
     public void test10_deleteConfirm() throws InterruptedException {
         ImageView deleteButton = lookup("#imgDeleteDwelling").query();
@@ -223,7 +204,6 @@ public class OwnerWindowControllerTest extends ApplicationTest {
         clickOn(deleteButton);
         press(KeyCode.ENTER).release(KeyCode.ENTER);
     }
-
     @Test
     public void test99_serverDown() throws InterruptedException {
         ImageView search = lookup("#imgSearch").query();
