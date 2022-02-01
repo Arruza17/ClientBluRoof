@@ -106,7 +106,7 @@ public class ServiceControllerTest extends ApplicationTest {
      @Test
     public void test04_cbDisableCompone() {
         
-         verifyThat(, nodeMatcher);
+         
 
     }
 

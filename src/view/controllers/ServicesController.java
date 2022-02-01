@@ -22,15 +22,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -39,6 +35,7 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Service;
@@ -101,7 +98,6 @@ public class ServicesController {
     private ImageView imgPrint;
     private ObservableList<Service> services;
     private ObservableList<String> types;
-
     private ComboBox type;
     @FXML
     private ComboBox<?> cbServiceType;
@@ -118,11 +114,9 @@ public class ServicesController {
 
     private boolean cancelling;
 
-    private boolean buttonCancelling;
-
     private boolean addingWithNullServices;
 
-    private boolean commitingBetweenCells;
+    private boolean escCancelWhenAdd = false;
 
     private String savedAddress;
 
@@ -146,10 +140,14 @@ public class ServicesController {
 
     private Integer lastCommittedRow;
 
+    private Integer addComittingRow;
+
+    /**
+     * initStage method that initialises Service view and its components.
+     */
     public void initStage() {
         try {
-            LOGGER.info("Initializing ServiceWindow stage");
-            //Creation of a new Scene
+            LOGGER.info("Initializing ServiceWindow view");
 
             /*
         //Save the route of the .css file
@@ -169,13 +167,6 @@ public class ServicesController {
             imgDelete.setDisable(true);
             imgDelete.setOpacity(0.25);
 
-            /*
-        if (!.isDisabled()) {
-            .setValueFactory(
-                    new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
-            .setEditable(true);
-        }
-             */
             //Add the combobox values
             ObservableList<String> optionsForCombo;
             optionsForCombo = FXCollections.observableArrayList(
@@ -210,6 +201,14 @@ public class ServicesController {
             tbvService.setEditable(true);
             tbvService.setMinWidth(500);
 
+            tbvService.setOnKeyPressed((event) -> {
+
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    escCancelWhenAdd = true;
+                }
+
+            });
+
             //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
             cbService.getSelectionModel().selectFirst();
 
@@ -229,6 +228,12 @@ public class ServicesController {
         }
     }
 
+    /**
+     * This method loads all the services and disables or enables the print
+     * imageView depending if there are 0, 1 or more services.
+     *
+     * @return an ObservableList with the services.
+     */
     private ObservableList loadAllServices() {
 
         ObservableList<Service> servicesTableBean = null;
@@ -262,14 +267,30 @@ public class ServicesController {
 
     }
 
+    /**
+     * Stage setter
+     *
+     * @param primaryStage
+     */
     public void setStage(Stage primaryStage) {
         this.stage = primaryStage;
     }
 
+    /**
+     * ServiceManager interfaceImplementation setter.
+     *
+     * @param serviceManager
+     */
     public void setServiceManager(ServicesManager serviceManager) {
         this.serviceManager = serviceManager;
     }
 
+    /**
+     *
+     * @param observableValue
+     * @param oldValue
+     * @param newValue
+     */
     private void handleTableSelectionChanged(ObservableValue observableValue, Object oldValue, Object newValue) {
 
         if (newValue != null) {
@@ -280,53 +301,27 @@ public class ServicesController {
                 imgDelete.setOpacity(0.25);
             }
 
-            if (tableCommitting) {
-
-                imgDelete.setDisable(true);
-                imgDelete.setOpacity(0.25);
-                Alert alert = new Alert(AlertType.CONFIRMATION);
-                alert.setHeaderText(null);
-                alert.setTitle("Confirmation");
-                alert.setContentText("Do you want to cancel the last commit? \n if not press cancel and press commit button.");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    tableCommitting = false;
-                    enableDefaultComponents();
-                    if (oldAddress != null) {
-
-                        services.get(lastCommittedRow).setAddress(oldAddress);
-                        tbvService.refresh();
-                    }
-                    if (oldName != null) {
-                        services.get(lastCommittedRow).setName(oldName);
-                        tbvService.refresh();
-                    }
-
-                    if (oldServiceType != null) {
-                        services.get(lastCommittedRow).setType(oldServiceType);
-                        tbvService.refresh();
-                    }
-
-                }else{
-                    newValue=services.get(lastCommittedRow);
-                    tbvService.refresh();
-                    
-                }
-            }
-
         } else {
             imgDelete.setDisable(true);
             imgDelete.setOpacity(0.25);
         }
+
     }
 
+    /**
+     * This method handles the actions caused when imgAdd is pressed.
+     *
+     * @param event the MouseEvent onPressed event.
+     */
     @FXML
-    private void handleServiceCreation(MouseEvent event
-    ) {
+    private void handleServiceCreation(MouseEvent event) {
 
         LOGGER.info("Adding new empty service to the table");
 
         if (services != null) {
+
+            addingService = true;
+            updateServicesTable();
 
             Service s = new Service();
             s.setId(Long.MIN_VALUE);
@@ -336,8 +331,6 @@ public class ServicesController {
             tbvService.layout();
             tbvService.getFocusModel().focus(services.size() - 1, tcAddress);
             tbvService.edit(services.size() - 1, tcAddress);
-
-            addingService = true;
 
             handleEditModeComponents();
 
@@ -356,10 +349,17 @@ public class ServicesController {
 
             addingService = true;
 
+            handleEditModeComponents();
+
         }
 
     }
 
+    /**
+     * This method set all the columns to editable. ATTENTION: - This method
+     * handles all the different states (editing,creating,commiting + cancelling
+     * types). - Sets the 3 different types of CellEditEvents.
+     */
     private void setEditableColumns() {
 
         //Making name Services table column editable
@@ -367,19 +367,109 @@ public class ServicesController {
 
         tcName.setOnEditStart(
                 (CellEditEvent<Service, String> t) -> {
-
-                    oldName = null;
+                    editing = true;
                     selectedRow = null;
-                    selectedRow = t.getTablePosition().getRow();
-                    if (!addingService) {
-                        oldName = t.getOldValue();
+
+                    if (!addingService && tableCommitting && lastCommittedRow != null && tbvService.getSelectionModel().getSelectedIndex() != lastCommittedRow) {
                         editing = true;
+
+                        imgDelete.setDisable(true);
+                        imgDelete.setOpacity(0.25);
+                        Alert alert = new Alert(AlertType.CONFIRMATION);
+                        alert.setHeaderText(null);
+                        alert.setTitle("Confirmation");
+                        alert.setContentText("Do you want to cancel the last commit? \n if not press cancel and press commit button.");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == ButtonType.OK) {
+                            editing = false;
+                            tableCommitting = false;
+                            enableDefaultComponents();
+
+                            if (oldAddress != null) {
+
+                                services.get(lastCommittedRow).setAddress(oldAddress);
+                                tbvService.getSelectionModel().clearSelection();
+                                tbvService.refresh();
+                            }
+                            if (oldName != null) {
+                                services.get(lastCommittedRow).setName(oldName);
+                                tbvService.getSelectionModel().clearSelection();
+                                tbvService.refresh();
+                            }
+
+                            if (oldServiceType != null) {
+                                services.get(lastCommittedRow).setType(oldServiceType);
+                                tbvService.getSelectionModel().clearSelection();
+                                tbvService.refresh();
+                            }
+
+                        } else {
+
+                            tbvService.getSelectionModel().select(lastCommittedRow);
+                            tbvService.refresh();
+
+                        }
+
                     } else {
-                        editing = false;
+                        oldName=null;
+                        selectedRow = t.getTablePosition().getRow();
 
+                        if (!addingService) {
+                            
+                            if(t.getOldValue()!=null){
+                            
+                            oldName = t.getOldValue();
+                            editing = true;
+                            }
+                        }
+                        if (addingService && addComittingRow != null) {
+
+                            if (tbvService.getSelectionModel().getSelectedIndex() != addComittingRow) {
+
+                                Alert Cancelalert = new Alert(AlertType.CONFIRMATION);
+                                Cancelalert.setHeaderText(null);
+                                Cancelalert.setTitle("Confirmation");
+                                if (addingService) {
+                                    Cancelalert.setContentText("Are you sure you want to cancel creating the last selected service?");
+                                } else {
+
+                                    Cancelalert.setContentText("Are you sure you want to cancel editing this cell?");
+                                }
+                                Optional<ButtonType> result = Cancelalert.showAndWait();
+                                if (result.get() == ButtonType.OK) {
+
+                                    if (addingService) {
+                                        services.remove(services.size() - 1);
+                                        addingService = false;
+
+                                    }
+                                    cancelling = true;
+                                    editing = false;
+                                    tableCommitting = false;
+
+                                    enableDefaultComponents();
+
+                                    updateServicesTable();
+
+                                } else {
+                                    if (addingService) {
+                                        LOGGER.info("creation not cancelled");
+
+                                        tbvService.getSelectionModel().clearSelection();
+                                        tbvService.getSelectionModel().focus(addComittingRow);
+                                        tbvService.getSelectionModel().select(addComittingRow);
+                                        tbvService.refresh();
+
+                                    }
+                                    LOGGER.info("update cancelled");
+                                }
+
+                            }
+
+                        }
+
+                        handleEditModeComponents();
                     }
-
-                    handleEditModeComponents();
                 });
 
         tcName.setOnEditCommit((CellEditEvent<Service, String> t) -> {
@@ -387,13 +477,13 @@ public class ServicesController {
                     t.getTablePosition().getRow())).setName(t.getNewValue());
             tbvService.getSelectionModel().select(t.getTablePosition().getRow(), tcName);
             tbvService.edit(t.getTablePosition().getRow(), tcName);
+            addComittingRow = null;
             lastCommittedRow = null;
-            lastCommittedRow = selectedRow;
+
             try {
                 editing = false;
                 if (t.getNewValue().trim().isEmpty()) {
                     //throw validation Error
-
                     LOGGER.warning("The address field is empty");
                     throw new FieldsEmptyException();
                 }
@@ -412,14 +502,13 @@ public class ServicesController {
                     } else if (!oldName.equals(t.getNewValue())) {
 
                         tableCommitting = true;
+                        lastCommittedRow = selectedRow;
                     }
                     handleEditModeComponents();
 
-                } else {
+                } else if (addingService) {
 
-                    commitingBetweenCells = true;
-                    tbvService.getFocusModel().focusRightCell();
-                    tbvService.edit(t.getTablePosition().getRow(), tcName);
+                    addComittingRow = tbvService.getSelectionModel().getSelectedIndex();
                     newName = t.getNewValue();
                     handleAddCommitting();
                     handleEditModeComponents();
@@ -434,6 +523,7 @@ public class ServicesController {
                 imgCommit.setOpacity(0.25);
                 imgCancel.setDisable(true);
                 imgCancel.setOpacity(0.25);
+                
             }
         });
 
@@ -442,28 +532,121 @@ public class ServicesController {
             editing = false;
 
             if (!cancelling) {
-                handleOnEditCancel(selectedRow);
+                handleOnEditCancel();
             }
 
         });
 
-        //Making address Services table column editable
+        //Making address Services table column editable        
         tcAddress.setCellFactory(TextFieldTableCell.<Service>forTableColumn());
         tcAddress.setOnEditStart(
                 (CellEditEvent<Service, String> t) -> {
-                    oldAddress = null;
+                    editing = true;
                     selectedRow = null;
-                    selectedRow = t.getTablePosition().getRow();
-                    if (!addingService) {
+                    if (!addingService && tableCommitting && lastCommittedRow != null && tbvService.getSelectionModel().getSelectedIndex() != lastCommittedRow) {
+                        editing = false;
                         editing = true;
 
-                        oldAddress = t.getOldValue();
+                        imgDelete.setDisable(true);
+                        imgDelete.setOpacity(0.25);
+                        Alert alert = new Alert(AlertType.CONFIRMATION);
+                        alert.setHeaderText(null);
+                        alert.setTitle("Confirmation");
+                        alert.setContentText("Do you want to cancel the last commit? \n if not press cancel and press commit button.");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == ButtonType.OK) {
+                            tableCommitting = false;
+                            editing = false;
+                            enableDefaultComponents();
+
+                            if (oldAddress != null) {
+
+                                services.get(lastCommittedRow).setAddress(oldAddress);
+                                tbvService.getSelectionModel().clearSelection();
+                                tbvService.refresh();
+                            }
+                            if (oldName != null) {
+                                services.get(lastCommittedRow).setName(oldName);
+                                tbvService.getSelectionModel().clearSelection();
+                                tbvService.refresh();
+                            }
+
+                            if (oldServiceType != null) {
+                                services.get(lastCommittedRow).setType(oldServiceType);
+                                tbvService.getSelectionModel().clearSelection();
+                                tbvService.refresh();
+                            }
+
+                        } else {
+
+                            tbvService.getSelectionModel().select(lastCommittedRow);
+                            tbvService.refresh();
+
+                        }
+
                     } else {
-                        editing = false;
+
+                        oldAddress = null;
+                        selectedRow = t.getTablePosition().getRow();
+                        if (!addingService) {
+                            editing = true;
+                            
+                            if(t.getOldValue()!=null){
+                                                           
+                            oldAddress = t.getOldValue();
+                
+                            }
+                        }
+
+                        if (addingService && addComittingRow != null) {
+
+                            if (tbvService.getSelectionModel().getSelectedIndex() != addComittingRow) {
+
+                                Alert Cancelalert = new Alert(AlertType.CONFIRMATION);
+                                Cancelalert.setHeaderText(null);
+                                Cancelalert.setTitle("Confirmation");
+                                if (addingService) {
+                                    Cancelalert.setContentText("Are you sure you want to cancel creating the last selected service?");
+                                } else {
+
+                                    Cancelalert.setContentText("Are you sure you want to cancel editing this cell?");
+                                }
+                                Optional<ButtonType> result = Cancelalert.showAndWait();
+                                if (result.get() == ButtonType.OK) {
+
+                                    if (addingService) {
+                                        services.remove(services.size() - 1);
+                                        addingService = false;
+
+                                    }
+                                    cancelling = true;
+                                    editing = false;
+                                    tableCommitting = false;
+
+                                    enableDefaultComponents();
+
+                                    updateServicesTable();
+
+                                } else {
+                                    if (addingService) {
+                                        LOGGER.info("creation not cancelled");
+
+                                        tbvService.getSelectionModel().clearSelection();
+                                        tbvService.getSelectionModel().focus(addComittingRow);
+                                        tbvService.getSelectionModel().select(addComittingRow);
+                                        tbvService.refresh();
+
+                                    }
+                                    LOGGER.info("update cancelled");
+                                }
+
+                            }
+
+                        }
+
+                        handleEditModeComponents();
 
                     }
-
-                    handleEditModeComponents();
                 });
 
         tcAddress.setOnEditCommit((CellEditEvent<Service, String> t) -> {
@@ -472,14 +655,12 @@ public class ServicesController {
             tbvService.getSelectionModel().select(t.getTablePosition().getRow(), tcAddress);
             tbvService.edit(t.getTablePosition().getRow(), tcAddress);
             editing = false;
+            addComittingRow = null;
             lastCommittedRow = null;
-            lastCommittedRow = selectedRow;
+
             try {
 
                 if (t.getNewValue().trim().isEmpty()) {
-
-                    tbvService.getFocusModel().focus(t.getTablePosition().getRow());
-                    tbvService.edit(t.getTablePosition().getRow(), tcAddress);
                     //throw validation Error
                     LOGGER.warning("The address field is empty");
                     throw new FieldsEmptyException();
@@ -499,14 +680,13 @@ public class ServicesController {
                     } else if (!oldAddress.equals(t.getNewValue())) {
 
                         tableCommitting = true;
+                        lastCommittedRow = selectedRow;
                     }
                     handleEditModeComponents();
 
-                } else {
+                } else if (addingService) {
 
-                    commitingBetweenCells = true;
-                    tbvService.getFocusModel().focusRightCell();
-                    tbvService.edit(t.getTablePosition().getRow(), tcName);
+                    addComittingRow = tbvService.getSelectionModel().getSelectedIndex();
                     newAddress = t.getNewValue();
                     handleAddCommitting();
                     handleEditModeComponents();
@@ -529,7 +709,7 @@ public class ServicesController {
             editing = false;
 
             if (!cancelling) {
-                handleOnEditCancel(selectedRow);
+                handleOnEditCancel();
             }
 
         });
@@ -538,17 +718,110 @@ public class ServicesController {
         tcType.setCellFactory(ComboBoxTableCell.forTableColumn(types));
         tcType.setOnEditStart(
                 (CellEditEvent<Service, String> t) -> {
+                    editing = true;
                     selectedRow = null;
-                    selectedRow = t.getTablePosition().getRow();
-                    oldServiceType = null;
-                    if (!addingService) {
-                        oldServiceType = t.getOldValue();
-                        editing = true;
-                    } else {
-                        editing = false;
 
+                    if (!addingService && tableCommitting && lastCommittedRow != null && tbvService.getSelectionModel().getSelectedIndex() != lastCommittedRow) {
+                        editing = true;
+
+                        imgDelete.setDisable(true);
+                        imgDelete.setOpacity(0.25);
+                        Alert alert = new Alert(AlertType.CONFIRMATION);
+                        alert.setHeaderText(null);
+                        alert.setTitle("Confirmation");
+                        alert.setContentText("Do you want to cancel the last commit? \n if not press cancel and press commit button.");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == ButtonType.OK) {
+                            editing = false;
+                            tableCommitting = false;
+                            enableDefaultComponents();
+
+                            if (oldAddress != null) {
+
+                                services.get(lastCommittedRow).setAddress(oldAddress);
+                                tbvService.getSelectionModel().clearSelection();
+                                tbvService.refresh();
+                            }
+                            if (oldName != null) {
+                                services.get(lastCommittedRow).setName(oldName);
+                                tbvService.getSelectionModel().clearSelection();
+                                tbvService.refresh();
+                            }
+
+                            if (oldServiceType != null) {
+                                services.get(lastCommittedRow).setType(oldServiceType);
+                                tbvService.getSelectionModel().clearSelection();
+                                tbvService.refresh();
+                            }
+
+                        } else {
+
+                            tbvService.getSelectionModel().select(lastCommittedRow);
+                            tbvService.refresh();
+
+                        }
+
+                    } else {
+
+                        oldServiceType=null;
+                        selectedRow = t.getTablePosition().getRow();
+
+                        if (!addingService) {
+                            
+                            if(t.getOldValue()!=null){
+                            
+                            oldServiceType = t.getOldValue();
+                            editing = true;
+                            }
+                        }
+                        if (addingService && addComittingRow != null) {
+
+                            if (tbvService.getSelectionModel().getSelectedIndex() != addComittingRow) {
+
+                                Alert Cancelalert = new Alert(AlertType.CONFIRMATION);
+                                Cancelalert.setHeaderText(null);
+                                Cancelalert.setTitle("Confirmation");
+                                if (addingService) {
+                                    Cancelalert.setContentText("Are you sure you want to cancel creating the last selected service?");
+                                } else {
+
+                                    Cancelalert.setContentText("Are you sure you want to cancel editing this cell?");
+                                }
+                                Optional<ButtonType> result = Cancelalert.showAndWait();
+                                if (result.get() == ButtonType.OK) {
+
+                                    if (addingService) {
+                                        services.remove(services.size() - 1);
+                                        addingService = false;
+
+                                    }
+                                    cancelling = true;
+                                    editing = false;
+                                    tableCommitting = false;
+
+                                    enableDefaultComponents();
+
+                                    updateServicesTable();
+
+                                } else {
+                                    if (addingService) {
+                                        LOGGER.info("creation not cancelled");
+
+                                        tbvService.getSelectionModel().clearSelection();
+                                        tbvService.getSelectionModel().focus(addComittingRow);
+                                        tbvService.getSelectionModel().select(addComittingRow);
+                                        tbvService.refresh();
+
+                                    }
+                                    LOGGER.info("update cancelled");
+                                }
+
+                            }
+
+                        }
+
+                        handleEditModeComponents();
                     }
-                    handleEditModeComponents();
                 });
         tcType.setOnEditCommit((CellEditEvent<Service, String> t) -> {
             ((Service) t.getTableView().getItems().get(
@@ -557,8 +830,9 @@ public class ServicesController {
             tbvService.edit(t.getTablePosition().getRow(), tcType);
 
             editing = false;
+            addComittingRow = null;
             lastCommittedRow = null;
-            lastCommittedRow = selectedRow;
+
             editing = false;
             if (!addingService && oldServiceType != null) {
 
@@ -568,9 +842,11 @@ public class ServicesController {
                     }
                 } else {
                     tableCommitting = true;
+                    lastCommittedRow = selectedRow;
                 }
                 handleEditModeComponents();
-            } else {
+            } else if (addingService) {
+                addComittingRow = tbvService.getSelectionModel().getSelectedIndex();
                 newType = t.getNewValue();
                 handleAddCommitting();
                 handleEditModeComponents();
@@ -583,13 +859,19 @@ public class ServicesController {
 
             if (!cancelling) {
 
-                handleOnEditCancel(selectedRow);
+                handleOnEditCancel();
             }
 
         });
 
     }
 
+    /**
+     * This method checks the value of the cbService ComboBox and changes
+     * components depending on it.
+     *
+     * @param event the MouseEvent onPressed event.
+     */
     @FXML
     private void handleChangeComponents(ActionEvent event) {
 
@@ -654,6 +936,14 @@ public class ServicesController {
         }
     }
 
+    /**
+     * Sets the searching boolean to true and saves the queryParameters obtained
+     * in the textfield. updateServicesTable()is executed in order to load
+     * services taking into account the selected value in the cbService
+     * ComboBox. cleans the tfServices after all.
+     *
+     * @param event the MouseEvent onPressed event.
+     */
     @FXML
     private void handleButtonSearch(ActionEvent event) {
 
@@ -664,6 +954,15 @@ public class ServicesController {
 
     }
 
+    /**
+     * This method loads all the services by address and disables or enables the
+     * print imageView depending if there are 0, 1 or more services.
+     *
+     * Receives the address as a String from the tfUser Textfield and its
+     * exceptions are controlled
+     *
+     * @return an ObservableList with the services.
+     */
     private ObservableList<Service> loadServicesByAddress() {
 
         ObservableList<Service> servicesTableBean = null;
@@ -714,6 +1013,9 @@ public class ServicesController {
 
     }
 
+    /**
+     * Removes all the services of the table.
+     */
     private void clearServicesTable() {
 
         if (services != null) {
@@ -733,6 +1035,15 @@ public class ServicesController {
         }
     }
 
+    /**
+     * This method loads all the services by name and disables or enables the
+     * print imageView depending if there are 0, 1 or more services.
+     *
+     * Receives the name as a String from the tfUser Textfield and its
+     * exceptions are controlled
+     *
+     * @return an ObservableList with the services.
+     */
     private ObservableList<Service> loadServicesByName() {
 
         ObservableList<Service> servicesTableBean = null;
@@ -783,11 +1094,19 @@ public class ServicesController {
         return servicesTableBean;
     }
 
+    /**
+     * This method commits to the DB the additions and modifications of the
+     * table. receives the index of the lastComittedRow in order to check if it
+     * is an addition or a modification. uses updateServicesTable() after all.
+     *
+     * @param event the MouseEvent onPressed event.
+     */
     @FXML
     private void handleServiceCommit(MouseEvent event) {
 
         Service service = tbvService.getItems().get(lastCommittedRow);
         int pos = lastCommittedRow;
+
         try {
             if (pos == services.size() - 1 && service.getId().equals(Long.MIN_VALUE)) {
 
@@ -808,6 +1127,7 @@ public class ServicesController {
             LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at handleTableCommit(): {0}", ex.getMessage());
         }
 
+        lastCommittedRow = null;
         editing = false;
         tableCommitting = false;
 
@@ -819,6 +1139,15 @@ public class ServicesController {
 
     }
 
+    /**
+     * This method loads all the services by type and disables or enables the
+     * print imageView depending if there are 0, 1 or more services.
+     *
+     * Receives the type as a String from the cbServiceType cbServiceType and
+     * its exceptions are controlled
+     *
+     * @return an ObservableList with the services.
+     */
     private ObservableList<Service> loadServicesByType() {
 
         ObservableList<Service> servicesTableBean = null;
@@ -842,27 +1171,15 @@ public class ServicesController {
                     imgPrint.setOpacity(1);
 
                 }
-            } else {
-
-                if (searching) {
-                    throw new FieldsEmptyException();
-                }
-
             }
+
         } catch (BusinessLogicException e) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Attention");
             alert.setHeaderText("Error");
-            alert.setContentText("The search field is empty");
+            alert.setContentText("database error");
             alert.showAndWait();
 
-        } catch (FieldsEmptyException ex) {
-            Logger.getLogger(ServicesController.class.getName()).log(Level.SEVERE, null, ex);
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Attention");
-            alert.setHeaderText("Error");
-            alert.setContentText("The service type comboBox is empty");
-            alert.showAndWait();
         }
 
         tbvService.refresh();
@@ -870,6 +1187,10 @@ public class ServicesController {
 
     }
 
+    /**
+     *
+     * @param event the MouseEvent onPressed event.
+     */
     @FXML
     private void handleDeleteRow(MouseEvent event) {
         Service service = tbvService.getSelectionModel().getSelectedItem();
@@ -966,12 +1287,26 @@ public class ServicesController {
             imgAdd.setOpacity(0.25);
             imgDelete.setDisable(true);
             imgDelete.setOpacity(0.25);
+            imgCancel.setDisable(true);
+            imgCancel.setOpacity(0.25);
 
             cbService.setDisable(true);
             cbServiceType.setDisable(true);
             btnSearchService.setDisable(true);
 
             tfServices.setDisable(true);
+
+        }
+
+        if (addingService) {
+            imgAdd.setDisable(true);
+            imgAdd.setOpacity(0.25);
+        }
+
+        if (addingService && !editing) {
+
+            imgCancel.setDisable(false);
+            imgCancel.setOpacity(1);
 
         }
 
@@ -1125,62 +1460,19 @@ public class ServicesController {
         }
     }
 
-    private void handleOnEditCancel(Integer row) {
+    private void handleOnEditCancel() {
 
-        if (addingService) {
-            if (tbvService.getSelectionModel().getFocusedIndex() != row) {
-
-                Alert Cancelalert = new Alert(AlertType.CONFIRMATION);
-                Cancelalert.setHeaderText(null);
-                Cancelalert.setTitle("Confirmation");
-                if (addingService) {
-                    Cancelalert.setContentText("Are you sure you want to cancel creating the last selected service?");
-                } else {
-
-                    Cancelalert.setContentText("Are you sure you want to cancel editing the last selected service?");
-                }
-                Optional<ButtonType> result = Cancelalert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-
-                    if (addingService) {
-                        services.remove(services.size() - 1);
-                        addingService = false;
-
-                    }
-                    cancelling = true;
-                    editing = false;
-                    tableCommitting = false;
-
-                    enableDefaultComponents();
-
-                    updateServicesTable();
-
-                } else {
-                    if (addingService) {
-                        LOGGER.info("commit cancelled");
-                    }
-                    LOGGER.info("update cancelled");
-                }
-            }
-        } else {
+        if (!addingService) {
 
             Alert Cancelalert = new Alert(AlertType.CONFIRMATION);
             Cancelalert.setHeaderText(null);
             Cancelalert.setTitle("Confirmation");
-            if (addingService) {
-                Cancelalert.setContentText("Are you sure you want to cancel creating the last selected service?");
-            } else {
 
-                Cancelalert.setContentText("Are you sure you want to cancel editing the last selected service?");
-            }
+            Cancelalert.setContentText("Are you sure you want to cancel editing this cell?");
+
             Optional<ButtonType> result = Cancelalert.showAndWait();
             if (result.get() == ButtonType.OK) {
 
-                if (addingService) {
-                    services.remove(services.size() - 1);
-                    addingService = false;
-
-                }
                 cancelling = true;
                 editing = false;
                 tableCommitting = false;
@@ -1190,26 +1482,55 @@ public class ServicesController {
                 updateServicesTable();
 
             } else {
-                if (addingService) {
-                    LOGGER.info("commit cancelled");
-                }
+
                 LOGGER.info("update cancelled");
             }
-        }
 
+        } else {
+
+            if (addingService && addComittingRow == null && tbvService.getSelectionModel().getSelectedIndex() != services.size() - 1 || escCancelWhenAdd) {
+
+                Alert Cancelalert = new Alert(AlertType.CONFIRMATION);
+                Cancelalert.setHeaderText(null);
+                Cancelalert.setTitle("Confirmation");
+                if (addingService) {
+                    Cancelalert.setContentText("Are you sure you want to cancel creating the last selected service?");
+                }
+                Optional<ButtonType> result = Cancelalert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+
+                    services.remove(services.size() - 1);
+                    addingService = false;
+
+                    cancelling = true;
+                    editing = false;
+                    tableCommitting = false;
+
+                    enableDefaultComponents();
+
+                    updateServicesTable();
+
+                } else {
+
+                    LOGGER.info("creation not cancelled");
+                    tbvService.getSelectionModel().clearSelection();
+                    tbvService.getSelectionModel().select(services.size() - 1);
+
+                }
+            }
+        }
     }
 
     private void handleAddCommitting() {
 
-        if (newAddress != null && newName != null && newType != null) {
+        if (newAddress != null && newName != null && newType != null && newAddress.trim().length() <= 255 && newName.trim().length() <= 255 && newType.trim().length() <= 255) {
 
             tableCommitting = true;
+            lastCommittedRow = selectedRow;
 
             newAddress = null;
             newName = null;
             newType = null;
-
-            commitingBetweenCells = false;
 
         }
     }
@@ -1237,4 +1558,5 @@ public class ServicesController {
 
         }
     }
+
 }
