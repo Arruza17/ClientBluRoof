@@ -54,6 +54,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javax.naming.OperationNotSupportedException;
 import javax.ws.rs.NotSupportedException;
@@ -67,11 +68,6 @@ import model.User;
  * @author Ander Arruza and Adrián Pérez
  */
 public class SignUpController {
-
-    private final int MAX_WIDTH = 1920;
-    private final int MAX_HEIGHT = 1024;
-    private final int MIN_WIDTH = 1024;
-    private final int MIN_HEIGHT = 768;
 
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
 
@@ -120,11 +116,16 @@ public class SignUpController {
         //Sets the .css to the Scene
         scene.getStylesheets().add(css);
         //Stage dimension setters
-        stage.setMaxWidth(MAX_WIDTH);
-        stage.setMinWidth(MIN_WIDTH);
-        stage.setMaxHeight(MAX_HEIGHT);
-        stage.setMinHeight(MIN_HEIGHT);
+       Screen screen = Screen.getPrimary();
+        javafx.geometry.Rectangle2D bound = screen.getVisualBounds();
+        stage.setX(bound.getMinX());
+        stage.setY(bound.getMinY());
+        stage.setWidth(bound.getWidth());
+        stage.setHeight(bound.getHeight());
+        stage.setResizable(false);
+        stage.setMaximized(true);
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
+      
         //Sets the scene to the stage
         stage.setScene(scene);
         stage.setTitle("SignUp");

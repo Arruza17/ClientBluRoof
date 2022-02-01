@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -198,7 +199,7 @@ public class AdminWindowControllerTest extends ApplicationTest {
             clickOn(confirmButton);
             Thread.sleep(200);
             //Go to the next cell
-            clickOn("Aceptar");
+            closeCurrentWindow();
 
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminWindowControllerTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -210,7 +211,6 @@ public class AdminWindowControllerTest extends ApplicationTest {
     public void test05_editExistingAdmin() {
         try {
             int rows = table.getItems().size();
-
             Thread.sleep(100);
             doubleClickOn("updateAdmin");
             press(KeyCode.DELETE).release(KeyCode.DELETE);
@@ -219,10 +219,9 @@ public class AdminWindowControllerTest extends ApplicationTest {
             press(KeyCode.ENTER).release(KeyCode.ENTER);
             Thread.sleep(100);
             clickOn(confirmButton);
-            Thread.sleep(100);
-            verifyThat("Error", isVisible());
-            Thread.sleep(5000);
-            clickOn("Aceptar");
+            Thread.sleep(1000);
+            //verifyThat("Server", isVisible());
+            closeCurrentWindow();
             Thread.sleep(300);
             clickOn("Search");
             Thread.sleep(300);
@@ -232,7 +231,6 @@ public class AdminWindowControllerTest extends ApplicationTest {
 
     }
 
-    @Ignore
     @Test
     public void test06_addExistingAdmin() {
         try {
@@ -279,13 +277,11 @@ public class AdminWindowControllerTest extends ApplicationTest {
             Thread.sleep(100);
             clickOn(confirmButton);
             verifyThat(ExceptionGenerator.exceptionGenerator(409), isVisible());
-            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            closeCurrentWindow();
             Thread.sleep(300);
-            Node row = lookup(".table-row-cell").nth(table.getItems().size() - 1).query();
-            clickOn(row);
-            clickOn(cancelButton);
-            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            clickOn("Search");
             Thread.sleep(300);
+            assertEquals("No admin added", rows, table.getItems().size());
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminWindowControllerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
