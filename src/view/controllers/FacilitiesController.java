@@ -233,7 +233,7 @@ public class FacilitiesController {
                         } 
 
                     });
-
+            dp_Facilities.setEditable(false);
             type_column.setCellValueFactory(cellData
                     -> new SimpleStringProperty(cellData.getValue().getType()));
             type_column.setCellFactory(ComboBoxTableCell.forTableColumn(optionsType));
@@ -252,6 +252,8 @@ public class FacilitiesController {
                             Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     });
+            
+
         } catch (Exception e) {
             LOGGER.severe(e.getMessage());
             LOGGER.severe("Error while opening the window");
@@ -325,6 +327,7 @@ public class FacilitiesController {
                             ObservableList<Facility> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
                             tbl_facilities.setItems(facilityTableBean);
+                            myFacilities=facilityTableBean;
                         }
                     } catch (BusinessLogicException ex) {
                          LOGGER.warning("ERROR,date query failure.");
@@ -351,6 +354,7 @@ public class FacilitiesController {
                             ObservableList<Facility> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
                             tbl_facilities.setItems(facilityTableBean);
+                            myFacilities=facilityTableBean;
                         }
                     } catch (BusinessLogicException ex) {
                         LOGGER.warning("ERROR,type query failure.");
@@ -371,6 +375,7 @@ public class FacilitiesController {
                             ObservableList<Facility> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
                             tbl_facilities.setItems(facilityTableBean);
+                            myFacilities=facilityTableBean;
                         }
 
                     } catch (BusinessLogicException ex) {
@@ -441,8 +446,13 @@ public class FacilitiesController {
             //report window not to close app.
             JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
             jasperViewer.setTitle("FacilitiesJasper");
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setHeaderText("Report");
+            alert.setContentText("Report generated");
+            alert.showAndWait();
             jasperViewer.setVisible(true);
             // jasperViewer.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+             
         } catch (JRException ex) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setHeaderText("Error printing");
@@ -575,6 +585,11 @@ public class FacilitiesController {
                     iv_minus.setDisable(false);
                     iv_add.setDisable(false);
                     iv_add.setOpacity(1);
+                    Alert alert2 = new Alert(AlertType.INFORMATION);
+                    alert2.setTitle("Facility updated");
+                    alert2.setHeaderText(null);
+                    alert2.setContentText("Content updated");
+                    alert2.showAndWait();
                 } else {
                     Alert alert2 = new Alert(AlertType.INFORMATION);
                     alert2.setTitle("Facility not updated");
