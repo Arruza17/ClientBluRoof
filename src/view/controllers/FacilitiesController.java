@@ -2,6 +2,7 @@ package view.controllers;
 
 import exceptions.BusinessLogicException;
 import exceptions.FieldsEmptyException;
+import exceptions.NotValidDateValueException;
 import javafx.scene.input.MouseEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,7 +45,6 @@ import javafx.scene.image.ImageView;
 import static javafx.scene.input.KeyCode.T;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import model.BussinessLogicException;
 import model.Facility;
 import interfaces.FacilityManager;
 import java.lang.reflect.InvocationTargetException;
@@ -59,18 +59,17 @@ import net.sf.jasperreports.view.JasperViewer;
 import sun.print.resources.serviceui;
 
 /**
- * FXML Controller class
+ * FXML Controller class for Facilities.fxml
  *
  * @author jorge
  */
 public class FacilitiesController {
-    private static final Logger LOGGER = Logger.getLogger(FacilitiesController.class.getName());
-    private Stage stage;
+    //FXML Objects
+
     @FXML
     private ComboBox<String> cb_Facilities;
     @FXML
     private DatePicker dp_Facilities;
-    private final String regexDate = "^(((0[1-9]|[12]\\d|3[01])\\/(0[13578]|1[02])\\/((19|[2-9]\\d)\\d{2}))|((0[1-9]|[12]\\d|30)\\/(0[13456789]|1[012])\\/((19|[2-9]\\d)\\d{2}))|((0[1-9]|1\\d|2[0-8])\\/02\\/((19|[2-9]\\d)\\d{2}))|(29\\/02\\/((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$";
     @FXML
     private Spinner<Integer> sp_Facilities;
     @FXML
@@ -94,7 +93,9 @@ public class FacilitiesController {
     @FXML
     private ImageView iv_print;
     @FXML
+    //My Objects
     private ImageView iv_cancel;
+    private static final Logger LOGGER = Logger.getLogger(FacilitiesController.class.getSimpleName());
     private FacilityManager facMan;
     private final String date = "Date";
     private final String type = "Type";
@@ -104,29 +105,36 @@ public class FacilitiesController {
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     boolean adding = false;
     boolean editing = false;
+    //Regex which validates date format dd/MM/yyyy
+    private final String regexDate = "^(((0[1-9]|[12]\\d|3[01])\\/(0[13578]|1[02])\\/((19|[2-9]\\d)\\d{2}))|((0[1-9]|[12]\\d|30)\\/(0[13456789]|1[012])\\/((19|[2-9]\\d)\\d{2}))|((0[1-9]|1\\d|2[0-8])\\/02\\/((19|[2-9]\\d)\\d{2}))|(29\\/02\\/((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$";
 
     /**
      * Initializes the controller class.
      */
     public void initStage() {
         try {
+            //Disables at start all query elements except the type of query combo.
             cb_Type.setDisable(true);
             dp_Facilities.setDisable(true);
             sp_Facilities.setDisable(true);
+            //Makes table editable
             tbl_facilities.setEditable(true);
+            //Disables and changes opacity to check and cancel ImageViews
             iv_check.setDisable(true);
             iv_check.setOpacity(0.25);
             iv_cancel.setDisable(true);
             iv_cancel.setOpacity(0.25);
             iv_check.setDisable(true);
             iv_check.setOpacity(0.25);
+            //Loads all comboBox query type data
             ObservableList<String> options
                     = FXCollections.observableArrayList(all, id, type, date);
             cb_Facilities.setItems(options);
             cb_Facilities.getSelectionModel().selectFirst();
+            //adds listener to the selected row
             tbl_facilities.getSelectionModel().selectedItemProperty()
                     .addListener(this::handleTableSelectionChanged);
-
+            //Selects all facilities
             try {
                 List<Facility> allFacilities = facMan.selectAll();
                 ObservableList<Facility> facilityTableBean
@@ -134,7 +142,8 @@ public class FacilitiesController {
                 myFacilities = facilityTableBean;
 
                 if (allFacilities.size() > 0) {
-
+                    //Adds the observable list of Facilities to the table.
+                    tbl_facilities.setItems(myFacilities);
                 } else {
 
                     //The imgPrint will be disabled if there are no facilities
@@ -148,25 +157,31 @@ public class FacilitiesController {
                 alert.setContentText(ex.getMessage());
                 alert.showAndWait();
             }
-
+            //Sets the value factory of the id cells column
             id_Column.setCellValueFactory(
                     new PropertyValueFactory<>("id"));
+            //Sets the value factory of the spinner
             sp_Facilities.setValueFactory(
                     new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
+            //Makes spinner editable
             sp_Facilities.setEditable(true);
-
+            
             EnumSet<FacilityType> ft = EnumSet.allOf(FacilityType.class);
             ArrayList<String> facilTypeList = new ArrayList<>();
-
+            //Adds all facility types to an ArrayList
             for (FacilityType f : ft) {
                 facilTypeList.add(f.toString());
             }
+            //Observable list of String with all the types.
             ObservableList<String> optionsType = FXCollections.observableArrayList(facilTypeList);
+            //Sets items of the observable list into the type combo
             cb_Type.setItems(optionsType);
+            //Sets the first type as selected when starting
             cb_Type.getSelectionModel().selectFirst();
             adq_column.setCellValueFactory(cellData
                     -> new SimpleStringProperty(formatter.format(cellData.getValue().getAdquisitionDate())));
             adq_column.setCellFactory(TextFieldTableCell.<Facility>forTableColumn());
+            //Sets the behaviour the column cells will have when commiting an Edit.
             adq_column.setOnEditCommit(
                     (CellEditEvent<Facility, String> t) -> {
                         try {
@@ -176,8 +191,8 @@ public class FacilitiesController {
                                 throw new FieldsEmptyException();
                             }
                             if (!t.getNewValue().matches(regexDate)) {
-                                LOGGER.severe("The field in the construction date doesn't have a valid date");
-
+                                LOGGER.severe("The field in the adquisition date doesn't have a valid date");
+                                throw new NotValidDateValueException("Date not valid");
                             }
 
                             ((Facility) t.getTableView().getItems().get(
@@ -194,7 +209,7 @@ public class FacilitiesController {
                             iv_add.setDisable(true);
                             iv_add.setOpacity(0.25);
                             editing = true;
-                        } catch (FieldsEmptyException e) {
+                        } catch (FieldsEmptyException|NotValidDateValueException e) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Error");
                             alert.setHeaderText(e.getMessage());
@@ -215,7 +230,7 @@ public class FacilitiesController {
                             iv_check.setOpacity(0.25);
                             iv_cancel.setDisable(true);
                             iv_cancel.setOpacity(0.25);
-                        }
+                        } 
 
                     });
 
@@ -237,7 +252,6 @@ public class FacilitiesController {
                             Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     });
-            tbl_facilities.setItems(myFacilities);
         } catch (Exception e) {
             LOGGER.severe(e.getMessage());
             LOGGER.severe("Error while opening the window");
@@ -246,34 +260,42 @@ public class FacilitiesController {
             alert.setHeaderText("Couldn't open Facilities window");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
-      
+
         }
     }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
+    /**
+     * Method used when changing cb_Facilities 
+     * to enable disable components
+     * @param action ActionEvent triggered when pressing combo
+     */
     @FXML
     void handleCbChange(ActionEvent action) {
         switch (cb_Facilities.getValue()) {
             case id:
+                LOGGER.info("Id query selected");
+                //Disables type combo box and date picker and enables spinner
                 cb_Type.setDisable(true);
                 dp_Facilities.setDisable(true);
                 sp_Facilities.setDisable(false);
                 break;
             case type:
+                LOGGER.info("Type query selected");
+                //Disables date picker and the spinner and enables type comboBox
                 cb_Type.setDisable(false);
                 dp_Facilities.setDisable(true);
                 sp_Facilities.setDisable(true);
 
                 break;
             case date:
+                LOGGER.info("Date query selected");
+                //Disables type comboBox and the spinner and enables the date picker.
                 cb_Type.setDisable(true);
                 dp_Facilities.setDisable(false);
                 sp_Facilities.setDisable(true);
                 break;
             case all:
+                LOGGER.info("All query selected");
+                //Disables Type ComboBox,Facilities date picker and Facilities Spinner.
                 cb_Type.setDisable(true);
                 dp_Facilities.setDisable(true);
                 sp_Facilities.setDisable(true);
@@ -281,7 +303,11 @@ public class FacilitiesController {
         }
 
     }
-
+    /**
+     * Method useed to search specific queries made 
+     * by the client.
+     * @param action Action event triggered when pressing Search button.
+     */
     @FXML
     void searchAction(ActionEvent action) {
         switch (cb_Facilities.getValue()) {
@@ -301,19 +327,19 @@ public class FacilitiesController {
                             tbl_facilities.setItems(facilityTableBean);
                         }
                     } catch (BusinessLogicException ex) {
-                        Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
+                         LOGGER.warning("ERROR,date query failure.");
                     }
                 } else {
-                    //THROW NEW EXCEPTION OF FIELDS EMPTY
+                    //Alert notifying date field is empty
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Empty fields");
-                    alert.setHeaderText("The construction date is null");
+                    alert.setHeaderText("The adquisition date is null");
                     alert.setContentText("Try again");
                     alert.showAndWait();
                 }
                 break;
             case type:
-                if (cb_Type.getValue() != null){
+                if (cb_Type.getValue() != null) {
                     try {
 
                         List<Facility> facilities = new ArrayList<>();
@@ -327,9 +353,10 @@ public class FacilitiesController {
                             tbl_facilities.setItems(facilityTableBean);
                         }
                     } catch (BusinessLogicException ex) {
+                        LOGGER.warning("ERROR,type query failure.");
                     }
                 } else {
-
+                 LOGGER.info("No type selected.");
                 }
                 break;
             case id:
@@ -347,9 +374,23 @@ public class FacilitiesController {
                         }
 
                     } catch (BusinessLogicException ex) {
-                        Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
+                        LOGGER.warning("ERROR, id query Failure");
+                        //Alert notifying spinner field failure
+                    Alert alert = new Alert(AlertType.WARNING);
+                    alert.setTitle("Error wrong format");
+                    alert.setHeaderText("Spinner has wrong format, please insert only numbers");
+                    alert.setContentText("Try again");
+                    alert.showAndWait();
                     }
 
+                }else{
+                LOGGER.warning("ERROR, spFacilities is null");
+                //Alert notifying spinner field is empty
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Empty fields");
+                    alert.setHeaderText("The spinner field is empty");
+                    alert.setContentText("Try again");
+                    alert.showAndWait();
                 }
                 break;
             case all:
@@ -411,6 +452,7 @@ public class FacilitiesController {
                     ex.getMessage());
         }
     }
+
     @FXML
     void clickMinus(MouseEvent action) {
         Facility facTBean = null;
@@ -425,7 +467,7 @@ public class FacilitiesController {
                 try {
                     facMan.remove(facTBean.getId());
                     loadAll();
-                } catch (BussinessLogicException ex) {
+                } catch (BusinessLogicException ex) {
                     Alert alert1 = new Alert(AlertType.ERROR);
                     alert1.setTitle("AYUDA");
                     alert1.setHeaderText("Error");

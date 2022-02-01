@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package restful;
 
 import java.util.ResourceBundle;
@@ -23,7 +18,7 @@ import org.glassfish.hk2.utilities.reflection.Logger;
  *        client.close();
  * </pre>
  *
- * @author Ander Arruza
+ * @author jorge
  */
 public class FacilityRestfulClient {
 
@@ -31,7 +26,11 @@ public class FacilityRestfulClient {
     private WebTarget webTarget;
     private Client client;
     private static final String BASE_URI = ResourceBundle.getBundle("resources.config").getString("BASE_URI");
-
+/**
+ * Constructor of Facility Restful client.
+ * Makes a restful client and adds the path of the webtarget object
+ * associated to the client.
+ */
     public FacilityRestfulClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("entities.facility");
