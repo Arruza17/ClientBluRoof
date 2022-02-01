@@ -37,7 +37,10 @@ public class FacilityManagerImplementation implements FacilityManager {
         }
         return fac;
     }
-
+    
+    /**
+     * Constructor of FacilityManagerImplementation
+     */
     public FacilityManagerImplementation() {
         frc = new FacilityRestfulClient();
 

@@ -64,16 +64,25 @@ import sun.print.resources.serviceui;
  * @author jorge
  */
 public class FacilitiesController {
-    //FXML Objects
 
+    //FXML Objects
+    /**
+     * ComboBox containing all facility queries
+     */
     @FXML
     private ComboBox<String> cb_Facilities;
     @FXML
     private DatePicker dp_Facilities;
     @FXML
     private Spinner<Integer> sp_Facilities;
+    /**
+     * Button Used to search
+     */
     @FXML
     private Button srch_Btn;
+    /**
+     * ComboBox used to select
+     */
     @FXML
     private ComboBox<String> cb_Type;
     @FXML
@@ -93,8 +102,8 @@ public class FacilitiesController {
     @FXML
     private ImageView iv_print;
     @FXML
-    //My Objects
     private ImageView iv_cancel;
+    //My Objects
     private static final Logger LOGGER = Logger.getLogger(FacilitiesController.class.getSimpleName());
     private FacilityManager facMan;
     private final String date = "Date";
@@ -131,9 +140,6 @@ public class FacilitiesController {
                     = FXCollections.observableArrayList(all, id, type, date);
             cb_Facilities.setItems(options);
             cb_Facilities.getSelectionModel().selectFirst();
-            //adds listener to the selected row
-            tbl_facilities.getSelectionModel().selectedItemProperty()
-                    .addListener(this::handleTableSelectionChanged);
             //Selects all facilities
             try {
                 List<Facility> allFacilities = facMan.selectAll();
@@ -162,10 +168,10 @@ public class FacilitiesController {
                     new PropertyValueFactory<>("id"));
             //Sets the value factory of the spinner
             sp_Facilities.setValueFactory(
-                    new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 99));
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(1,1000));
             //Makes spinner editable
             sp_Facilities.setEditable(true);
-            
+
             EnumSet<FacilityType> ft = EnumSet.allOf(FacilityType.class);
             ArrayList<String> facilTypeList = new ArrayList<>();
             //Adds all facility types to an ArrayList
@@ -185,16 +191,17 @@ public class FacilitiesController {
             adq_column.setOnEditCommit(
                     (CellEditEvent<Facility, String> t) -> {
                         try {
-
+                            //Checks if the new committed value is empty
                             if (t.getNewValue().isEmpty()) {
                                 LOGGER.warning("The field in the facility adquisition date is empty");
                                 throw new FieldsEmptyException();
                             }
+                            //Checks if the commited value format is valid
                             if (!t.getNewValue().matches(regexDate)) {
                                 LOGGER.severe("The field in the adquisition date doesn't have a valid date");
                                 throw new NotValidDateValueException("Date not valid");
                             }
-
+                            //sets date with parsed format
                             ((Facility) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow())).setAdquisitionDate(
                                     formatter.parse(t.getNewValue())
@@ -209,7 +216,7 @@ public class FacilitiesController {
                             iv_add.setDisable(true);
                             iv_add.setOpacity(0.25);
                             editing = true;
-                        } catch (FieldsEmptyException|NotValidDateValueException e) {
+                        } catch (FieldsEmptyException | NotValidDateValueException e) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("Error");
                             alert.setHeaderText(e.getMessage());
@@ -230,13 +237,17 @@ public class FacilitiesController {
                             iv_check.setOpacity(0.25);
                             iv_cancel.setDisable(true);
                             iv_cancel.setOpacity(0.25);
-                        } 
+                        }
 
                     });
+            //Sets date picker to not editable
             dp_Facilities.setEditable(false);
+            //Sets the cell value Factory
             type_column.setCellValueFactory(cellData
                     -> new SimpleStringProperty(cellData.getValue().getType()));
+            //Sets cell factory to a combobox using all options types
             type_column.setCellFactory(ComboBoxTableCell.forTableColumn(optionsType));
+            //Sets to type column a cell edit event 
             type_column.setOnEditCommit(
                     (CellEditEvent<Facility, String> t) -> {
                         ((Facility) t.getTableView().getItems().get(
@@ -247,13 +258,24 @@ public class FacilitiesController {
                                 LOGGER.warning("The field in facility type is empty");
                                 throw new FieldsEmptyException();
                             }
-
+                            if(t.getNewValue().toString().equalsIgnoreCase(t.getOldValue().toString())){
+                            //Sets the check and cancel buttons to clickable
+                            iv_check.setDisable(false);
+                            iv_check.setOpacity(1);
+                            iv_cancel.setDisable(false);
+                            iv_cancel.setOpacity(1);
+                            iv_minus.setDisable(true);
+                            iv_minus.setOpacity(0.25);
+                            iv_add.setDisable(true);
+                            iv_add.setOpacity(0.25);
+                            editing = true;
+                            
+                            }
+                            
                         } catch (FieldsEmptyException ex) {
                             Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     });
-            
-
         } catch (Exception e) {
             LOGGER.severe(e.getMessage());
             LOGGER.severe("Error while opening the window");
@@ -265,9 +287,10 @@ public class FacilitiesController {
 
         }
     }
+
     /**
-     * Method used when changing cb_Facilities 
-     * to enable disable components
+     * Method used when changing cb_Facilities to enable disable components
+     *
      * @param action ActionEvent triggered when pressing combo
      */
     @FXML
@@ -305,21 +328,28 @@ public class FacilitiesController {
         }
 
     }
+
     /**
-     * Method useed to search specific queries made 
-     * by the client.
+     * Method useed to search specific queries made by the client.
+     *
      * @param action Action event triggered when pressing Search button.
      */
     @FXML
     void searchAction(ActionEvent action) {
         switch (cb_Facilities.getValue()) {
+            //Search by date
             case date:
                 if (dp_Facilities.getValue() != null) {
                     try {
+                        //Gets date from date picker
                         Date date = Date.from(dp_Facilities.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        //Date format of the date
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         List<Facility> facilities = new ArrayList<>();
+                        //Selects by date
                         List<Facility> fs = facMan.selectByDate(simpleDateFormat.format(date).toString());
+                        //If the facility List is greater than 0 adds the list to 
+                        //facility table and if not shows an alert to notify query its empty
                         if (fs.size() > 0) {
                             for (Facility f : fs) {
                                 facilities.add(f);
@@ -327,12 +357,21 @@ public class FacilitiesController {
                             ObservableList<Facility> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
                             tbl_facilities.setItems(facilityTableBean);
-                            myFacilities=facilityTableBean;
+                            myFacilities = facilityTableBean;
+                        } else {
+                            LOGGER.info("No results");
+                            //Alert notifying facilities with X date not found
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("Date not found");
+                            alert.setHeaderText("Couldn't find facilities with selected date");
+                            alert.setContentText("Try again");
+                            alert.showAndWait();
                         }
                     } catch (BusinessLogicException ex) {
-                         LOGGER.warning("ERROR,date query failure.");
+                        LOGGER.warning("ERROR,date query failure.");
                     }
                 } else {
+                    LOGGER.info("Field empty");
                     //Alert notifying date field is empty
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Empty fields");
@@ -341,12 +380,16 @@ public class FacilitiesController {
                     alert.showAndWait();
                 }
                 break;
+            //Search by type
             case type:
                 if (cb_Type.getValue() != null) {
                     try {
 
                         List<Facility> facilities = new ArrayList<>();
+                        //Selects by Type
                         List<Facility> fs = facMan.selectByType(cb_Type.getValue());
+                        //If the facility List is greater than 0 adds the list to 
+                        //facility table and if not shows an alert to notify query its empty
                         if (fs.size() > 0) {
                             for (Facility f : fs) {
                                 facilities.add(f);
@@ -354,43 +397,63 @@ public class FacilitiesController {
                             ObservableList<Facility> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
                             tbl_facilities.setItems(facilityTableBean);
-                            myFacilities=facilityTableBean;
+                            myFacilities = facilityTableBean;
+                        } else {
+                            LOGGER.info("No results");
+                            //Alert shown whe type not found
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("Type not found");
+                            alert.setHeaderText("Couldn't find facilities with selected type");
+                            alert.setContentText("Try again");
+                            alert.showAndWait();
                         }
                     } catch (BusinessLogicException ex) {
                         LOGGER.warning("ERROR,type query failure.");
                     }
                 } else {
-                 LOGGER.info("No type selected.");
+                    LOGGER.info("No type selected.");
                 }
                 break;
+            //Search by Id
             case id:
                 if (sp_Facilities != null) {
                     Long aux = Long.valueOf(sp_Facilities.getValue().toString());
                     try {
                         List<Facility> facilities = new ArrayList<>();
+                        //Search by Id
                         Facility fs = facMan.selectById(aux);
+                        //If the facility query isn't null adds the facility to the table
+                        //If it isn't Shows an Alert notifying the id hasn't been found
                         if (fs != null) {
 
                             facilities.add(fs);
                             ObservableList<Facility> facilityTableBean
                                     = FXCollections.observableArrayList(facilities);
                             tbl_facilities.setItems(facilityTableBean);
-                            myFacilities=facilityTableBean;
+                            myFacilities = facilityTableBean;
+                        }else{
+                         LOGGER.info("No results");
+                            //Alert shown whe Id not found
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("Id not found");
+                            alert.setHeaderText("Couldn't find facility with selected Id");
+                            alert.setContentText("Try again");
+                            alert.showAndWait();
                         }
 
                     } catch (BusinessLogicException ex) {
                         LOGGER.warning("ERROR, id query Failure");
                         //Alert notifying spinner field failure
-                    Alert alert = new Alert(AlertType.WARNING);
-                    alert.setTitle("Error wrong format");
-                    alert.setHeaderText("Spinner has wrong format, please insert only numbers");
-                    alert.setContentText("Try again");
-                    alert.showAndWait();
+                        Alert alert = new Alert(AlertType.WARNING);
+                        alert.setTitle("Error wrong format");
+                        alert.setHeaderText("Spinner has wrong format, please insert only numbers");
+                        alert.setContentText("Try again");
+                        alert.showAndWait();
                     }
 
-                }else{
-                LOGGER.warning("ERROR, spFacilities is null");
-                //Alert notifying spinner field is empty
+                } else {
+                    LOGGER.warning("ERROR, spFacilities is null");
+                    //Alert notifying spinner field is empty
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Empty fields");
                     alert.setHeaderText("The spinner field is empty");
@@ -398,15 +461,21 @@ public class FacilitiesController {
                     alert.showAndWait();
                 }
                 break;
+            //Search all
             case all:
+                //Loads all data
                 loadAll();
                 break;
 
         }
     }
-
+    /**
+     * Method used to add one row to the table to later commit.
+     * @param event Mouse event triggered when on pressed
+     */
     @FXML
     void clickAdd(MouseEvent event) {
+        //Disables iv_add and iv_minus and enables check and cancel image view
         iv_add.setDisable(true);
         iv_add.setOpacity(0.25);
         iv_minus.setDisable(true);
@@ -415,19 +484,27 @@ public class FacilitiesController {
         iv_check.setOpacity(1);
         iv_cancel.setDisable(false);
         iv_cancel.setOpacity(1);
+        //sets adding boolean to true
         adding = true;
         Facility ft = new Facility();
         ft.setId(Long.MIN_VALUE);
         ft.setAdquisitionDate(new Date());
+        //Adds row to table
         myFacilities.add(ft);
-
+        //Selects last row of the table
         tbl_facilities.getSelectionModel().select(myFacilities.size() - 1);
         tbl_facilities.layout();
+        //Focuses adq_column of last row
         tbl_facilities.getFocusModel().focus(myFacilities.size() - 1, adq_column);
+        //Edits adq_column
         tbl_facilities.edit(myFacilities.size() - 1, adq_column);
+ 
 
     }
-
+    /**
+     * Method used to print a Jasper report with the displayed data.
+     * @param action Mouse event triggered when pressing iv_print.
+     */
     @FXML
     void clickPrint(MouseEvent action) {
         try {
@@ -451,8 +528,7 @@ public class FacilitiesController {
             alert.setContentText("Report generated");
             alert.showAndWait();
             jasperViewer.setVisible(true);
-            // jasperViewer.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-             
+
         } catch (JRException ex) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setHeaderText("Error printing");
@@ -462,12 +538,17 @@ public class FacilitiesController {
                     ex.getMessage());
         }
     }
-
+    /**
+     * Method used to delete one Facility from the database.
+     * @param action MouseEvent triggered when pressing iv_cancel ImageView.
+     */
     @FXML
     void clickMinus(MouseEvent action) {
         Facility facTBean = null;
         try {
+            //Gets selected item
             facTBean = tbl_facilities.getSelectionModel().getSelectedItem();
+            //Alert of confirmation of deletion
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setHeaderText(null);
             alert.setTitle("Confirmation");
@@ -475,9 +556,12 @@ public class FacilitiesController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
                 try {
+                    //Deletes the selected dacility by id
                     facMan.remove(facTBean.getId());
+                    //Selects all with the deletion updated
                     loadAll();
-                } catch (BusinessLogicException ex) {
+                } catch (BusinessLogicException ex){
+                    //In case delete fails
                     Alert alert1 = new Alert(AlertType.ERROR);
                     alert1.setTitle("AYUDA");
                     alert1.setHeaderText("Error");
@@ -500,9 +584,14 @@ public class FacilitiesController {
         }
 
     }
-
+    /**
+     * Method used to cancel the updated/created rows.
+     * @param action MouseEvent triggered when pressing iv_cancel ImageView
+     */
     @FXML
     void clickClose(MouseEvent action) {
+        LOGGER.info("Closing");
+        //Confirmation Alert
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setHeaderText(null);
         alert.setTitle("Confirmation");
@@ -510,8 +599,10 @@ public class FacilitiesController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             if (adding) {
+                //If its adding removes last row and sets adding to false
                 myFacilities.remove(myFacilities.size() - 1);
                 adding = false;
+                //Sets ImageViews iv_add,iv_minus as enabled and iv_check,iv_cancel as disabled
                 iv_add.setDisable(false);
                 iv_add.setOpacity(1);
                 iv_minus.setDisable(false);
@@ -521,8 +612,10 @@ public class FacilitiesController {
                 iv_check.setDisable(true);
                 iv_check.setOpacity(0.25);
             } else if (editing) {
+                //if its editing reloads all and sets editing to false
                 loadAll();
                 editing = false;
+                //Sets ImageViews iv_add,iv_minus as enabled and iv_check,iv_cancel as disabled
                 iv_add.setDisable(false);
                 iv_add.setOpacity(1);
                 iv_minus.setDisable(false);
@@ -535,15 +628,22 @@ public class FacilitiesController {
         } else {
         }
     }
-
+    /**
+     * Method used to commit changes into the database.
+     * @param action Mouse event triggered when pressing iv_check
+     */
     @FXML
     void clickCheck(MouseEvent action) {
         Date date;
         Facility f = new Facility();
+        //Equals a Facility to the selected row
         f = tbl_facilities.getSelectionModel().getSelectedItem();
+        //Gets position of index
         int pos = tbl_facilities.getSelectionModel().getSelectedIndex();
         try {
-
+            //If the position of the row equls the last one and the ID value
+            //is the minimum starts wit the creating process
+            //if not starts with the updating process
             if (pos == myFacilities.size() - 1 && f.getId().equals(Long.MIN_VALUE)) {
                 Alert alert = new Alert(AlertType.CONFIRMATION);
                 alert.setHeaderText(null);
@@ -551,16 +651,26 @@ public class FacilitiesController {
                 alert.setContentText("Are you sure you want to create\n this facility with the following type and date:" + f.getType() + f.getAdquisitionDate() + "?");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
-                    facMan.create(f);
-                    loadAll();
-                    iv_check.setDisable(true);
-                    iv_check.setOpacity(0.25);
-                    iv_cancel.setDisable(true);
-                    iv_cancel.setOpacity(0.25);
-                    iv_minus.setOpacity(1);
-                    iv_minus.setDisable(false);
-                    iv_add.setDisable(false);
-                    iv_add.setOpacity(1);
+                    if (f.getType() != null) {
+                        LOGGER.info("Creating...");
+                        facMan.create(f);
+                        loadAll();
+                        iv_check.setDisable(true);
+                        iv_check.setOpacity(0.25);
+                        iv_cancel.setDisable(true);
+                        iv_cancel.setOpacity(0.25);
+                        iv_minus.setOpacity(1);
+                        iv_minus.setDisable(false);
+                        iv_add.setDisable(false);
+                        iv_add.setOpacity(1);
+                    } else {
+                        Alert alert2 = new Alert(AlertType.ERROR);
+                        alert.setHeaderText(null);
+                        alert.setTitle("Error");
+                        alert.setContentText("One field is empty");
+                        alert.showAndWait();
+                        LOGGER.warning("Missing field");
+                    }
                 } else {
                     Alert alert2 = new Alert(AlertType.INFORMATION);
                     alert2.setTitle("Facility not created");
@@ -575,6 +685,7 @@ public class FacilitiesController {
                 alert.setContentText("Are you sure you want to update\n this facility with the following type and date:" + f.getType() + "  " + f.getAdquisitionDate() + "?");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
+                    LOGGER.info("Updating...");
                     facMan.update(f, f.getId());
                     loadAll();
                     iv_check.setDisable(true);
@@ -600,6 +711,7 @@ public class FacilitiesController {
 
             }
         } catch (BusinessLogicException ex) {
+            LOGGER.warning("Check Failed");
             Alert excAlert = new Alert(AlertType.INFORMATION);
             excAlert.setTitle("Error");
             excAlert.setContentText("There was an error with the edition of the facility: " + ex.getMessage());
@@ -607,29 +719,35 @@ public class FacilitiesController {
 
         }
     }
-
-    public void setFacMan(FacilityManager facMan) {
+    /**
+     * Used to set the FacilityManager
+     * @param facMan Facility Manager
+     */
+     public void setFacMan(FacilityManager facMan) {
         this.facMan = facMan;
     }
-
-    private void handleTableSelectionChanged(ObservableValue observableValue, Object oldValue, Object newValue) {
-
-    }
-
+    /**
+     * Method in which selects all facilities.
+     * @return ObservableList of all facilities
+     */
     private ObservableList loadAll() {
         ObservableList<Facility> facilityTableBean = null;
-
+        //List of all facilities
         List<Facility> allFacilities;
         try {
+            //Gets all facilities
             allFacilities = facMan.selectAll();
+            //Adds to the observable list the list
             facilityTableBean = FXCollections.observableArrayList(allFacilities);
+            //sets items to the table
             tbl_facilities.setItems(facilityTableBean);
 
         } catch (BusinessLogicException ex) {
-            Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.warning("Business Logic Exception Error");
         }
         tbl_facilities.refresh();
         myFacilities = facilityTableBean;
+        //returns the observable list
         return facilityTableBean;
     }
 }
