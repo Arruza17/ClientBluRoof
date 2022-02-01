@@ -199,15 +199,25 @@ public class OwnerWindowControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test08_deleteCancell() throws InterruptedException {
+    public void test08_deleteCancel() throws InterruptedException {
         ImageView deleteButton = lookup("#imgDeleteDwelling").query();
         clickOn(newDwellingAddress);
         clickOn(deleteButton);
+        clickOn("Cancel");
         press(KeyCode.ENTER).release(KeyCode.ENTER);
+        
     }
-
+    /*
     @Test
-    public void test09_deleteConfirm() throws InterruptedException {
+    public void test09_print() throws InterruptedException {
+        ImageView printButton = lookup("#imgPrint").query();
+        clickOn(printButton);
+        verifyThat("Error generating the report", isInvisible());
+        closeCurrentWindow();
+    }
+    */
+    @Test
+    public void test10_deleteConfirm() throws InterruptedException {
         ImageView deleteButton = lookup("#imgDeleteDwelling").query();
         clickOn(newDwellingAddress);
         clickOn(deleteButton);

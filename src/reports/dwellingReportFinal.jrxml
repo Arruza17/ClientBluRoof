@@ -59,7 +59,7 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="25" splitType="Stretch">
+		<band height="21" splitType="Stretch">
 			<textField>
 				<reportElement x="0" y="0" width="150" height="20" uuid="d8a5a01f-0804-4f26-b71c-6f6a76483bea"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
@@ -76,14 +76,14 @@
 				<textFieldExpression><![CDATA[$F{squareMeters}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="272" y="0" width="162" height="20" uuid="86e08527-a106-453b-89bb-a65803ed8d2b"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{constructionDate}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="434" y="0" width="121" height="20" uuid="a23039a5-0531-4fec-8b98-15c34760e8ef"/>
+				<reportElement x="434" y="0" width="121" height="21" uuid="a23039a5-0531-4fec-8b98-15c34760e8ef"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{rating}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="272" y="0" width="162" height="20" uuid="86e08527-a106-453b-89bb-a65803ed8d2b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{constructionDate})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

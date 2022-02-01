@@ -534,7 +534,7 @@ public class OwnerWindowController {
                 dwellingManager.remove(selectedDwelling.getId());
                 dwellingsCollectionTable.remove(selectedDwelling);
                 LOGGER.info("A Dwelling have been removed");
-                tableDwelling.refresh();
+                tableDwelling.refresh();    
             } catch (BussinessLogicException ex) {
                 LOGGER.severe("Error with the server side");
                 Alert alert1 = new Alert(AlertType.ERROR);
@@ -548,6 +548,8 @@ public class OwnerWindowController {
             imgCancelNewDwelling.setDisable(true);
             imgCancelNewDwelling.setOpacity(0.25);
         } else {
+            imgCreateNewDwelling.setDisable(false);
+            imgCreateNewDwelling.setOpacity(1);
             LOGGER.info("Dwelling finally not removed by the user");
             Alert alert3 = new Alert(AlertType.INFORMATION);
             alert3.setTitle("Dwelling not deleted");
@@ -588,7 +590,7 @@ public class OwnerWindowController {
             LOGGER.severe("Error printing");
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("Error with the server");
+            alert.setHeaderText("Error generating the report");
             alert.setContentText(ex.getMessage());
             alert.showAndWait();
         }
