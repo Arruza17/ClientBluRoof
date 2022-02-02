@@ -1,7 +1,6 @@
 package cipher;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
@@ -21,22 +20,22 @@ import javax.crypto.NoSuchPaddingException;
  * @author Yeray Sampedro
  */
 public class Cipher {
-    
+
     private static byte[] publicKey;
-    
+
     public Cipher() {
         try {
-            InputStream is = getClass().getResourceAsStream("Public.key");
-            byte[] fileContent = new byte[is.available()];
-            is.read(fileContent, 0, is.available());
+            InputStream is = Cipher.class.getResourceAsStream("Public.key");
+            byte[] fileContent = toByteArray(is);
+            is.close();
             publicKey = fileContent;
         } catch (IOException ex) {
             Logger.getLogger(Cipher.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public String cipher(byte[] msg) {
-        
+
         String ret = null;
         try {
             //Creamos la clave publica
@@ -49,16 +48,16 @@ public class Cipher {
             // Lo inicializamos con la clave PÚBLICA
             cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, pub);
             // Ciframos el mensaje
-            ret = hexadecimal(cipher.doFinal(msg));        
-            
+            ret = hexadecimal(cipher.doFinal(msg));
+
         } catch (NoSuchAlgorithmException | InvalidKeySpecException
                 | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException
                 | BadPaddingException ex) {
             Logger.getLogger(Cipher.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
         return ret;
     }
-    
+
     private String hexadecimal(byte[] resumen) {
         String HEX = "";
         for (int i = 0; i < resumen.length; i++) {
@@ -70,5 +69,17 @@ public class Cipher {
         }
         return HEX.toUpperCase();
     }
-    
+
+    public static byte[] toByteArray(InputStream in) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len;
+        // read bytes from the input stream and store them in buffer
+        while ((len = in.read(buffer)) != -1) {
+            // write bytes from the buffer into output stream
+            os.write(buffer, 0, len);
+        }
+        return os.toByteArray();
+    }
+
 }

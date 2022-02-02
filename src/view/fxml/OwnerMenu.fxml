@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -22,6 +23,9 @@
          <padding>
             <Insets left="25.0" right="25.0" />
          </padding>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </HBox>
       <HBox fx:id="menuDwellings" alignment="CENTER" onMouseClicked="#handleDwellings" VBox.vgrow="ALWAYS">
          <children>
@@ -37,6 +41,9 @@
          <padding>
             <Insets left="25.0" right="25.0" />
          </padding>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </HBox>
       <HBox fx:id="menuSignOut" alignment="CENTER" onMouseClicked="#handleSignOut" VBox.vgrow="ALWAYS">
          <children>
@@ -52,6 +59,9 @@
          <padding>
             <Insets left="25.0" right="25.0" />
          </padding>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </HBox>
       <HBox fx:id="menuExit" alignment="CENTER" onMouseClicked="#handleExit" VBox.vgrow="ALWAYS">
          <children>
@@ -67,6 +77,9 @@
          <padding>
             <Insets left="25.0" right="25.0" />
          </padding>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </HBox>
    </children>
 </VBox>
