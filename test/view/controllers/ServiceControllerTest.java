@@ -56,12 +56,12 @@ public class ServiceControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test02_printOk() {
+    public void test02_printOK() {
 
         verifyThat("#imgPrint", isEnabled());
         clickOn("#imgPrint");
 
-    }   
+    }
 
     @Test
     public void test03_cbDisableComponents() {
@@ -102,15 +102,10 @@ public class ServiceControllerTest extends ApplicationTest {
         verifyThat("#imgCancel", isDisabled());
 
     }
-    
-     @Test
+
+    @Test
     public void test04_cbDisableCompone() {
-        
-         
 
     }
-
-    
-    
 
 }
