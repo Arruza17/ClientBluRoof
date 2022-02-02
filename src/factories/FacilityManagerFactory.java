@@ -15,7 +15,12 @@ import logic.FacilityManagerImplementation;
  */
 public class FacilityManagerFactory {
      public static final String REST_WEB_CLIENT_TYPE = "REST_WEB_CLIENT";
-
+/**
+ * Method that returns an implementation of FacilityManager
+ * @param type the type of instance
+ * @return FacilityManager
+ * @throws OperationNotSupportedException 
+ */
     public static FacilityManager createFacilityManager(String type) throws OperationNotSupportedException {
         //The object to be returned
         FacilityManager facManager = null;
