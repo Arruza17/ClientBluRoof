@@ -137,7 +137,7 @@
             <columns>
                 <TableColumn fx:id="id_Column" prefWidth="150.0" text="ID" />
                 <TableColumn fx:id="adq_column" prefWidth="150.0" text="Adquisition Date" />
-                <TableColumn fx:id="type_column" prefWidth="150.0" text="Type" />
+                <TableColumn fx:id="type_column" prefWidth="150.0" text="Types" />
             </columns>
         </TableView>
    </center>
