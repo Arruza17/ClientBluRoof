@@ -5,13 +5,22 @@ import interfaces.DwellingManager;
 import javax.naming.OperationNotSupportedException;
 
 /**
+ * The factory class for the dwellings
  *
- * @author ander
+ * @author Ander Arruza
  */
 public class DwellingManagerFactory {
 
     public static final String REST_WEB_CLIENT_TYPE = "REST_WEB_CLIENT";
 
+    /**
+     * Method that creates a dwelling manager depending of the type that the
+     * user wants
+     *
+     * @param type the type of the logical part
+     * @return a DwellingManager interface inicialized
+     * @throws OperationNotSupportedException if the operation is not supported
+     */
     public static DwellingManager createDwellingManager(String type) throws OperationNotSupportedException {
         //The object to be returned
         DwellingManager dwellingManager = null;

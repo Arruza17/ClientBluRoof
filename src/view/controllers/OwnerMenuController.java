@@ -123,7 +123,7 @@ public class OwnerMenuController extends GenericMenuController {
             OwnerWindowController controller = loader.getController();
             controller.setDwellingManager(DwellingManagerFactory.createDwellingManager(DwellingManagerFactory.REST_WEB_CLIENT_TYPE));
             getBorder().setCenter(node);
-            controller.setUser(getUser());
+            controller.setUserId(getUser().getId());
             controller.initStage();
         } catch (IOException ex) {
             Logger.getLogger(OwnerMenuController.class.getName()).log(Level.SEVERE, null, ex);

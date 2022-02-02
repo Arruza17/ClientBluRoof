@@ -195,7 +195,7 @@ public class FacilitiesController {
                         try {
                             //Checks if the new committed value is empty
                             if (t.getNewValue().isEmpty()) {
-                                LOGGER.warning("The field in the facility adquisition date is empty");
+                                //LOGGER.warning("The field in the facility adquisition date is empty");
                                 throw new FieldsEmptyException();
                             }
                             //Checks if the commited value format is valid
@@ -257,7 +257,7 @@ public class FacilitiesController {
                         try {
                             if (t.getNewValue().toString().equalsIgnoreCase("")) {
 
-                                LOGGER.warning("The field in facility type is empty");
+                                //LOGGER.warning("The field in facility type is empty");
                                 throw new FieldsEmptyException();
                             }
                             if(t.getNewValue().toString().equalsIgnoreCase(t.getOldValue().toString())){
@@ -279,8 +279,8 @@ public class FacilitiesController {
                         }
                     });
         } catch (Exception e) {
-            LOGGER.severe(e.getMessage());
-            LOGGER.severe("Error while opening the window");
+            //LOGGER.severe(e.getMessage());
+            //LOGGER.severe("Error while opening the window");
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Couldn't open Facilities window");
@@ -535,9 +535,9 @@ public class FacilitiesController {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setHeaderText("Error printing");
             alert.setContentText("There was an error printing the information, try again later");
-            LOGGER.log(Level.SEVERE,
-                    "Error printing report at printReport(): {0}",
-                    ex.getMessage());
+            //LOGGER.log(Level.SEVERE,
+                   // "Error printing report at printReport(): {0}",
+                   // ex.getMessage());
         }
     }
     /**
