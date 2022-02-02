@@ -181,13 +181,7 @@ public class ServicesController {
     /**
      * Used to check if a service is being added when a query returns nothing.
      */
-
     private boolean addingWithNullServices;
-    /**
-     * Used to check if escape button is pressed when adding and editing
-     * service.
-     */
-    private boolean escCancelWhenAdd = false;
     /**
      * a String used to save the query field value when you search.
      */
@@ -297,21 +291,6 @@ public class ServicesController {
 
             tbvService.setEditable(true);
             tbvService.setMinWidth(500);
-
-            /*keypressed event setting to be used to cancel editing while you are adding a service,
-            escCancelWhenAdd will be checked on every onEditCancel in order to catch the cancel on escape pressed.
-            by default OnEditCancel cancels editing pressing ESC.
-            The case is that when there is an a addittion the cancel only works if you click in another row. And that's because there are conditions and to enter in both
-            a OnKeyPressed is needed.
-             */
-            tbvService.setOnKeyPressed((event) -> {
-
-                if (event.getCode() == KeyCode.ESCAPE) {
-                    escCancelWhenAdd = true;
-                }
-
-            });
-
             //SELECT THE FIRST COMBOBOX ITEM BY DEFAULT
             cbService.getSelectionModel().selectFirst();
 
@@ -327,7 +306,6 @@ public class ServicesController {
             alert.setHeaderText("Error");
             alert.setContentText("database error.");
             alert.showAndWait();
-
         }
     }
 
@@ -370,7 +348,6 @@ public class ServicesController {
 
                 }
             }
-
             //Exceptions catch.
         } catch (BusinessLogicException ex) {
             LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at loadAllServices(): {0}", ex.getMessage());
@@ -380,11 +357,9 @@ public class ServicesController {
             alert.setContentText("No services have been found");
             alert.showAndWait();
         }
-
         //table refresh.
         tbvService.refresh();
         return servicesTableBean;
-
     }
 
     /**
@@ -407,7 +382,7 @@ public class ServicesController {
     private void handleTableSelectionChanged(ObservableValue observableValue, Object oldValue, Object newValue) {
 
         //enables delete ImageView if new value is not null.
-        if (newValue != null) {
+        if (newValue != null && !tableCommitting) {
             imgDelete.setDisable(false);
             imgDelete.setOpacity(1);
             //disables it when a service is being added.
@@ -420,7 +395,6 @@ public class ServicesController {
             imgDelete.setDisable(true);
             imgDelete.setOpacity(0.25);
         }
-
     }
 
     /**
@@ -483,7 +457,6 @@ public class ServicesController {
             handleTableImageViews();
 
         }
-
     }
 
     /**
@@ -548,7 +521,6 @@ public class ServicesController {
                                 tbvService.getSelectionModel().clearSelection();
                                 tbvService.refresh();
                             }
-
                         } else {
 
                             //if you press cancel it means you dont want to lose your last commit
@@ -604,21 +576,20 @@ public class ServicesController {
 
                                     updateServicesTable();
 
+                                    LOGGER.info("creation cancelled");
+
                                 } else {
-                                    if (addingService) {
-                                        LOGGER.info("creation not cancelled");
 
-                                        tbvService.getSelectionModel().clearSelection();
-                                        tbvService.getSelectionModel().focus(services.size() - 1);
-                                        tbvService.getSelectionModel().select(services.size() - 1);
-                                        tbvService.refresh();
+                                    LOGGER.info("creation not cancelled");
 
-                                    }
-                                    LOGGER.info("update cancelled");
+                                    editing = false;
+
+                                    tbvService.getSelectionModel().clearSelection();
+                                    tbvService.getSelectionModel().focus(services.size() - 1);
+                                    tbvService.getSelectionModel().select(services.size() - 1);
+                                    tbvService.refresh();
                                 }
-
                             }
-
                         }
 
                         handleTableImageViews();
@@ -636,12 +607,16 @@ public class ServicesController {
                 editing = false;
                 if (t.getNewValue().trim().isEmpty()) {
                     //throw validation Error
-                    LOGGER.warning("The address field is empty");
+                    LOGGER.warning("The name field is empty");
+                    updateServicesTable();
+                    enableDefaultComponents();
                     throw new FieldsEmptyException();
                 }
                 if (t.getNewValue().trim().length() > 255) {
                     //throw validation Error
                     LOGGER.warning("The field has more than 255 characters");
+                    updateServicesTable();
+                    enableDefaultComponents();
                     throw new MaxCharactersException();
                 }
 
@@ -680,12 +655,9 @@ public class ServicesController {
 
         tcName.setOnEditCancel((CellEditEvent<Service, String> t) -> {
 
-            editing = false;
-
             if (!cancelling) {
                 handleOnEditCancel();
             }
-
         });
 
         //Making address Services table column editable        
@@ -736,9 +708,7 @@ public class ServicesController {
 
                             tbvService.getSelectionModel().select(lastCommittedRow);
                             tbvService.refresh();
-
                         }
-
                     } else {
 
                         oldAddress = null;
@@ -773,8 +743,6 @@ public class ServicesController {
                                         addingService = false;
                                         services.remove(services.size() - 1);
 
-                                        System.out.println("el primeeeroo");
-
                                     }
                                     cancelling = true;
                                     editing = false;
@@ -784,17 +752,19 @@ public class ServicesController {
 
                                     updateServicesTable();
 
+                                    LOGGER.info("creation cancelled");
+
                                 } else {
-                                    if (addingService) {
-                                        LOGGER.info("creation not cancelled");
 
-                                        tbvService.getSelectionModel().clearSelection();
-                                        tbvService.getSelectionModel().focus(services.size() - 1);
-                                        tbvService.getSelectionModel().select(services.size() - 1);
-                                        tbvService.refresh();
+                                    LOGGER.info("creation not cancelled");
 
-                                    }
-                                    LOGGER.info("update cancelled");
+                                    editing = false;
+
+                                    tbvService.getSelectionModel().clearSelection();
+                                    tbvService.getSelectionModel().focus(services.size() - 1);
+                                    tbvService.getSelectionModel().select(services.size() - 1);
+                                    tbvService.refresh();
+
                                 }
 
                             }
@@ -820,11 +790,15 @@ public class ServicesController {
                 if (t.getNewValue().trim().isEmpty()) {
                     //throw validation Error
                     LOGGER.warning("The address field is empty");
+                    updateServicesTable();
+                    enableDefaultComponents();
                     throw new FieldsEmptyException();
                 }
                 if (t.getNewValue().trim().length() > 255) {
                     //throw validation Error
                     LOGGER.warning("The field has more than 255 characters");
+                    updateServicesTable();
+                    enableDefaultComponents();
                     throw new MaxCharactersException();
                 }
 
@@ -862,7 +836,6 @@ public class ServicesController {
         });
 
         tcAddress.setOnEditCancel((CellEditEvent<Service, String> t) -> {
-            editing = false;
 
             if (!cancelling) {
                 handleOnEditCancel();
@@ -941,22 +914,15 @@ public class ServicesController {
                                 Alert Cancelalert = new Alert(AlertType.CONFIRMATION);
                                 Cancelalert.setHeaderText(null);
                                 Cancelalert.setTitle("Confirmation");
-                                if (addingService) {
-                                    Cancelalert.setContentText("Are you sure you want to cancel creating the last selected service?");
-                                } else {
-
-                                    Cancelalert.setContentText("Are you sure you want to cancel editing this cell?");
-                                }
+                                Cancelalert.setContentText("Are you sure you want to cancel creating the last selected service?");
                                 Optional<ButtonType> result = Cancelalert.showAndWait();
                                 if (result.get() == ButtonType.OK) {
 
-                                    if (addingService) {
-                                        services.remove(services.size() - 1);
-                                        addingService = false;
+                                    services.remove(services.size() - 1);
+                                    addingService = false;
 
-                                        System.out.println("view.controllers.ServicesController.setEditableColumns()");
+                                    System.out.println("view.controllers.ServicesController.setEditableColumns()");
 
-                                    }
                                     cancelling = true;
                                     editing = false;
                                     tableCommitting = false;
@@ -965,17 +931,19 @@ public class ServicesController {
 
                                     updateServicesTable();
 
+                                    LOGGER.info("creation cancelled");
+
                                 } else {
-                                    if (addingService) {
-                                        LOGGER.info("creation not cancelled");
 
-                                        tbvService.getSelectionModel().clearSelection();
-                                        tbvService.getSelectionModel().focus(services.size() - 1);
-                                        tbvService.getSelectionModel().select(services.size() - 1);
-                                        tbvService.refresh();
+                                    LOGGER.info("creation not cancelled");
 
-                                    }
-                                    LOGGER.info("update cancelled");
+                                    editing = false;
+
+                                    tbvService.getSelectionModel().clearSelection();
+                                    tbvService.getSelectionModel().focus(services.size() - 1);
+                                    tbvService.getSelectionModel().select(services.size() - 1);
+                                    tbvService.refresh();
+
                                 }
 
                             }
@@ -1016,7 +984,6 @@ public class ServicesController {
         });
 
         tcType.setOnEditCancel((CellEditEvent<Service, String> t) -> {
-            editing = false;
 
             if (!cancelling) {
 
@@ -1503,7 +1470,6 @@ public class ServicesController {
             }
 
         }
-
         //disabling the variables to return the initial state.
         editing = false;
         cancelling = false;
@@ -1563,7 +1529,6 @@ public class ServicesController {
             enableDefaultComponents();
 
         }
-
     }
 
     /**
@@ -1592,7 +1557,6 @@ public class ServicesController {
             if (addingService) {
                 services.remove(services.size() - 1);
                 addingService = false;
-
             }
             cancelling = true;
             editing = false;
@@ -1604,10 +1568,17 @@ public class ServicesController {
         } else {
             if (addingService) {
                 LOGGER.info("commit cancelled");
-            }
-            LOGGER.info("update cancelled");
-        }
 
+                tbvService.getSelectionModel().select(services.size() - 1);
+
+            } else {
+
+                tbvService.getSelectionModel().select(lastCommittedRow);
+
+                LOGGER.info("update cancelled");
+            }
+
+        }
     }
 
     /**
@@ -1684,7 +1655,6 @@ public class ServicesController {
 
                 break;
         }
-
     }
 
     /**
@@ -1729,60 +1699,19 @@ public class ServicesController {
 
         if (!addingService && editing) {
 
-            Alert Cancelalert = new Alert(AlertType.CONFIRMATION);
-            Cancelalert.setHeaderText(null);
-            Cancelalert.setTitle("Confirmation");
+            cancelling = true;
+            editing = false;
+            tableCommitting = false;
 
-            Cancelalert.setContentText("Are you sure you want to cancel editing this cell?");
+            enableDefaultComponents();
 
-            Optional<ButtonType> result = Cancelalert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            updateServicesTable();
 
-                cancelling = true;
-                editing = false;
-                tableCommitting = false;
+            LOGGER.info("update cancelled");
 
-                enableDefaultComponents();
-
-                updateServicesTable();
-
-            } else {
-
-                LOGGER.info("update cancelled");
-            }
-
-        } else {
-
-            if (addingService || escCancelWhenAdd) {
-
-                Alert Cancelalert = new Alert(AlertType.CONFIRMATION);
-                Cancelalert.setHeaderText(null);
-                Cancelalert.setTitle("Confirmation");
-                if (addingService) {
-                    Cancelalert.setContentText("Are you sure you want to cancel creating the last selected service?");
-                }
-                Optional<ButtonType> result = Cancelalert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    addingService = false;
-
-                    services.remove(services.size() - 1);
-
-                    cancelling = true;
-                    editing = false;
-                    tableCommitting = false;
-
-                    enableDefaultComponents();
-
-                    updateServicesTable();
-
-                } else {
-
-                    LOGGER.info("creation not cancelled");
-                    tbvService.getSelectionModel().clearSelection();
-                    tbvService.getSelectionModel().select(services.size() - 1);
-
-                }
-            }
+        }
+        if (addingService) {
+            handleTableImageViews();
         }
     }
 

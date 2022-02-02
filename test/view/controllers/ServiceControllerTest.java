@@ -29,8 +29,6 @@ import static org.testfx.matcher.base.WindowMatchers.isShowing;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ServiceControllerTest extends ApplicationTest {
 
-    private ComboBox cbService;
-
     /**
      * This method sets the primary stage of the javaFx window and sets up the
      * application.
@@ -64,7 +62,7 @@ public class ServiceControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test03_cbDisableComponents() {
+    public void test03_cbServiceDisableComponents() {
 
         clickOn("#cbService");
         clickOn("All services");
@@ -104,8 +102,24 @@ public class ServiceControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test04_cbDisableCompone() {
+    public void test04_selectAll() {
 
+        clickOn("#cbService");
+        clickOn("All services");
+        clickOn("#btnSearchService");
+        
     }
+    
+    @Test
+    public void test04_selectByAddress() {
+
+        clickOn("#cbService");
+        clickOn("By address");
+        clickOn("#tfServices");
+        write("Bilbao, Gran via avenue");
+        clickOn("#btnSearchService");
+        
+    }
+
 
 }
