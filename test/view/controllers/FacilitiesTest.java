@@ -43,11 +43,16 @@ public class FacilitiesTest extends ApplicationTest {
     private final ComboBox cb_Facilities = lookup("#cb_Facilities").queryComboBox();
     private final DatePicker dp_Facilities = lookup("#dp_Facilities").query();
     private final Spinner sp_Facilities = lookup("#sp_Facilities").query();
-    private static String currentDate=null;
+    private static String currentDate = null;
+
     @BeforeClass
     public static void setUpClass() throws TimeoutException {
         FxToolkit.registerPrimaryStage();
         FxToolkit.setupApplication(Application.class);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date now = new Date();
+        String today = simpleDateFormat.format(now);
+        currentDate = today;
     }
 
     @Test
@@ -63,7 +68,7 @@ public class FacilitiesTest extends ApplicationTest {
     @Test
     public void test02_PrintWorking() {
         clickOn("#iv_print");
-        Window[] jframe=Window.getWindows();
+        Window[] jframe = Window.getWindows();
         verifyThat("Report generated", isVisible());
         clickOn("Aceptar");
         closeCurrentWindow();
@@ -102,7 +107,43 @@ public class FacilitiesTest extends ApplicationTest {
     }
 
     @Test
-    public void test05_selectByDate(){
+    public void test05_selectByType() {
+        clickOn("#cb_Facilities");
+        clickOn("Type");
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        press(KeyCode.F4).release(KeyCode.F4);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn("Search");
+    }
+
+    @Ignore
+    @Test
+    public void test06_selectById() {
+        clickOn("#cb_Facilities");
+        clickOn("Id");
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        clickOn("Search");
+    }
+
+    @Test
+    public void test07_addFacilityCorrect() {
+        clickOn("#iv_add");
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        press(KeyCode.TAB).release(KeyCode.TAB);
+        press(KeyCode.F4).release(KeyCode.F4);
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        clickOn("#iv_check");
+        clickOn("Aceptar");
+        verifyThat(currentDate, isVisible());
+    }
+
+    @Test
+    public void test08_selectByDate() {
         clickOn("#cb_Facilities");
         clickOn("Date");
         press(KeyCode.TAB).release(KeyCode.TAB);
@@ -112,88 +153,91 @@ public class FacilitiesTest extends ApplicationTest {
     }
 
     @Test
-    public void test06_selectByType(){
-        clickOn("#cb_Facilities");
-        clickOn("Type");
-        press(KeyCode.TAB).release(KeyCode.TAB);
-        press(KeyCode.F4).release(KeyCode.F4);
-        press(KeyCode.ENTER).release(KeyCode.ENTER);
-        clickOn("Search");
-    }
-
-    @Test
-    public void test07_selectById(){
-        clickOn("#cb_Facilities");
-        clickOn("Id");
-        press(KeyCode.TAB).release(KeyCode.TAB);
-        clickOn("Search");
-    }
-
-    @Test
-    public void test08_addFacilityCorrect(){
-            clickOn("#iv_add");
-            press(KeyCode.ENTER).release(KeyCode.ENTER);
-            press(KeyCode.RIGHT).release(KeyCode.RIGHT);
-            press(KeyCode.DOWN).release(KeyCode.DOWN);
-            press(KeyCode.RIGHT).release(KeyCode.RIGHT);
-            press(KeyCode.ENTER).release(KeyCode.ENTER);
-            press(KeyCode.TAB).release(KeyCode.TAB);
-            press(KeyCode.F4).release(KeyCode.F4);
-            press(KeyCode.DOWN).release(KeyCode.DOWN);
-            
+    public void test09_modifyFacilityCorrect() {
+        if (iv_check.isDisabled()) {
+            doubleClickOn(currentDate);
+            write("12/12/1999");
+            press(KeyCode.ENTER);
             clickOn("#iv_check");
             clickOn("Aceptar");
-             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-             Date now= new Date();
-             String today=simpleDateFormat.format(now);
-             currentDate=today;
-            verifyThat(today,isVisible());
-    }
-
-    @Test
-    public void test09_deleteFacilityCorrect(){
-        if(iv_cancel.isDisabled()){
-            clickOn("#type_column");
-            press(KeyCode.DOWN).release(KeyCode.DOWN);
-            clickOn("#iv_minus");
-            verifyThat("Aceptar",isVisible());
-            clickOn("Aceptar");
-        }else{
-            clickOn("#iv_cancel");
-            clickOn("#Aceptar");
-             clickOn("#type_column");
-            press(KeyCode.DOWN).release(KeyCode.DOWN);
-            clickOn("#iv_minus");
-            verifyThat("Aceptar",isVisible());
+            verifyThat("Content updated", isVisible());
             clickOn("Aceptar");
         }
     }
 
     @Test
-    public void test10_modifyFacilityCorrect(){
-    if(iv_check.isDisabled()){
-        doubleClickOn(currentDate);
-        write("12/12/1999");
-        press(KeyCode.ENTER);
-        clickOn("#iv_check");
-        clickOn("Aceptar");
-        verifyThat("Content updated", isVisible());
-        clickOn("Aceptar");
-    }
+    public void test10_deleteFacilityCorrect() {
+        if (iv_cancel.isDisabled()) {
+            clickOn("#type_column");
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+            clickOn("#iv_minus");
+            verifyThat("Aceptar", isVisible());
+            clickOn("Aceptar");
+        } else {
+            clickOn("#iv_cancel");
+            clickOn("#Aceptar");
+            clickOn("#type_column");
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+            clickOn("#iv_minus");
+            verifyThat("Aceptar", isVisible());
+            clickOn("Aceptar");
+        }
     }
 
-     @Test
-    public void test11_closeButton(){
-    if(iv_cancel.isDisabled()){
+    @Test
+    public void test11_closeButton() {
+        if (iv_cancel.isDisabled()) {
+            clickOn("#iv_add");
+            clickOn("#iv_cancel");
+            verifyThat("Are you sure you want to stop creating/updatting?", isVisible());
+            clickOn("Aceptar");
+        } else {
+            clickOn("#iv_cancel");
+            verifyThat("Are you sure you want to stop creating/updatting?", isVisible());
+            clickOn("Aceptar");
+        }
+    }
+
+    @Test
+    public void test12_addFieldMissing() {
         clickOn("#iv_add");
-        clickOn("#iv_cancel");
-        verifyThat("Are you sure you want to stop creating/updatting?", isVisible());
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn("#iv_check");
         clickOn("Aceptar");
-    }else{
+        verifyThat("One field is empty", isVisible());
+        clickOn("Aceptar");
         clickOn("#iv_cancel");
-        verifyThat("Are you sure you want to stop creating/updatting?", isVisible());
         clickOn("Aceptar");
     }
+
+    @Test
+    public void test13_addDateWrongFormat() {
+        clickOn("#iv_add");
+        write("testingBadFormat");
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        verifyThat("Date not valid", isVisible());
+        clickOn("Aceptar");
+        clickOn("testingBadFormat");
+        press(KeyCode.ENTER).release(KeyCode.ENTER);
+        clickOn("#iv_cancel");
+        clickOn("Aceptar");
     }
-    
+    @Test 
+    public void test14_delete_without_selection(){
+        String msg="Couldn't delete, please \n select the desired row to delete in the table";
+        clickOn("#menuServiceCrud");
+        clickOn("#menuFacilitiesCrud");
+        clickOn("#iv_minus");
+        verifyThat(msg,isVisible());
+        clickOn("Aceptar");
+    }
+    @Test
+    public void test15_DateSearchNull(){
+        clickOn("#menuServiceCrud");
+        clickOn("#menuFacilitiesCrud");
+        clickOn("#cb_Facilities");
+        clickOn("Date");
+        clickOn("Search");
+        verifyThat("The adquisition date is null", isVisible());
+    }
 }
