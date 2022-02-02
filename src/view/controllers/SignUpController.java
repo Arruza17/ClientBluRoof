@@ -1,13 +1,10 @@
 package view.controllers;
 
-import cipher.Cipher;
-import enumerations.ActualState;
 import enumerations.UserPrivilege;
 import enumerations.UserStatus;
 import exceptions.EmailFormatException;
 import exceptions.FieldsEmptyException;
 import exceptions.FullNameFormatException;
-import exceptions.LoginFoundException;
 import exceptions.MaxCharactersException;
 import exceptions.PasswordFormatException;
 import exceptions.PassNotEqualException;
@@ -15,27 +12,16 @@ import exceptions.PhoneFormatException;
 import factories.GuestManagerFactory;
 import factories.OwnerManagerFactory;
 import factories.UserManagerFactory;
-import interfaces.GuestManager;
 import interfaces.OwnerManager;
 import interfaces.UserManager;
-import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -43,17 +29,13 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javax.naming.OperationNotSupportedException;
 import javax.ws.rs.NotSupportedException;
@@ -64,14 +46,9 @@ import model.User;
 /**
  * Controller UI class for SignUp view in the user's managements application
  *
- * @author Ander Arruza and Adrián Pérez
+ * @author Ander Arruza, Adrián Pérez, Yeray Sampedro
  */
 public class SignUpController {
-
-    private final int MAX_WIDTH = 1920;
-    private final int MAX_HEIGHT = 1024;
-    private final int MIN_WIDTH = 1024;
-    private final int MIN_HEIGHT = 768;
 
     private static final Logger LOGGER = Logger.getLogger(SignInController.class.getName());
 
@@ -81,6 +58,11 @@ public class SignUpController {
      */
     public static final Pattern VALID_EMAIL_ADDRESS
             = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+    /**
+     *  This variable contains the following Pattern in order to get the phone
+     * well written (format: +###########)
+     */
     public static final Pattern VALID_PHONE_NUMBER = Pattern.compile("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$");
     private Stage stage;
     @FXML
@@ -120,11 +102,16 @@ public class SignUpController {
         //Sets the .css to the Scene
         scene.getStylesheets().add(css);
         //Stage dimension setters
-        stage.setMaxWidth(MAX_WIDTH);
-        stage.setMinWidth(MIN_WIDTH);
-        stage.setMaxHeight(MAX_HEIGHT);
-        stage.setMinHeight(MIN_HEIGHT);
+       Screen screen = Screen.getPrimary();
+        javafx.geometry.Rectangle2D bound = screen.getVisualBounds();
+        stage.setX(bound.getMinX());
+        stage.setY(bound.getMinY());
+        stage.setWidth(bound.getWidth());
+        stage.setHeight(bound.getHeight());
+        stage.setResizable(false);
+        stage.setMaximized(true);
         stage.getIcons().add(new Image("/view/resources/img/BluRoofLogo.png"));
+      
         //Sets the scene to the stage
         stage.setScene(scene);
         stage.setTitle("SignUp");

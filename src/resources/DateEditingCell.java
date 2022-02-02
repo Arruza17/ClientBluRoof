@@ -9,6 +9,10 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import model.User;
 
+/**
+ *
+ * @author Yeray Sampedro
+ */
 public class DateEditingCell extends TableCell<User, Date> {
 
     private DatePicker datePicker;
@@ -38,7 +42,7 @@ public class DateEditingCell extends TableCell<User, Date> {
 
     @Override
     public void updateItem(Date item, boolean empty) {
-        super.updateItem(item, empty);  
+        super.updateItem(item, empty);
         if (empty) {
             setText(null);
             setGraphic(null);
@@ -54,16 +58,19 @@ public class DateEditingCell extends TableCell<User, Date> {
                 setGraphic(null);
             }
         }
-      
+
     }
 
+    /**
+     * Method that creates the datepicker that is visible in the cell
+     */
     private void createDatePicker() {
         datePicker = new DatePicker(getDate());
         datePicker.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         datePicker.setEditable(false);
         datePicker.setOnAction((e) -> {
             commitEdit(Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            
+
         });
 
     }

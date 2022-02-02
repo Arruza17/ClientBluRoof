@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view.controllers;
 
-import cipher.Cipher;
 import enumerations.UserPrivilege;
 import enumerations.UserStatus;
 import exceptions.BusinessLogicException;
@@ -15,7 +9,6 @@ import exceptions.FullNameFormatException;
 import exceptions.MaxCharactersException;
 import exceptions.PhoneFormatException;
 import interfaces.UserManager;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 import java.util.Date;
@@ -60,7 +53,6 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 import resources.DateEditingCell;
-import static view.controllers.SignUpController.VALID_EMAIL_ADDRESS;
 
 /**
  * FXML Controller for AdminTable
@@ -110,7 +102,6 @@ public class AdminController {
     /**
      * Initializes the controller class.
      *
-     * @param root
      */
     public void initStage() {
         LOGGER.info("Loading admin controller view");
@@ -146,10 +137,7 @@ public class AdminController {
         //Setting the table editable
         tblAdmin.setEditable(true);
         //Setting all the button properties
-        imgCancel.setDisable(true);
-        imgCancel.setOpacity(0.25);
-        imgCommit.setDisable(true);
-        imgCommit.setOpacity(0.25);
+        disableEdition();
         imgDel.setDisable(true);
         imgDel.setOpacity(0.25);
 
@@ -160,7 +148,9 @@ public class AdminController {
         colFullName.setOnEditCommit(new EventHandler<CellEditEvent<User, String>>() {
             @Override
             public void handle(CellEditEvent<User, String> t) {
+                enableEdition();
                 try {
+
                     //Catch the exceptions in case the user imput is not valid
                     if (t.getNewValue().trim().isEmpty()) {
                         throw new FieldsEmptyException();
@@ -177,10 +167,6 @@ public class AdminController {
                     //Move row
                     tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colLogin);
                     tblAdmin.edit(t.getTablePosition().getRow(), colLogin);
-                    imgCommit.setDisable(false);
-                    imgCommit.setOpacity(1);
-                    imgCancel.setDisable(false);
-                    imgCancel.setOpacity(1);
                 } catch (FullNameFormatException e) {
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Wrong format");
@@ -192,7 +178,6 @@ public class AdminController {
                     tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colFullName);
                     tblAdmin.edit(t.getTablePosition().getRow(), colFullName);
                 } catch (FieldsEmptyException e) {
-
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Field empty");
                     alert.setContentText(e.getMessage());
@@ -216,15 +201,11 @@ public class AdminController {
                     tblAdmin.refresh();
                 }
             }
-        });
 
+        });
         //Disable the commit and cancel buttons if the user cancels
         colFullName.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
-            imgCommit.setDisable(true);
-            imgCommit.setOpacity(0.25);
-            imgCancel.setDisable(true);
-            imgCancel.setOpacity(0.25);
         });
 
         //Make login column editable
@@ -234,7 +215,8 @@ public class AdminController {
         colLogin.setCellFactory(TextFieldTableCell.<User>forTableColumn());
         colLogin.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
-                    //Catch the exceptions in case the user imput is not valid
+                    enableEdition();
+                    //Catch the exceptions in case the user input is not valid
                     try {
                         if (t.getNewValue().trim().isEmpty()) {
                             throw new FieldsEmptyException();
@@ -249,10 +231,6 @@ public class AdminController {
                         //Move row
                         tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colEmail);
                         tblAdmin.edit(t.getTablePosition().getRow(), colEmail);
-                        imgCommit.setDisable(false);
-                        imgCommit.setOpacity(1);
-                        imgCancel.setDisable(false);
-                        imgCancel.setOpacity(1);
                     } catch (FieldsEmptyException e) {
                         Alert alert = new Alert(AlertType.INFORMATION);
                         alert.setTitle("Fields empty");
@@ -277,10 +255,6 @@ public class AdminController {
         //Disable the commit and cancel buttons if the user cancels
         colLogin.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
-            imgCommit.setDisable(true);
-            imgCommit.setOpacity(0.25);
-            imgCancel.setDisable(true);
-            imgCancel.setOpacity(0.25);
         });
 
         //Make email column editable
@@ -290,6 +264,7 @@ public class AdminController {
         colEmail.setOnEditCommit(new EventHandler<CellEditEvent<User, String>>() {
             @Override
             public void handle(CellEditEvent<User, String> t) {
+                enableEdition();
                 try {
                     Pattern valid_email = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
                     Matcher matcher = valid_email.matcher(t.getNewValue().trim());
@@ -309,10 +284,6 @@ public class AdminController {
                     tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colBirthDate);
                     //Move row
                     tblAdmin.edit(t.getTablePosition().getRow(), colBirthDate);
-                    imgCommit.setDisable(false);
-                    imgCommit.setOpacity(1);
-                    imgCancel.setDisable(false);
-                    imgCancel.setOpacity(1);
                 } catch (EmailFormatException e) {
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Wrong format");
@@ -339,6 +310,7 @@ public class AdminController {
                     alert.show();
                 } finally {
                     tblAdmin.refresh();
+
                 }
 
             }
@@ -347,10 +319,6 @@ public class AdminController {
         //Disable the commit and cancel buttons if the user cancels
         colEmail.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
-            imgCommit.setDisable(true);
-            imgCommit.setOpacity(0.25);
-            imgCancel.setDisable(true);
-            imgCancel.setOpacity(0.25);
         });
 
         //Make phone column editable
@@ -360,6 +328,7 @@ public class AdminController {
         colPhone.setOnEditCommit(
                 (CellEditEvent<User, String> t) -> {
                     try {
+                        enableEdition();
                         //Catch the exceptions in case the user imput is not valid
                         if (t.getNewValue().trim().isEmpty()) {
                             throw new FieldsEmptyException();
@@ -378,10 +347,6 @@ public class AdminController {
                         //Move row
                         tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
                         tblAdmin.edit(t.getTablePosition().getRow(), colPhone);
-                        imgCommit.setDisable(false);
-                        imgCommit.setOpacity(1);
-                        imgCancel.setDisable(false);
-                        imgCancel.setOpacity(1);
                     } catch (FieldsEmptyException | PhoneFormatException e) {
                         Alert alert = new Alert(AlertType.INFORMATION);
                         alert.setTitle("Wrong format");
@@ -406,10 +371,6 @@ public class AdminController {
         //Disable the commit and cancel buttons if the user cancels
         colPhone.setOnEditCancel((CellEditEvent<User, String> t) -> {
             tblAdmin.refresh();
-            imgCommit.setDisable(true);
-            imgCommit.setOpacity(0.25);
-            imgCancel.setDisable(true);
-            imgCancel.setOpacity(0.25);
         });
 
         //Make birthdate column editable   
@@ -419,33 +380,30 @@ public class AdminController {
 
         //Create the datePicker cell
         Callback<TableColumn<User, Date>, TableCell<User, Date>> dateCellFactory
-                = (TableColumn<User, Date> param) -> new DateEditingCell();;
+                = (TableColumn<User, Date> param) -> new DateEditingCell();
         colBirthDate.setCellFactory(dateCellFactory);
 
         //Enable the buttons and update the data of the user when commiting
         colBirthDate.setOnEditCommit(
                 (CellEditEvent<User, Date> t) -> {
+                    enableEdition();
                     ((User) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())).setBirthDate(t.getNewValue());
-                    imgCommit.setDisable(false);
-                    imgCommit.setOpacity(1);
-                    imgCancel.setDisable(false);
-                    imgCancel.setOpacity(1);
                     tblAdmin.getSelectionModel().select(t.getTablePosition().getRow(), colPhone);
                     tblAdmin.getFocusModel().focus(t.getTablePosition().getRow(), colPhone);
                 });
-
         //Disable the commit and cancel buttons if the user cancels
         colBirthDate.setOnEditCancel((CellEditEvent<User, Date> t) -> {
             tblAdmin.refresh();
-            imgCommit.setDisable(true);
-            imgCommit.setOpacity(0.25);
-            imgCancel.setDisable(true);
-            imgCancel.setOpacity(0.25);
+
         });
 
     }
 
+    /**
+     *
+     * @param userManager
+     */
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
     }
@@ -469,10 +427,7 @@ public class AdminController {
         tblAdmin.getFocusModel().focus(admin.size() - 1, colFullName);
         //Opening the first column in edit mode
         tblAdmin.edit(admin.size() - 1, colFullName);
-        imgCommit.setDisable(false);
-        imgCommit.setOpacity(1);
-        imgCancel.setDisable(false);
-        imgCancel.setOpacity(1);
+        enableEdition();
         imgAdd.setDisable(true);
         imgAdd.setOpacity(0.25);
         imgDel.setDisable(true);
@@ -518,6 +473,12 @@ public class AdminController {
                 excAlert.setTitle("Error");
                 excAlert.setContentText("There was an error with the deletion of the user: " + ex.getMessage());
                 excAlert.show();
+            } catch (Exception ex) {
+                Alert excAlert = new Alert(AlertType.INFORMATION);
+                excAlert.setTitle("Error");
+                excAlert.setContentText("There was an error with the connection of the server");
+                excAlert.show();
+                LOGGER.log(Level.SEVERE, ex.getClass().getSimpleName() + " thrown at handleTableCommit(): {0}", ex.getMessage());
             }
         }
 
@@ -538,7 +499,7 @@ public class AdminController {
         int pos = tblAdmin.getSelectionModel().getSelectedIndex();
         try {
             //Check if any of the data inputted is empty
-            if (user.getLogin().isEmpty() || user.getBirthDate().equals(null)
+            if (user.getLogin().isEmpty()
                     || user.getEmail().isEmpty() || user.getFullName().isEmpty() || user.getPhoneNumber().isEmpty()) {
                 throw new FieldsEmptyException();
             }
@@ -548,7 +509,7 @@ public class AdminController {
                 user.setPrivilege(UserPrivilege.ADMIN.name());
                 user.setStatus(UserStatus.ENABLED.name());
                 user.setLastPasswordChange(new Date());
-
+                user.setId(null);
                 userManager.createUser(user);
                 //Reset the password so the admins receive a unique pass
                 userManager.resetPassword(user.getLogin());
@@ -575,7 +536,7 @@ public class AdminController {
         } catch (BusinessLogicException ex) {
             Alert excAlert = new Alert(AlertType.INFORMATION);
             excAlert.setTitle("Error");
-            excAlert.setContentText("There was an error with the edition of the user: " + ex.getMessage());
+            excAlert.setContentText(ex.getMessage());
             excAlert.show();
             LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at handleTableCommit(): {0}", ex.getMessage());
         } catch (FieldsEmptyException ex) {
@@ -584,13 +545,21 @@ public class AdminController {
             excAlert.setContentText(ex.getMessage());
             excAlert.show();
             LOGGER.log(Level.SEVERE, "FieldsEmptyException thrown at handleTableCommit(): {0}", ex.getMessage());
-
+        } catch (Exception ex) {
+            Alert excAlert = new Alert(AlertType.INFORMATION);
+            excAlert.setTitle("Error");
+            excAlert.setContentText("There was an error with the connection of the server");
+            excAlert.show();
+            LOGGER.log(Level.SEVERE, ex.getClass().getSimpleName() + " thrown at handleTableCommit(): {0}", ex.getMessage());
+        } finally {
+            tblAdmin.getSelectionModel().clearSelection();
         }
     }
 
     /**
      * Method used to handle the cancel action
-     * @param event 
+     *
+     * @param event
      */
     @FXML
     private void handleTableCancel(MouseEvent event) {
@@ -601,30 +570,43 @@ public class AdminController {
         alert.setContentText("You are about to stop the edition\nAre you sure?");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
-            //Remove the data if called an addition
-            if (pos == admin.size() - 1 && admin.get(pos).getId() == Long.MIN_VALUE) {
-                LOGGER.info("Cancel creation");
-                admin.remove(admin.size() - 1);
-            } else {
-                LOGGER.info("Cancel update");
+            try {
+                //Remove the data if called an addition
+                if (pos == admin.size() - 1 && admin.get(pos).getId() == Long.MIN_VALUE) {
+                    LOGGER.info("Cancel creation");
+                    admin.remove(admin.size() - 1);
+                } else {
+                    LOGGER.info("Cancel update");
+                }
+                imgCommit.setDisable(true);
+                imgCommit.setOpacity(0.25);
+                imgCancel.setDisable(true);
+                imgCancel.setOpacity(0.25);
+                imgAdd.setDisable(false);
+                imgAdd.setOpacity(1);
+                imgDel.setDisable(true);
+                imgDel.setOpacity(0.25);
+                tblAdmin.getItems().clear();
+                admin = FXCollections.observableArrayList(userManager.findAllAdmins());
+                tblAdmin.setItems(admin);
+                tblAdmin.refresh();
+                tblAdmin.getSelectionModel().clearSelection(tblAdmin.getSelectionModel().getSelectedIndex());
+            } catch (BusinessLogicException ex) {
+                alert = new Alert(AlertType.INFORMATION);
+                alert.setHeaderText("Error with the cancel");
+                alert.setContentText("There was an error updating the information, try again later");
+                LOGGER.log(Level.SEVERE,
+                        "Error updating the table at handleTableCancel(): {0}",
+                        ex.getMessage());
+                Logger.getLogger(AdminController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            imgCommit.setDisable(true);
-            imgCommit.setOpacity(0.25);
-            imgCancel.setDisable(true);
-            imgCancel.setOpacity(0.25);
-            imgAdd.setDisable(false);
-            imgAdd.setOpacity(1);
-            imgDel.setDisable(true);
-            imgDel.setOpacity(0.25);
-            tblAdmin.setItems(admin);
-            tblAdmin.refresh();
-            tblAdmin.getSelectionModel().clearSelection(tblAdmin.getSelectionModel().getSelectedIndex());
         }
     }
 
     /**
      * Method used to search admins that contain words in their login
-     * @param event 
+     *
+     * @param event
      */
     @FXML
     private void searchByLogin(ActionEvent event) {
@@ -661,6 +643,11 @@ public class AdminController {
 
     }
 
+    /**
+     * Method used to print a report using JasperReports
+     *
+     * @param event
+     */
     @FXML
     private void printReport(MouseEvent event) {
         try {
@@ -690,6 +677,30 @@ public class AdminController {
         }
     }
 
+    /**
+     * Method that enables the Commit and Cancel buttons
+     */
+    private void enableEdition() {
+        imgCommit.setDisable(false);
+        imgCommit.setOpacity(1);
+        imgCancel.setDisable(false);
+        imgCancel.setOpacity(1);
+    }
+
+    /**
+     * Method that disables the Commit and Cancel buttons
+     */
+    private void disableEdition() {
+        imgCommit.setDisable(true);
+        imgCommit.setOpacity(0.25);
+        imgCancel.setDisable(true);
+        imgCancel.setOpacity(0.25);
+    }
+
+    /**
+     * Sets the user of the view
+     * @param user
+     */
     public void setUser(User user) {
         this.user = user;
     }

@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logic;
 
 import exceptions.BusinessLogicException;
+import exceptions.ExceptionGenerator;
 import interfaces.OwnerManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +12,7 @@ import restful.OwnerRestfulClient;
 
 /**
  * Implementation of the owner manager for a restful client
+ *
  * @author Yeray Sampedro
  */
 public class OwnerManagerImplementation implements OwnerManager {
@@ -23,14 +20,18 @@ public class OwnerManagerImplementation implements OwnerManager {
     private final OwnerRestfulClient webClient;
     private static final Logger LOGGER = Logger.getLogger("UserManagerImplementation");
 
+    /**
+     *
+     */
     public OwnerManagerImplementation() {
         webClient = new OwnerRestfulClient();
     }
 
-        /**
+    /**
      * Method used to register a owner
+     *
      * @param owner the owner to register
-     * @throws BusinessLogicException 
+     * @throws BusinessLogicException
      */
     @Override
     public void register(Owner owner) throws BusinessLogicException {
@@ -38,19 +39,21 @@ public class OwnerManagerImplementation implements OwnerManager {
             LOGGER.log(Level.INFO, "OwnersManager: Creating owner {0}.", owner.getLogin());
             //Send user data to web client for creation. 
             webClient.create(owner);
-        } catch (Exception ex) {
+        } catch (ClientErrorException ex) {
             LOGGER.log(Level.SEVERE,
                     "UsersManager: Exception creating owner, {0}",
                     ex.getMessage());
-            throw new BusinessLogicException("Error creating owner:\n" + ex.getMessage());
+            throw new BusinessLogicException("Error creating owner:\n"
+                    + ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
         }
     }
 
-        /**
+    /**
      * Method used to find a owner by id
+     *
      * @param id the owner to find
      * @return the owner with that id
-     * @throws BusinessLogicException 
+     * @throws BusinessLogicException
      */
     @Override
     public Owner findById(String id) throws BusinessLogicException {
@@ -64,7 +67,8 @@ public class OwnerManagerImplementation implements OwnerManager {
             LOGGER.log(Level.SEVERE,
                     "OwnerManager: Exception finding owner with id, {0}",
                     ex.getMessage());
-            throw new BusinessLogicException("Error finding owner with that id:\n" + ex.getMessage());
+            throw new BusinessLogicException("Error finding owner with that id:\n"
+                    + ExceptionGenerator.exceptionGenerator(ex.getResponse().getStatus()));
         }
         return owner;
     }

@@ -1,16 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package exceptions;
 
 /**
  *
- * @author 2dam
+ * @author BlurOOF
  */
 public class BusinessLogicException extends Exception{
-      public BusinessLogicException(String msg) {
+
+    /**
+     * 
+     * @param msg the msg of the exception
+     */
+    public BusinessLogicException(String msg) {
         super(msg);
     }
+      
+  
 }

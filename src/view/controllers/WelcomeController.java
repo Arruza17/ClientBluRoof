@@ -77,19 +77,28 @@ public class WelcomeController {
         stage.show();
         LOGGER.info("Welcome window shown");
         try {
-            FXMLLoader loader = new MenuFactory().getMenu(user.getPrivilege());
-            if (loader != null) {
-                menuNode = loader.load();
-                GenericMenuController menu = loader.getController();
-                menu.setUser(user);
-                menu.setStage(stage);
-                bpMain.setLeft(menuNode);
-                menu.setBorder(getBpMain());
+            if (!user.getPrivilege().equals("GUEST")) {
+                FXMLLoader loader = new MenuFactory().getMenu(user.getPrivilege());
+                if (loader != null) {
+                    menuNode = loader.load();
+                    GenericMenuController menu = loader.getController();
+                    menu.setUser(user);
+                    menu.setStage(stage);
+                    bpMain.setLeft(menuNode);
+                    menu.setBorder(getBpMain());
+                } else {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setContentText("There was an issue loading the menu information");
+                    alert.setTitle("Problems with the menu");
+                    alert.show();
+                }
             } else {
                 Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setContentText("There was an issue loading the menu information");
-                alert.setTitle("Problems with the menu");
-                alert.show();
+                alert.setHeaderText("Under development");
+                alert.setContentText("The login of guests is still under development, try again in a few days."
+                        + "\n Thus, the application will be closed");
+                alert.showAndWait();
+                stage.close();
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -175,6 +184,10 @@ public class WelcomeController {
         this.um = um;
     }
 
+    /**
+     *
+     * @return
+     */
     public BorderPane getBpMain() {
         return bpMain;
     }

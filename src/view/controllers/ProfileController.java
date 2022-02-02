@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view.controllers;
 
 import enumerations.UserPrivilege;
@@ -35,7 +30,7 @@ import javafx.stage.Stage;
 import model.User;
 
 /**
- * 
+ * Controlls the profile
  *
  * @author Yeray Sampedro
  */
@@ -64,6 +59,9 @@ public class ProfileController {
     @FXML
     private ImageView userImg;
 
+    /**
+     * Method that initializes the stage
+     */
     public void initStage() {
         lblName.setText(user.getFullName());
         tfLogin.setText(user.getLogin());
@@ -87,14 +85,27 @@ public class ProfileController {
 
     }
 
+    /**
+     *
+     * @param userManager
+     */
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
     }
 
+    /**
+     *
+     * @param user
+     */
     public void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Method that handles the edit 
+     * @param event 
+     * @deprecated
+     */
     @FXML
     private void handleEditAction(ActionEvent event) {
         try {
@@ -123,7 +134,8 @@ public class ProfileController {
 
     /**
      * Method used to handle the password change
-     * @param event 
+     *
+     * @param event
      */
     @FXML
     private void handlePasswordChange(ActionEvent event) {

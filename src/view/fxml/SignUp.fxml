@@ -27,14 +27,14 @@
                     <children>
                         <HBox prefHeight="100.0" prefWidth="200.0">
                             <children>
-                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
                                     <children>
                                         <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Username:">
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
                                         </Label>
-                                        <TextField fx:id="tfUser" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="User">
+                                        <TextField fx:id="tfUser" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" promptText="User">
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
@@ -45,14 +45,14 @@
                                     </children>
                                 </VBox>
                                 <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
-                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
                                     <children>
                                         <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Full name:">
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
                                         </Label>
-                                        <TextField fx:id="tfFullName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="Name">
+                                        <TextField fx:id="tfFullName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" promptText="Name">
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
@@ -66,7 +66,7 @@
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="200.0">
                             <children>
-                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
                                     <children>
                                         <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Password:">
                                             <font>
@@ -74,7 +74,7 @@
                                             </font>
                                         </Label>
                                         
-                                        <PasswordField fx:id="passField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="Password">
+                                        <PasswordField fx:id="passField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" promptText="Password">
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
@@ -85,14 +85,14 @@
                                     </children>
                                 </VBox>
                                 <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
-                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
                                     <children>
                                         <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Repeat password:">
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
                                         </Label>
-                                        <PasswordField fx:id="rptPassword" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" promptText="Repeat Password">
+                                        <PasswordField fx:id="rptPassword" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" promptText="Repeat Password">
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
@@ -107,7 +107,7 @@
                         <VBox alignment="CENTER_LEFT" prefHeight="95.0" prefWidth="406.0">
                             <children>
                                 <Label text="Email:" />
-                                <TextField fx:id="tfEmail" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="33.0" prefWidth="400.0" promptText="Email">
+                                <TextField fx:id="tfEmail" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Email">
                                     <font>
                                         <Font size="16.0" />
                                     </font>
@@ -119,14 +119,14 @@
                         </VBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                        <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Phone Number">
                                  <font>
                                     <Font size="16.0" />
                                  </font>
                               </Label>
-                              <TextField fx:id="tfPhoneNo" prefHeight="32.0" prefWidth="360.0" promptText="Phone no">
+                              <TextField fx:id="tfPhoneNo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Phone no">
                                  <tooltip>
                                     <Tooltip text="Input your phone number, country code included" />
                                  </tooltip>
@@ -137,14 +137,14 @@
                            </children>
                         </VBox>
                         <Separator orientation="VERTICAL" prefHeight="200.0" visible="false" />
-                        <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                        <VBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
                            <children>
                               <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" text="Birth Date">
                                  <font>
                                     <Font size="16.0" />
                                  </font>
                               </Label>
-                              <DatePicker fx:id="dpBdate" editable="false" prefHeight="32.0" prefWidth="360.0" VBox.vgrow="ALWAYS">
+                              <DatePicker fx:id="dpBdate" editable="false" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="32.0" VBox.vgrow="ALWAYS">
                                  <tooltip>
                                     <Tooltip text="Put the date in the current format DD/MM/YYYY" />
                                  </tooltip>
