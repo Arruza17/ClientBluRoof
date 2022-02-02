@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logic;
 
 import exceptions.BusinessLogicException;
@@ -13,19 +8,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.GenericType;
-import model.BussinessLogicException;
 import model.Facility;
 import interfaces.FacilityManager;
 import restful.FacilityRestfulClient;
 
 /**
- *
- * @author 2dam
+ *Implementation of the facility manager
+ * @author jorge
  */
 public class FacilityManagerImplementation implements FacilityManager {
 
     private FacilityRestfulClient frc;
-
+    /**
+     * Method used to select all facilities
+     * @return a list of facilities
+     * @throws BusinessLogicException 
+     */
     @Override
     public List<Facility> selectAll() throws BusinessLogicException {
 
@@ -39,12 +37,21 @@ public class FacilityManagerImplementation implements FacilityManager {
         }
         return fac;
     }
-
+    
+    /**
+     * Constructor of FacilityManagerImplementation
+     */
     public FacilityManagerImplementation() {
         frc = new FacilityRestfulClient();
 
     }
-
+    /**
+     * Method used to select data from facilities in 
+     * the database by the selected date.
+     * @param date String of the date which will be searched
+     * @return list of facilities
+     * @throws BusinessLogicException 
+     */
     @Override
     public List<Facility> selectByDate(String date) throws BusinessLogicException {
         List<Facility> fac = null;
@@ -57,7 +64,12 @@ public class FacilityManagerImplementation implements FacilityManager {
         return fac;
 
     }
-
+/**
+ * Method to obtain facilities by type.
+ * @param type String containing the type
+ * @return list of Facilities
+ * @throws BusinessLogicException 
+ */
     @Override
     public List<Facility> selectByType(String type) throws BusinessLogicException {
         List<Facility> fac = null;
@@ -68,7 +80,12 @@ public class FacilityManagerImplementation implements FacilityManager {
         }
         return fac;
     }
-
+/**
+ * Method to obtain one facility selected by Id
+ * @param id Long containing the id of the facility which will be searched.
+ * @return the selected Facility
+ * @throws BusinessLogicException 
+ */
     @Override
     public Facility selectById(Long id) throws BusinessLogicException {
         Facility fac = null;
@@ -80,15 +97,25 @@ public class FacilityManagerImplementation implements FacilityManager {
         
         return fac;
     }
+    /**
+     * Method used to delete one facility by id.
+     * @param id Long containing the id of the facility which will be deleted.
+     * @throws BussinessLogicException 
+     */
     @Override
-    public void remove(Long id) throws BussinessLogicException {
+    public void remove(Long id) throws BusinessLogicException {
         try {
             frc.remove(String.valueOf(id));
         } catch (ClientErrorException e) {
-            throw new BussinessLogicException(e.getMessage());
+            throw new BusinessLogicException(e.getMessage());
         }
     }
-
+/**
+ * Method used to create one facility via POST request to the restful
+ * web sevices.
+ * @param f Facility object containing the new facility to be added.
+ * @throws BusinessLogicException 
+ */
     @Override
     public void create(Facility f) throws BusinessLogicException {
          try {
@@ -97,7 +124,13 @@ public class FacilityManagerImplementation implements FacilityManager {
             throw new BusinessLogicException(e.getMessage());
         }
     }
-
+/**
+ * Method used to update one facility via PUT request to the restful
+ * web services.
+ * @param f Facility object containing the facility data to be updated
+ * @param id Long containing the id of the target facility to be updated.
+ * @throws BusinessLogicException 
+ */
     @Override
     public void update(Facility f, Long id) throws BusinessLogicException {
         try {
