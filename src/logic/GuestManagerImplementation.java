@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package logic;
 
 import exceptions.BusinessLogicException;
@@ -25,6 +21,7 @@ public class GuestManagerImplementation implements GuestManager {
 
     private final GuestRestfulClient webClient;
     private static final Logger LOGGER = Logger.getLogger("UserManagerImplementation");
+
 
     public GuestManagerImplementation() {
         webClient = new GuestRestfulClient();

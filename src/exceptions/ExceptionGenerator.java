@@ -6,6 +6,11 @@ package exceptions;
  */
 public class ExceptionGenerator {
 
+    /**
+     *
+     * @param code
+     * @return
+     */
     public static String exceptionGenerator(int code) {
         String msg = new String();
         switch (code) {

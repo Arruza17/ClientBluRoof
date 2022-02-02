@@ -184,6 +184,10 @@ public class WelcomeController {
         this.um = um;
     }
 
+    /**
+     *
+     * @return
+     */
     public BorderPane getBpMain() {
         return bpMain;
     }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package logic;
 
 import cipher.Cipher;
@@ -29,6 +24,7 @@ public class UserManagerImplementation implements UserManager {
     private final UserRestfulClient webClient;
     private static final Logger LOGGER = Logger.getLogger("UserManagerImplementation");
 
+ 
     public UserManagerImplementation() {
         webClient = new UserRestfulClient();
     }
@@ -62,6 +58,7 @@ public class UserManagerImplementation implements UserManager {
     /**
      * Method used to find all the admins containing a string in their name
      *
+     * @param login
      * @return List with all the admins
      * @throws BusinessLogicException
      */
@@ -206,7 +203,7 @@ public class UserManagerImplementation implements UserManager {
     /**
      * Method used to change the password a user
      *
-     * @param login the login of the user
+     * @param user
      * @param password the password to change
      * @return user, the user
      * @throws BusinessLogicException

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view.controllers;
 
 import enumerations.UserPrivilege;
@@ -107,7 +102,6 @@ public class AdminController {
     /**
      * Initializes the controller class.
      *
-     * @param root
      */
     public void initStage() {
         LOGGER.info("Loading admin controller view");
@@ -406,6 +400,10 @@ public class AdminController {
 
     }
 
+    /**
+     *
+     * @param userManager
+     */
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
     }
@@ -645,6 +643,11 @@ public class AdminController {
 
     }
 
+    /**
+     * Method used to print a report using JasperReports
+     *
+     * @param event
+     */
     @FXML
     private void printReport(MouseEvent event) {
         try {
@@ -674,6 +677,9 @@ public class AdminController {
         }
     }
 
+    /**
+     * Method that enables the Commit and Cancel buttons
+     */
     private void enableEdition() {
         imgCommit.setDisable(false);
         imgCommit.setOpacity(1);
@@ -681,6 +687,9 @@ public class AdminController {
         imgCancel.setOpacity(1);
     }
 
+    /**
+     * Method that disables the Commit and Cancel buttons
+     */
     private void disableEdition() {
         imgCommit.setDisable(true);
         imgCommit.setOpacity(0.25);
@@ -688,6 +697,10 @@ public class AdminController {
         imgCancel.setOpacity(0.25);
     }
 
+    /**
+     * Sets the user of the view
+     * @param user
+     */
     public void setUser(User user) {
         this.user = user;
     }

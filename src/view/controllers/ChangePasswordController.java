@@ -57,6 +57,10 @@ public class ChangePasswordController {
 
     }
 
+    /**
+     *
+     * @param stage
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
@@ -130,6 +134,10 @@ public class ChangePasswordController {
 
     }
 
+    /**
+     *
+     * @param user
+     */
     public void setUser(User user) {
         this.user = user;
     }
