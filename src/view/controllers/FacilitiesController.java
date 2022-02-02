@@ -1,6 +1,5 @@
 package view.controllers;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 import exceptions.BusinessLogicException;
 import exceptions.FieldsEmptyException;
 import javafx.scene.input.MouseEvent;
@@ -57,7 +56,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
-import sun.print.resources.serviceui;
+
 
 /**
  * FXML Controller class
@@ -65,6 +64,8 @@ import sun.print.resources.serviceui;
  * @author jorge
  */
 public class FacilitiesController {
+
+    private static final Logger LOGGER = Logger.getLogger(FacilitiesController.class.getName());
 
     private Stage stage;
     @FXML
@@ -113,7 +114,7 @@ public class FacilitiesController {
      */
     public void initStage() {
         try {
-            
+
             cb_Type.setDisable(true);
             dp_Facilities.setDisable(true);
             sp_Facilities.setDisable(true);
@@ -250,7 +251,7 @@ public class FacilitiesController {
             alert.setHeaderText("Couldn't open Facilities window");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
-      
+
         }
     }
 

@@ -373,7 +373,7 @@ public class ServicesController {
      * This method is used to check if the selected item of the table is not
      * null. Used to enable the imgDelete ImageView when is needed.
      *
-     * @param observableValue
+     * @param observableValue The Observable value.
      * @param oldValue Last selected table item.
      * @param newValue Currently selected item.
      */

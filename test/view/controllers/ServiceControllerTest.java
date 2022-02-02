@@ -10,6 +10,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -29,6 +30,9 @@ import static org.testfx.matcher.base.WindowMatchers.isShowing;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ServiceControllerTest extends ApplicationTest {
+
+    private TextField tfServices;
+    private String maxCharSample = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
     /**
      * This method sets the primary stage of the javaFx window and sets up the
@@ -219,9 +223,6 @@ public class ServiceControllerTest extends ApplicationTest {
             clickOn("SHOPPING");
             clickOn("#imgCommit");
             Thread.sleep(2000);
-            verifyThat("GAME videogame shop", isVisible());
-            verifyThat("Bilbao, Indautxu street", isVisible());
-            verifyThat("SHOPPING", isVisible());
             verifyThat("#imgCommit", isDisabled());
             verifyThat("#imgCancel", isDisabled());
 
@@ -249,6 +250,8 @@ public class ServiceControllerTest extends ApplicationTest {
         clickOn("#imgDelete");
         verifyThat("Cancelar", isVisible());
         clickOn("Cancelar");
+        sleep(2000);
+        clickOn("Aceptar");
     }
 
     @Test
@@ -258,17 +261,27 @@ public class ServiceControllerTest extends ApplicationTest {
         clickOn("By address");
         clickOn("#btnSearchService");
         verifyThat("The search field is empty", isVisible());
+        clickOn("Aceptar");
 
     }
 
     @Test
     public void test13_tfServicesMaxCharactersException() {
 
-        clickOn("#cbService");
-        clickOn("By address");
+        try {
+            clickOn("#cbService");
+            clickOn("By address");
+            tfServices = lookup("#tfServices").query();
+            clickOn(tfServices);
 
-        clickOn("#btnSearchService");
-        verifyThat("The search field is empty", isVisible());
+            tfServices.setText(maxCharSample);
+            clickOn("#btnSearchService");
+            verifyThat("Search field has a length higher than 255 characters.", isVisible());
+            Thread.sleep(1500);
+            clickOn("Aceptar");
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ServiceControllerTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 

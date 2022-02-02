@@ -25,11 +25,19 @@ public class ServiceManagerImplementation implements ServicesManager{
     private final ServiceRestfulClient serviceRestfulClient;
     private static final Logger LOGGER = Logger.getLogger(ServiceManagerImplementation.class.getName());
     
-      public ServiceManagerImplementation() {
+    /**
+     *
+     */
+    public ServiceManagerImplementation() {
         serviceRestfulClient = new ServiceRestfulClient();
     }
     
-    
+   /**
+     * This method returns a List of Services, containing all services data.
+     *
+     * @return List The List with all data for services.
+     * @throws BusinessLogicException If there is any error while processing.
+     */
     @Override
     public List<Service> findServiceByType(String serviceType) throws BusinessLogicException {
         List <Service> services = null;
@@ -41,6 +49,12 @@ public class ServiceManagerImplementation implements ServicesManager{
         return services;
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     * @throws ClientErrorException
+     */
     @Override
     public Service find(String id) throws ClientErrorException {
          Service service = null;
@@ -56,6 +70,12 @@ public class ServiceManagerImplementation implements ServicesManager{
         return service;
     }
 
+    /**
+     *
+     * @param serviceAddress
+     * @return
+     * @throws BusinessLogicException
+     */
     @Override
     public List<Service> findServiceByAddress(String serviceAddress) throws BusinessLogicException {
         List <Service> services = null;
@@ -67,6 +87,12 @@ public class ServiceManagerImplementation implements ServicesManager{
         return services;
     }
 
+    /**
+     *
+     * @param serviceName
+     * @return
+     * @throws BusinessLogicException
+     */
     @Override
     public List<Service> findServiceByName(String serviceName) throws BusinessLogicException {
        List <Service> services = null;
@@ -78,6 +104,11 @@ public class ServiceManagerImplementation implements ServicesManager{
         return services;
     }
 
+    /**
+     *
+     * @return
+     * @throws BusinessLogicException
+     */
     @Override
     public List<Service> findAll() throws BusinessLogicException {
          List <Service> services = null;
@@ -89,6 +120,11 @@ public class ServiceManagerImplementation implements ServicesManager{
         return services;
     }
 
+    /**
+     *
+     * @param service
+     * @throws BusinessLogicException
+     */
     @Override
     public void updateService(Service service) throws BusinessLogicException {
         
@@ -103,6 +139,11 @@ public class ServiceManagerImplementation implements ServicesManager{
         }
     }
 
+    /**
+     *
+     * @param service
+     * @throws BusinessLogicException
+     */
     @Override
     public void createService(Service service) throws BusinessLogicException {
        
@@ -119,6 +160,11 @@ public class ServiceManagerImplementation implements ServicesManager{
         
     }
 
+    /**
+     *
+     * @param id
+     * @throws BusinessLogicException
+     */
     @Override
     public void deleteService(Long id) throws BusinessLogicException {
      

@@ -12,7 +12,7 @@ import javax.naming.OperationNotSupportedException;
 
 /**
  *
- * @author Adrián
+ * @author Adrián Pérez
  */
 public class ServiceManagerFactory {
 
