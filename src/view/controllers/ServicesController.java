@@ -923,8 +923,6 @@ public class ServicesController {
                                     services.remove(services.size() - 1);
                                     addingService = false;
 
-                                    System.out.println("view.controllers.ServicesController.setEditableColumns()");
-
                                     cancelling = true;
                                     editing = false;
                                     tableCommitting = false;
