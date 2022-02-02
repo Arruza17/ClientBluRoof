@@ -35,9 +35,7 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 import model.Service;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -601,7 +599,9 @@ public class ServicesController {
                     t.getTablePosition().getRow())).setName(t.getNewValue());
             tbvService.getSelectionModel().select(t.getTablePosition().getRow(), tcName);
             tbvService.edit(t.getTablePosition().getRow(), tcName);
-            lastCommittedRow = null;
+            if (!addingService) {
+                lastCommittedRow = null;
+            }
 
             try {
                 editing = false;
@@ -783,7 +783,9 @@ public class ServicesController {
             tbvService.edit(t.getTablePosition().getRow(), tcAddress);
             editing = false;
 
-            lastCommittedRow = null;
+            if (!addingService) {
+                lastCommittedRow = null;
+            }
 
             try {
 
@@ -960,7 +962,10 @@ public class ServicesController {
             tbvService.edit(t.getTablePosition().getRow(), tcType);
 
             editing = false;
-            lastCommittedRow = null;
+
+            if (!addingService) {
+                lastCommittedRow = null;
+            }
 
             editing = false;
             if (!addingService && oldServiceType != null) {
@@ -1244,7 +1249,7 @@ public class ServicesController {
             }
 
         } catch (FieldsEmptyException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
+            LOGGER.log(Level.INFO, "FieldsEmptyException thrown at loadServicesByName(): {0}", ex.getMessage());
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Attention");
             alert.setHeaderText("Error");
@@ -1253,7 +1258,7 @@ public class ServicesController {
 
             tfServices.requestFocus();
         } catch (MaxCharactersException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
+            LOGGER.log(Level.INFO, "MaxCharactersException thrown at loadServicesByName(): {0}", ex.getMessage());
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Attention");
             alert.setHeaderText("Error");
@@ -1692,11 +1697,12 @@ public class ServicesController {
     }
 
     /**
-     * This method is called in the CellEditEvent OnEditCancel. Allows different
-     * types of cancelling depending if you are adding a service or editing.
+     * This method is called in the CellEditEvent OnEditCancel. used to manage 2
+     * types of cell edit cancel.
      */
     private void handleOnEditCancel() {
 
+        //updates the table again when a cell edit is cancelled. Only in the case that you are editing a service.
         if (!addingService && editing) {
 
             cancelling = true;
@@ -1711,6 +1717,7 @@ public class ServicesController {
 
         }
         if (addingService) {
+            //to manage imageviews while adding a row.
             handleTableImageViews();
         }
     }

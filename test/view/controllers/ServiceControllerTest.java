@@ -10,6 +10,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.ComboBox;
+import javafx.scene.input.KeyCode;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -56,8 +57,14 @@ public class ServiceControllerTest extends ApplicationTest {
     @Test
     public void test02_printOK() {
 
-        verifyThat("#imgPrint", isEnabled());
-        clickOn("#imgPrint");
+        try {
+            verifyThat("#imgPrint", isEnabled());
+            clickOn("#imgPrint");
+
+            Thread.sleep(3000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ServiceControllerTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
@@ -107,19 +114,162 @@ public class ServiceControllerTest extends ApplicationTest {
         clickOn("#cbService");
         clickOn("All services");
         clickOn("#btnSearchService");
-        
+
     }
-    
+
     @Test
-    public void test04_selectByAddress() {
+    public void test05_selectByAddress() {
 
         clickOn("#cbService");
         clickOn("By address");
         clickOn("#tfServices");
         write("Bilbao, Gran via avenue");
         clickOn("#btnSearchService");
-        
+
     }
 
+    @Test
+    public void test06_selectByName() {
+
+        clickOn("#cbService");
+        clickOn("By name");
+        clickOn("#tfServices");
+        write("El corte Inglés");
+        clickOn("#btnSearchService");
+
+    }
+
+    @Test
+    public void test07_selectByType() {
+
+        clickOn("#cbService");
+        clickOn("By type");
+        clickOn("#cbServiceType");
+        clickOn("TRAVELLING");
+        clickOn("#btnSearchService");
+
+    }
+
+    @Test
+    public void test08_addServiceCorrect() {
+
+        try {
+            clickOn("#imgAdd");
+            write("Tartanga street, 15");
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+            Thread.sleep(100);
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            write("CIFP Tartanga");
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            press(KeyCode.RIGHT).release(KeyCode.RIGHT);
+            Thread.sleep(100);
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            press(KeyCode.TAB).release(KeyCode.TAB);
+            Thread.sleep(100);
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+            Thread.sleep(100);
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            press(KeyCode.TAB).release(KeyCode.TAB);
+            Thread.sleep(100);
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+            Thread.sleep(100);
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            press(KeyCode.TAB).release(KeyCode.TAB);
+            Thread.sleep(100);
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+            Thread.sleep(100);
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            press(KeyCode.TAB).release(KeyCode.TAB);
+            Thread.sleep(100);
+            press(KeyCode.DOWN).release(KeyCode.DOWN);
+            Thread.sleep(100);
+            clickOn("#imgCommit");
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ServiceControllerTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    @Test
+    public void test09_editServiceCorrect() {
+        try {
+
+            doubleClickOn("Madrid, Lavapies street");
+            press(KeyCode.CONTROL);
+            press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+            eraseText(1);
+            write("Bilbao, Indautxu street");
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            doubleClickOn("Manolo's pedicure");
+            press(KeyCode.CONTROL);
+            press(KeyCode.A).release(KeyCode.CONTROL).release(KeyCode.A);
+            eraseText(1);
+            write("GAME videogame shop");
+            press(KeyCode.ENTER).release(KeyCode.ENTER);
+            Thread.sleep(100);
+            doubleClickOn("HEALTH");
+            clickOn("SHOPPING");
+            clickOn("#imgCommit");
+            Thread.sleep(2000);
+            verifyThat("GAME videogame shop", isVisible());
+            verifyThat("Bilbao, Indautxu street", isVisible());
+            verifyThat("SHOPPING", isVisible());
+            verifyThat("#imgCommit", isDisabled());
+            verifyThat("#imgCancel", isDisabled());
+
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ServiceControllerTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    @Test
+    public void test10_deleteServiceCorrect() {
+
+        clickOn("#tcAddress");
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        clickOn("#imgDelete");
+        verifyThat("Aceptar", isVisible());
+        clickOn("Aceptar");
+    }
+
+    @Test
+    public void test11_deleteServiceCancelled() {
+
+        clickOn("#tcAddress");
+        press(KeyCode.DOWN).release(KeyCode.DOWN);
+        clickOn("#imgDelete");
+        verifyThat("Cancelar", isVisible());
+        clickOn("Cancelar");
+    }
+
+    @Test
+    public void test12_tfServicesEmptyFieldException() {
+
+        clickOn("#cbService");
+        clickOn("By address");
+        clickOn("#btnSearchService");
+        verifyThat("The search field is empty", isVisible());
+
+    }
+
+    @Test
+    public void test13_tfServicesMaxCharactersException() {
+
+        clickOn("#cbService");
+        clickOn("By address");
+
+        clickOn("#btnSearchService");
+        verifyThat("The search field is empty", isVisible());
+
+    }
 
 }

@@ -14,6 +14,7 @@ import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.GenericType;
 import model.Service;
 import restful.ServiceRestfulClient;
+import view.controllers.ServicesController;
 
 /**
  *
@@ -22,7 +23,7 @@ import restful.ServiceRestfulClient;
 public class ServiceManagerImplementation implements ServicesManager{
 
     private final ServiceRestfulClient serviceRestfulClient;
-    private Logger LOGGER=Logger.getLogger("ServiceManagerIMple");
+    private static final Logger LOGGER = Logger.getLogger(ServiceManagerImplementation.class.getName());
     
       public ServiceManagerImplementation() {
         serviceRestfulClient = new ServiceRestfulClient();
@@ -49,7 +50,7 @@ public class ServiceManagerImplementation implements ServicesManager{
              try {
                  throw new BusinessLogicException(e.getMessage());
              } catch (BusinessLogicException ex) {
-                 Logger.getLogger(ServiceManagerImplementation.class.getName()).log(Level.SEVERE, null, ex);
+                 LOGGER.log(Level.SEVERE, null, ex);
              }
         }
         return service;
@@ -92,11 +93,11 @@ public class ServiceManagerImplementation implements ServicesManager{
     public void updateService(Service service) throws BusinessLogicException {
         
          try {
-            LOGGER.log(Level.INFO, "UsersManager: Updating user {0}.", service.getName());
+            LOGGER.log(Level.INFO, "ServiceManager: Updating user {0}.", service.getName());
             serviceRestfulClient.edit(service, String.valueOf(service.getId()));
         } catch (ClientErrorException ex) {
             LOGGER.log(Level.SEVERE,
-                    "UsersManager: Exception updating user, {0}",
+                    "ServiceManager: Exception updating service, {0}",
                     ex.getMessage());
             throw new BusinessLogicException("Error updating Service:\n" + ex.getMessage());
         }
@@ -111,7 +112,7 @@ public class ServiceManagerImplementation implements ServicesManager{
             serviceRestfulClient.create(service);
         } catch (ClientErrorException ex) {
             LOGGER.log(Level.SEVERE,
-                    "UsersManager: Exception creating Service, {0}",
+                    "ServiceManager: Exception creating Service, {0}",
                     ex.getMessage());
             throw new BusinessLogicException("Error creating user:\n" + ex.getMessage());
         }
@@ -122,9 +123,16 @@ public class ServiceManagerImplementation implements ServicesManager{
     public void deleteService(Long id) throws BusinessLogicException {
      
          try {
+              LOGGER.log(Level.INFO, "ServiceManager: deleting service with the id: {0}.", id);
+             
             serviceRestfulClient.remove(String.valueOf(id));
-        } catch (ClientErrorException e) {
-            throw new BusinessLogicException(e.getMessage());
+        } catch (ClientErrorException ex) {
+            
+            LOGGER.log(Level.SEVERE,
+                    "ServiceManager: Exception deleting Service, {0}",
+                    ex.getMessage());
+            
+            throw new BusinessLogicException(ex.getMessage());
         }
         
     }
