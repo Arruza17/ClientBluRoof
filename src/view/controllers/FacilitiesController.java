@@ -56,7 +56,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
-import sun.print.resources.serviceui;
+
 
 /**
  * FXML Controller class for Facilities.fxml
@@ -64,6 +64,7 @@ import sun.print.resources.serviceui;
  * @author jorge
  */
 public class FacilitiesController {
+
 
     //FXML Objects
     /**
@@ -122,6 +123,7 @@ public class FacilitiesController {
      */
     public void initStage() {
         try {
+
             //Disables at start all query elements except the type of query combo.
             cb_Type.setDisable(true);
             dp_Facilities.setDisable(true);
