@@ -1703,7 +1703,7 @@ public class ServicesController {
     private void handleOnEditCancel() {
 
         //updates the table again when a cell edit is cancelled. Only in the case that you are editing a service.
-        if (!addingService && editing) {
+        if (editing && selectedRow != services.size() - 1) {
 
             cancelling = true;
             editing = false;
