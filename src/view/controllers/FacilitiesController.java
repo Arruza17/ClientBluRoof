@@ -18,7 +18,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,17 +33,12 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
-import static javafx.scene.input.KeyCode.T;
-import javafx.stage.Stage;
-import javafx.util.Callback;
 import model.Facility;
 import interfaces.FacilityManager;
-import java.lang.reflect.InvocationTargetException;
 import model.FacilityType;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -119,7 +113,6 @@ public class FacilitiesController {
     public void initStage() {
         try {
 
-
             //Disables at start all query elements except the type of query combo.
             cb_Type.setDisable(true);
             dp_Facilities.setDisable(true);
@@ -166,7 +159,7 @@ public class FacilitiesController {
                     new PropertyValueFactory<>("id"));
             //Sets the value factory of the spinner
             sp_Facilities.setValueFactory(
-                    new SpinnerValueFactory.IntegerSpinnerValueFactory(1,1000));
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000));
             //Makes spinner editable
             sp_Facilities.setEditable(true);
 
@@ -256,20 +249,20 @@ public class FacilitiesController {
                                 //LOGGER.warning("The field in facility type is empty");
                                 throw new FieldsEmptyException();
                             }
-                            if(t.getNewValue().toString().equalsIgnoreCase(t.getOldValue().toString())){
-                            //Sets the check and cancel buttons to clickable
-                            iv_check.setDisable(false);
-                            iv_check.setOpacity(1);
-                            iv_cancel.setDisable(false);
-                            iv_cancel.setOpacity(1);
-                            iv_minus.setDisable(true);
-                            iv_minus.setOpacity(0.25);
-                            iv_add.setDisable(true);
-                            iv_add.setOpacity(0.25);
-                            editing = true;
-                            
+                            if (t.getNewValue().toString().equalsIgnoreCase(t.getOldValue().toString())) {
+                                //Sets the check and cancel buttons to clickable
+                                iv_check.setDisable(false);
+                                iv_check.setOpacity(1);
+                                iv_cancel.setDisable(false);
+                                iv_cancel.setOpacity(1);
+                                iv_minus.setDisable(true);
+                                iv_minus.setOpacity(0.25);
+                                iv_add.setDisable(true);
+                                iv_add.setOpacity(0.25);
+                                editing = true;
+
                             }
-                            
+
                         } catch (FieldsEmptyException ex) {
                             Logger.getLogger(FacilitiesController.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -429,8 +422,8 @@ public class FacilitiesController {
                                     = FXCollections.observableArrayList(facilities);
                             tbl_facilities.setItems(facilityTableBean);
                             myFacilities = facilityTableBean;
-                        }else{
-                         LOGGER.info("No results");
+                        } else {
+                            LOGGER.info("No results");
                             //Alert shown whe Id not found
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("Id not found");
@@ -467,8 +460,10 @@ public class FacilitiesController {
 
         }
     }
+
     /**
      * Method used to add one row to the table to later commit.
+     *
      * @param event Mouse event triggered when on pressed
      */
     @FXML
@@ -484,6 +479,10 @@ public class FacilitiesController {
         iv_cancel.setOpacity(1);
         //sets adding boolean to true
         adding = true;
+        if (myFacilities.isEmpty()) {
+            myFacilities = loadAll();
+            tbl_facilities.refresh();
+        }
         Facility ft = new Facility();
         ft.setId(Long.MIN_VALUE);
         ft.setAdquisitionDate(new Date());
@@ -496,11 +495,12 @@ public class FacilitiesController {
         tbl_facilities.getFocusModel().focus(myFacilities.size() - 1, adq_column);
         //Edits adq_column
         tbl_facilities.edit(myFacilities.size() - 1, adq_column);
- 
 
     }
+
     /**
      * Method used to print a Jasper report with the displayed data.
+     *
      * @param action Mouse event triggered when pressing iv_print.
      */
     @FXML
@@ -532,12 +532,14 @@ public class FacilitiesController {
             alert.setHeaderText("Error printing");
             alert.setContentText("There was an error printing the information, try again later");
             //LOGGER.log(Level.SEVERE,
-                   // "Error printing report at printReport(): {0}",
-                   // ex.getMessage());
+            // "Error printing report at printReport(): {0}",
+            // ex.getMessage());
         }
     }
+
     /**
      * Method used to delete one Facility from the database.
+     *
      * @param action MouseEvent triggered when pressing iv_cancel ImageView.
      */
     @FXML
@@ -558,7 +560,7 @@ public class FacilitiesController {
                     facMan.remove(facTBean.getId());
                     //Selects all with the deletion updated
                     loadAll();
-                } catch (BusinessLogicException ex){
+                } catch (BusinessLogicException ex) {
                     //In case delete fails
                     Alert alert1 = new Alert(AlertType.ERROR);
                     alert1.setTitle("AYUDA");
@@ -582,8 +584,10 @@ public class FacilitiesController {
         }
 
     }
+
     /**
      * Method used to cancel the updated/created rows.
+     *
      * @param action MouseEvent triggered when pressing iv_cancel ImageView
      */
     @FXML
@@ -626,8 +630,10 @@ public class FacilitiesController {
         } else {
         }
     }
+
     /**
      * Method used to commit changes into the database.
+     *
      * @param action Mouse event triggered when pressing iv_check
      */
     @FXML
@@ -717,15 +723,19 @@ public class FacilitiesController {
 
         }
     }
+
     /**
      * Used to set the FacilityManager
+     *
      * @param facMan Facility Manager
      */
-     public void setFacMan(FacilityManager facMan) {
+    public void setFacMan(FacilityManager facMan) {
         this.facMan = facMan;
     }
+
     /**
      * Method in which selects all facilities.
+     *
      * @return ObservableList of all facilities
      */
     private ObservableList loadAll() {

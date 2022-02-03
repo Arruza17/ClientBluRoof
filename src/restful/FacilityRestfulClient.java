@@ -5,7 +5,6 @@ import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
-import org.glassfish.hk2.utilities.reflection.Logger;
 
 /**
  * Jersey REST client generated for REST resource:FacilityFacadeREST
@@ -22,7 +21,6 @@ import org.glassfish.hk2.utilities.reflection.Logger;
  */
 public class FacilityRestfulClient {
 
-    private Logger log = Logger.getLogger();
     private WebTarget webTarget;
     private Client client;
     private static final String BASE_URI = ResourceBundle.getBundle("resources.config").getString("BASE_URI");

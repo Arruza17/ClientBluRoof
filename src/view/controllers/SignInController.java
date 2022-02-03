@@ -148,10 +148,10 @@ public class SignInController {
             alert.setContentText(ex.getMessage());
             alert.show();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
-        } catch (ClientErrorException ex) {
+        } catch (BusinessLogicException ex) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText("Could not log in");
-            alert.setContentText(ex.getMessage()+ex.getClass().getName());
+            alert.setContentText(ex.getMessage());
             alert.show();
             LOGGER.warning(ex.getClass().getSimpleName() + " exception thrown at SignIn method");
         } catch (Exception ex) {

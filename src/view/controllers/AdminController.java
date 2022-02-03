@@ -443,49 +443,56 @@ public class AdminController {
     private void handleTableDelete(MouseEvent event) {
         LOGGER.info("Deleteing information about user");
         //Getting the information of the user to delete
-        User user = tblAdmin.getSelectionModel().getSelectedItem();
-        //Getting the position of the user to delete
-        int pos = tblAdmin.getSelectionModel().getSelectedIndex();
-        //Show an alert to confirm
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setHeaderText("Delete");
-        alert.setContentText("You are about to delete the information about " + user.getFullName() + ". Are you sure?");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != ButtonType.OK) {
-            LOGGER.info("User deletion cancelled");
-            Alert allert = new Alert(AlertType.INFORMATION);
-            allert.setTitle("Cancelled");
-            allert.setContentText("User deletion cancelled");
-            allert.show();
+        User selectedUser = tblAdmin.getSelectionModel().getSelectedItem();
+        if (user.getId() == selectedUser.getId()) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Cannot delete this user");
+            alert.setContentText("You cannot delete yourself from the table");
+            alert.show();
         } else {
-            LOGGER.info("User deleted");
-            try {
-                //If it was not an addition of row
-                if (!(pos == admin.size() - 1 && user.getId().equals(Long.MIN_VALUE))) {
-                    userManager.deleteUser(String.valueOf(user.getId()));
+            //Getting the position of the user to delete
+            int pos = tblAdmin.getSelectionModel().getSelectedIndex();
+            //Show an alert to confirm
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setHeaderText("Delete");
+            alert.setContentText("You are about to delete the information about " + selectedUser.getFullName() + ". Are you sure?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() != ButtonType.OK) {
+                LOGGER.info("User deletion cancelled");
+                Alert allert = new Alert(AlertType.INFORMATION);
+                allert.setTitle("Cancelled");
+                allert.setContentText("User deletion cancelled");
+                allert.show();
+            } else {
+                LOGGER.info("User deleted");
+                try {
+                    //If it was not an addition of row
+                    if (!(pos == admin.size() - 1 && selectedUser.getId().equals(Long.MIN_VALUE))) {
+                        userManager.deleteUser(String.valueOf(selectedUser.getId()));
+                    }
+                    //Either case, we update the table
+                    admin.remove(selectedUser);
+                    tblAdmin.refresh();
+                } catch (BusinessLogicException ex) {
+                    LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at handleTableDelete(): {0}", ex.getMessage());
+                    Alert excAlert = new Alert(AlertType.INFORMATION);
+                    excAlert.setTitle("Error");
+                    excAlert.setContentText("There was an error with the deletion of the user: " + ex.getMessage());
+                    excAlert.show();
+                } catch (Exception ex) {
+                    Alert excAlert = new Alert(AlertType.INFORMATION);
+                    excAlert.setTitle("Error");
+                    excAlert.setContentText("There was an error with the connection of the server");
+                    excAlert.show();
+                    LOGGER.log(Level.SEVERE, ex.getClass().getSimpleName() + " thrown at handleTableCommit(): {0}", ex.getMessage());
                 }
-                //Either case, we update the table
-                admin.remove(user);
-                tblAdmin.refresh();
-            } catch (BusinessLogicException ex) {
-                LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at handleTableDelete(): {0}", ex.getMessage());
-                Alert excAlert = new Alert(AlertType.INFORMATION);
-                excAlert.setTitle("Error");
-                excAlert.setContentText("There was an error with the deletion of the user: " + ex.getMessage());
-                excAlert.show();
-            } catch (Exception ex) {
-                Alert excAlert = new Alert(AlertType.INFORMATION);
-                excAlert.setTitle("Error");
-                excAlert.setContentText("There was an error with the connection of the server");
-                excAlert.show();
-                LOGGER.log(Level.SEVERE, ex.getClass().getSimpleName() + " thrown at handleTableCommit(): {0}", ex.getMessage());
             }
-        }
 
-        imgDel.setDisable(true);
-        imgDel.setOpacity(0.25);
-        imgAdd.setDisable(false);
-        imgAdd.setOpacity(1);
+            imgDel.setDisable(true);
+            imgDel.setOpacity(0.25);
+            imgAdd.setDisable(false);
+            imgAdd.setOpacity(1);
+        }
     }
 
     /**
@@ -699,6 +706,7 @@ public class AdminController {
 
     /**
      * Sets the user of the view
+     *
      * @param user
      */
     public void setUser(User user) {
