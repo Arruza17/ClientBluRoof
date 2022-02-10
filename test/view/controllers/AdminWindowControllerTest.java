@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import model.User;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import org.junit.BeforeClass;
@@ -45,6 +46,8 @@ public class AdminWindowControllerTest extends ApplicationTest {
 
     private static TableView table;
 
+    private static User adminToRegister;
+
     @BeforeClass
     public static void setUpClass() throws TimeoutException {
         FxToolkit.registerPrimaryStage();
@@ -74,7 +77,6 @@ public class AdminWindowControllerTest extends ApplicationTest {
     @Test
     public void test01_addAdmin() {
         try {
-            int rows = table.getItems().size();
             addButton = lookup("#imgAdd").query();
             confirmButton = lookup("#imgCommit").query();
             cancelButton = lookup("#imgCancel").query();
@@ -119,7 +121,8 @@ public class AdminWindowControllerTest extends ApplicationTest {
             press(KeyCode.ENTER).release(KeyCode.ENTER);
             Thread.sleep(100);
             clickOn(confirmButton);
-            assertNotEquals("Row added", rows, table.getItems().size());
+            adminToRegister = (User) table.getItems().get(table.getItems().size() - 1);
+            assertEquals("The new admin appears in the table", true, table.getItems().contains(adminToRegister));
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminWindowControllerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -129,20 +132,20 @@ public class AdminWindowControllerTest extends ApplicationTest {
     @Test
     public void test02_lookForAdmin() {
         try {
+            sleep(1000);
             TextField tf = lookup("#tfSearch").query();
             clickOn(tf);
-            write("test");
+            write(adminLogin);
             Thread.sleep(100);
             clickOn("Search");
             Thread.sleep(200);
-            verifyThat(adminLogin, isVisible());
-            int rows = table.getItems().size();
+            adminToRegister = (User) table.getItems().get(table.getItems().size() - 1);
+            assertEquals("The admin we are looking for appears in the table", true, table.getItems().contains(adminToRegister));
             doubleClickOn(tf);
-            Thread.sleep(100);
             press(KeyCode.DELETE);
+            release(KeyCode.DELETE);
             Thread.sleep(100);
             clickOn("Search");
-            assertNotEquals(rows, table.getItems().size());
         } catch (InterruptedException ex) {
             Logger.getLogger(AdminWindowControllerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -155,8 +158,6 @@ public class AdminWindowControllerTest extends ApplicationTest {
             clickOn("Search");
             Thread.sleep(200);
             doubleClickOn("Admin Test");
-            /*verifyThat(confirmButton, isEnabled());
-            verifyThat(cancelButton, isEnabled());*/
             press(KeyCode.CONTROL);
             press(KeyCode.A).release(KeyCode.A).release(KeyCode.CONTROL);
             write("Admin update");
@@ -277,6 +278,7 @@ public class AdminWindowControllerTest extends ApplicationTest {
             Thread.sleep(100);
             clickOn(confirmButton);
             verifyThat(ExceptionGenerator.exceptionGenerator(409), isVisible());
+            Thread.sleep(1000);
             closeCurrentWindow();
             Thread.sleep(300);
             clickOn("Search");

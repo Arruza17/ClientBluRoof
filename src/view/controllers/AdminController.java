@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javafx.beans.property.SimpleObjectProperty;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -32,6 +33,7 @@ import javafx.scene.control.Alert.AlertType;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 
 import javafx.scene.control.TableColumn;
@@ -401,8 +403,8 @@ public class AdminController {
     }
 
     /**
-     *
-     * @param userManager
+     * Method that sets the user manager of the class
+     * @param userManager the user manager to set
      */
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
@@ -411,7 +413,7 @@ public class AdminController {
     /**
      * Handles the adition of new rows to the table
      *
-     * @param event
+     * @param event a mouse event
      */
     @FXML
     private void handleTableAdd(MouseEvent event) {
@@ -437,7 +439,7 @@ public class AdminController {
     /**
      * Used to handle the deletion of rows
      *
-     * @param event
+     * @param event a mouse event
      */
     @FXML
     private void handleTableDelete(MouseEvent event) {
@@ -459,10 +461,6 @@ public class AdminController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() != ButtonType.OK) {
                 LOGGER.info("User deletion cancelled");
-                Alert allert = new Alert(AlertType.INFORMATION);
-                allert.setTitle("Cancelled");
-                allert.setContentText("User deletion cancelled");
-                allert.show();
             } else {
                 LOGGER.info("User deleted");
                 try {
@@ -488,8 +486,6 @@ public class AdminController {
                 }
             }
 
-            imgDel.setDisable(true);
-            imgDel.setOpacity(0.25);
             imgAdd.setDisable(false);
             imgAdd.setOpacity(1);
         }
@@ -498,7 +494,7 @@ public class AdminController {
     /**
      * Method used to commit the changes of the table
      *
-     * @param event
+     * @param event a mouse event
      */
     @FXML
     private void handleTableCommit(MouseEvent event) {
@@ -566,7 +562,7 @@ public class AdminController {
     /**
      * Method used to handle the cancel action
      *
-     * @param event
+     * @param event a mouse event
      */
     @FXML
     private void handleTableCancel(MouseEvent event) {
@@ -613,20 +609,24 @@ public class AdminController {
     /**
      * Method used to search admins that contain words in their login
      *
-     * @param event
+     * @param event the action event of the button
      */
     @FXML
     private void searchByLogin(ActionEvent event) {
         try {
             //Clear the data of the admins in the table
             admin.clear();
+            tblAdmin.getItems().clear();
+            admin = FXCollections.observableArrayList(userManager.findAllAdmins());
             String text = tfSearch.getText().trim();
-            if (text.isEmpty()) {
-                //Search for all the admins if no text is imput
-                admin = FXCollections.observableArrayList(userManager.findAllAdmins());
-            } else {
+            if (!text.isEmpty()) {
                 //Search for the admins that contain the text
-                admin = FXCollections.observableArrayList(userManager.findAllAdminsByLogin("%" + text + "%"));
+                admin = FXCollections.observableArrayList(admin.stream()
+                        //Filter all the admins that contain the text
+                        .filter(admin -> admin.getLogin().contains(text))
+                        //Gets al the filtered data into the initial arraylist
+                        .collect(Collectors.toList()
+                        ));
             }
             imgCommit.setDisable(true);
             imgCommit.setOpacity(0.25);
@@ -643,6 +643,9 @@ public class AdminController {
             excAlert.show();
             LOGGER.log(Level.SEVERE, "BusinessLogicException thrown at searchByLogin(): {0}", ex.getMessage());
         } finally {
+            if (admin.size() == 0) {
+                tblAdmin.setPlaceholder(new Label("There are no admins that contain that in their login"));
+            }
             tblAdmin.setItems(admin);
             tblAdmin.refresh();
 
@@ -653,7 +656,7 @@ public class AdminController {
     /**
      * Method used to print a report using JasperReports
      *
-     * @param event
+     * @param event the mouse event
      */
     @FXML
     private void printReport(MouseEvent event) {
